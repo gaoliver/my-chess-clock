@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
 import Colors from '../constants/Colors'
 import Settings from '../constants/Settings'
 
@@ -7,16 +7,18 @@ interface IProps {
 	color?: string
 	height?: number
 	disabled?: boolean
+	style?: StyleProp<ViewStyle>
 }
 
 const translator = (props: IProps) => ({
 	color: props.color ? props.color : Colors.themeColor,
 	height: props.height ? props.height : 230,
 	disabled: props.disabled ? props.disabled : false,
+	style: props.style && props.style,
 })
 
 export const AppBox: React.FC<IProps> = (props) => {
-	const { color, height, disabled } = translator(props)
+	const { color, height, disabled, style } = translator(props)
 
 	const styles = StyleSheet.create({
 		box: {
@@ -30,5 +32,5 @@ export const AppBox: React.FC<IProps> = (props) => {
 		},
 	})
 
-	return <View style={styles.box}>{props.children}</View>
+	return <View style={[styles.box, style]}>{props.children}</View>
 }
