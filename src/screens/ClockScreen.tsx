@@ -29,6 +29,7 @@ const ClockScreen = () => {
 	const [counterPlayer1, setCounterPlayer1] = useState(timePlayer1)
 	const [counterPlayer2, setCounterPlayer2] = useState(timePlayer2)
 	const [thisTotalTime, setThisTotalTime] = useState(totalTime)
+	const [totalTimer, setTotalTimer] = useState<any>()
 	const [timer, setTimer] = useState<any>()
 
 	const landscape = (direction: string) => {
@@ -78,6 +79,18 @@ const ClockScreen = () => {
 			clearInterval(timer)
 		}
 	}, [thisPlay, thisPlayer1, thisPlayer2])
+
+	useEffect(() => {
+		if (thisPlay) {
+			const totalTimerId = setInterval(
+				() => setThisTotalTime((value) => value + 1),
+				1000
+			)
+			setTotalTimer(totalTimerId)
+		} else {
+			clearInterval(totalTimer)
+		}
+	}, [thisPlay])
 
 	const styles = StyleSheet.create({
 		container: {
