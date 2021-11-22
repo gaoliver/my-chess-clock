@@ -39,13 +39,25 @@ const ClockScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<AppTimer direction={landscape('up')} />
+			<AppTimer direction={landscape('down')} />
 			<View style={styles.buttons}>
-				<RoundedButton icon={<SettingsIcon />} size={55} />
-				<RoundedButton icon={<PlayIcon />} size={65} />
-				<RoundedButton icon={<RefreshIcon />} size={55} />
+				<RoundedButton
+					landscape={settings.landscape}
+					icon={<SettingsIcon />}
+					size={55}
+				/>
+				<RoundedButton
+					landscape={settings.landscape}
+					icon={<PlayIcon />}
+					size={65}
+				/>
+				<RoundedButton
+					landscape={settings.landscape}
+					icon={<RefreshIcon />}
+					size={55}
+				/>
 			</View>
-			<AppTimer disabled />
+			<AppTimer disabled direction={landscape('up')} />
 		</SafeAreaView>
 	)
 }
