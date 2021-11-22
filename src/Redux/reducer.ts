@@ -31,5 +31,15 @@ export const settingsReducer = (
 				...state,
 				settings: action.payload,
 			}
+		case 'SET_TIMER_P1':
+			return {
+				...state,
+				timePlayer1: action.payload,
+			}
+		case 'SET_TIMER_P2':
+			return {
+				...state,
+				timePlayer2: action.payload,
+			}
 	}
 }
