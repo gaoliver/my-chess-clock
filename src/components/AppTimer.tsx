@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text } from 'react-native'
-import { AppBox } from '.'
+import { AppBox } from '../components/AppBox'
 import Colors from '../constants/Colors'
 import Timer from '../utils/timer'
 import { fontFamily, IDirectionTranslator } from '../utils/types'
@@ -67,7 +67,7 @@ export const AppTimer = (props: IProps) => {
 			disabled={disabled}
 			onPress={onPress}
 		>
-			<Text style={styles.total}>{`total time - ${totalTime}`}</Text>
+			<Text style={styles.total}>{`total time - ${Timer(totalTime)}`}</Text>
 			<Text style={styles.playerTime}>{Timer(playerTime)}</Text>
 		</AppBox>
 	)
