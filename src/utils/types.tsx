@@ -19,6 +19,32 @@ export enum fontFamily {
 	whiteDream = 'white-dream',
 }
 
+export interface IDirectionTranslator {
+	container: {
+		height: number | undefined
+		flexDirection:
+			| 'row'
+			| 'column'
+			| 'row-reverse'
+			| 'column-reverse'
+			| undefined
+		justifyContent:
+			| 'space-around'
+			| 'center'
+			| 'flex-start'
+			| 'flex-end'
+			| 'space-between'
+			| 'space-evenly'
+			| undefined
+		rotate: any
+	}
+	playerTime: {
+		marginTop: any
+		fontSize: number
+	}
+	rotate: any
+}
+
 export interface ISettings {
 	themeColor: string
 	playSound: boolean

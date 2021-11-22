@@ -1,8 +1,8 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { RotateZTransform, StyleSheet, Text, View } from 'react-native'
 import { AppBox } from '.'
 import Colors from '../constants/Colors'
-import { fontFamily } from '../utils/types'
+import { fontFamily, IDirectionTranslator } from '../utils/types'
 
 interface IProps {
 	playerTime?: number
@@ -21,22 +21,44 @@ const translator = (props: IProps) => ({
 export const AppTimer = (props: IProps) => {
 	const { totalTime, playerTime, direction, disabled } = translator(props)
 
+	const directionTranslator: IDirectionTranslator = {
+		container: {
+			height: direction === 'landscape' ? 260 : 230,
+			flexDirection: direction === 'landscape' ? 'row' : 'column',
+			justifyContent: direction === 'landscape' ? 'space-around' : 'center',
+			rotate: direction === 'down' ? [{ rotateZ: '180deg' }] : [],
+		},
+		playerTime: {
+			marginTop: direction === 'landscape' ? 0 : '15%',
+			fontSize: direction === 'landscape' ? 60 : 80,
+		},
+		rotate: direction === 'landscape' ? [{ rotateZ: '270deg' }] : [],
+	}
+
 	const styles = StyleSheet.create({
+		container: {
+			height: directionTranslator.container.height,
+			flexDirection: directionTranslator.container.flexDirection,
+			justifyContent: directionTranslator.container.justifyContent,
+			transform: directionTranslator.container.rotate,
+		},
 		total: {
 			color: Colors.totalTimerColor,
 			fontFamily: fontFamily.digitalNumber,
 			fontSize: 20,
+			transform: directionTranslator.rotate,
 		},
 		playerTime: {
 			color: Colors.textColor,
 			fontFamily: fontFamily.digitalNumber,
-			fontSize: 80,
-			marginTop: '15%',
+			fontSize: directionTranslator.playerTime.fontSize,
+			marginTop: directionTranslator.playerTime.marginTop,
+			transform: directionTranslator.rotate,
 		},
 	})
 
 	return (
-		<AppBox disabled={disabled}>
+		<AppBox style={[direction && styles.container]} disabled={disabled}>
 			<Text style={styles.total}>{`total time - 00:00:00`}</Text>
 			<Text style={styles.playerTime}>{`00:00:00`}</Text>
 		</AppBox>

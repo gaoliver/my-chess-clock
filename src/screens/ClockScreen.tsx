@@ -1,14 +1,27 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSelector } from 'react-redux'
 
-import { AppBox, AppTimer, RoundedButton } from '../components'
+import { AppTimer, RoundedButton } from '../components'
 import PlayIcon from '../../assets/icons/play.svg'
 import PauseIcon from '../../assets/icons/pause.svg'
 import SettingsIcon from '../../assets/icons/settings.svg'
 import RefreshIcon from '../../assets/icons/refresh.svg'
+import { ApplicationState } from '../redux'
 
 const ClockScreen = () => {
+	const { settings } = useSelector((state: ApplicationState) => state)
+
+	const landscape = (direction: string) => {
+		let landscape = settings.landscape
+		if (landscape) {
+			return 'landscape'
+		} else if (direction === 'up' || direction === 'down') {
+			return direction
+		}
+	}
+
 	const styles = StyleSheet.create({
 		container: {
 			flex: 1,
@@ -26,13 +39,13 @@ const ClockScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<AppTimer />
+			<AppTimer direction={landscape('up')} />
 			<View style={styles.buttons}>
 				<RoundedButton icon={<SettingsIcon />} size={55} />
 				<RoundedButton icon={<PlayIcon />} size={65} />
 				<RoundedButton icon={<RefreshIcon />} size={55} />
 			</View>
-			<AppBox disabled />
+			<AppTimer disabled />
 		</SafeAreaView>
 	)
 }
