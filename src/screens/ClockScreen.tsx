@@ -4,6 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { RoundedButton } from '../components'
 import PlayIcon from '../../assets/icons/play.svg'
+import PauseIcon from '../../assets/icons/pause.svg'
+import SettingsIcon from '../../assets/icons/settings.svg'
+import RefreshIcon from '../../assets/icons/refresh.svg'
 
 const ClockScreen = () => {
 	const styles = StyleSheet.create({
@@ -12,11 +15,21 @@ const ClockScreen = () => {
 			justifyContent: 'center',
 			alignItems: 'center',
 		},
+		buttons: {
+			width: '100%',
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-around',
+		},
 	})
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<RoundedButton icon={<PlayIcon />} size={60} />
+			<View style={styles.buttons}>
+				<RoundedButton icon={<SettingsIcon />} size={55} />
+				<RoundedButton icon={<PlayIcon />} size={65} />
+				<RoundedButton icon={<RefreshIcon />} size={55} />
+			</View>
 		</SafeAreaView>
 	)
 }
