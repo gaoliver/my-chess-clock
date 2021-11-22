@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native'
 import Colors from '../constants/Colors'
 import Settings from '../constants/Settings'
 
@@ -8,6 +8,7 @@ interface IProps {
 	height?: number
 	disabled?: boolean
 	style?: StyleProp<ViewStyle>
+	onPress?: () => void
 }
 
 const translator = (props: IProps) => ({
@@ -15,10 +16,11 @@ const translator = (props: IProps) => ({
 	height: props.height ? props.height : 230,
 	disabled: props.disabled ? props.disabled : false,
 	style: props.style && props.style,
+	onPress: props.onPress ? props.onPress : () => {},
 })
 
 export const AppBox: React.FC<IProps> = (props) => {
-	const { color, height, disabled, style } = translator(props)
+	const { color, height, disabled, style, onPress } = translator(props)
 
 	const styles = StyleSheet.create({
 		box: {
@@ -32,5 +34,9 @@ export const AppBox: React.FC<IProps> = (props) => {
 		},
 	})
 
-	return <View style={[styles.box, style]}>{props.children}</View>
+	return (
+		<Pressable style={[styles.box, style]} onPress={onPress}>
+			{props.children}
+		</Pressable>
+	)
 }

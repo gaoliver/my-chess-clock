@@ -9,6 +9,7 @@ interface IProps {
 	totalTime?: number
 	direction?: 'up' | 'down' | 'landscape'
 	disabled?: boolean
+	onPress?: () => {}
 }
 
 const translator = (props: IProps) => ({
@@ -16,10 +17,12 @@ const translator = (props: IProps) => ({
 	totalTime: props.totalTime ? props.totalTime : 0,
 	direction: props.direction ? props.direction : 'up',
 	disabled: props.disabled ? props.disabled : false,
+	onPress: props.onPress ? props.onPress : () => {},
 })
 
 export const AppTimer = (props: IProps) => {
-	const { totalTime, playerTime, direction, disabled } = translator(props)
+	const { totalTime, playerTime, direction, disabled, onPress } =
+		translator(props)
 
 	const directionTranslator: IDirectionTranslator = {
 		container: {
@@ -58,7 +61,11 @@ export const AppTimer = (props: IProps) => {
 	})
 
 	return (
-		<AppBox style={[direction && styles.container]} disabled={disabled}>
+		<AppBox
+			style={[direction && styles.container]}
+			disabled={disabled}
+			onPress={onPress}
+		>
 			<Text style={styles.total}>{`total time - 00:00:00`}</Text>
 			<Text style={styles.playerTime}>{`00:00:00`}</Text>
 		</AppBox>
