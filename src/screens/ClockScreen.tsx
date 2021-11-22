@@ -65,6 +65,18 @@ const ClockScreen = () => {
 		dispatch(gameActions.setPlayPause(thisPlay))
 	}
 
+	const onReset = () => {
+		dispatch(gameActions.setPlayPause(false))
+		dispatch(gameActions.setTimerPlayer1(0))
+		dispatch(gameActions.setTimerPlayer2(0))
+		dispatch(gameActions.setTotalTime(0))
+
+		setThisPlay(false)
+		setCounterPlayer1(0)
+		setCounterPlayer2(0)
+		setThisTotalTime(0)
+	}
+
 	useEffect(() => {
 		if (thisPlay) {
 			const timerId = setInterval(() => {
@@ -132,6 +144,7 @@ const ClockScreen = () => {
 					landscape={settings.landscape}
 					icon={<RefreshIcon />}
 					size={55}
+					onPress={onReset}
 				/>
 			</View>
 			<AppTimer
