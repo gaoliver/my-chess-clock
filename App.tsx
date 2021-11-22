@@ -31,7 +31,10 @@ export default function App() {
 			<PersistGate loading={null} persistor={persistor}>
 				<StatusBar />
 				<NavigationContainer>
-					<Stack.Navigator screenOptions={{ headerShown: false }}>
+					<Stack.Navigator
+						screenOptions={{ headerShown: false }}
+						initialRouteName="Home"
+					>
 						<Stack.Screen name="Home" component={ClockScreen} />
 						<Stack.Screen name="Settings" component={SettingsScreen} />
 						<Stack.Screen name="Ruleset" component={RulesetScreen} />

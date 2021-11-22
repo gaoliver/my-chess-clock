@@ -10,8 +10,9 @@ import PauseIcon from '../../assets/icons/pause.svg'
 import SettingsIcon from '../../assets/icons/settings.svg'
 import RefreshIcon from '../../assets/icons/refresh.svg'
 import { ApplicationState } from '../redux'
+import { NavigationParamsProp } from '../utils/types'
 
-const ClockScreen = () => {
+const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const dispatch = useDispatch()
 	const {
 		settings,
@@ -77,6 +78,10 @@ const ClockScreen = () => {
 		setThisTotalTime(0)
 	}
 
+	const onSettings = () => {
+		navigation.navigate('Settings')
+	}
+
 	useEffect(() => {
 		if (thisPlay) {
 			const timerId = setInterval(() => {
@@ -133,6 +138,7 @@ const ClockScreen = () => {
 					landscape={settings.landscape}
 					icon={<SettingsIcon />}
 					size={55}
+					onPress={onSettings}
 				/>
 				<RoundedButton
 					landscape={settings.landscape}
