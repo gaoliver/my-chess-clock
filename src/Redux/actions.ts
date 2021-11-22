@@ -1,23 +1,31 @@
 import { Dispatch } from 'react'
+import { ISettings } from '../utils/types'
 
 export interface setSettingsModel {
 	readonly type: 'ON_LOAD_SETTINGS'
-	payload: any
+	payload: ISettings
 }
 
 export interface setTimerPlayer1 {
 	readonly type: 'SET_TIMER_P1'
-	payload: number
+	payload: any
 }
-
 export interface setTimerPlayer2 {
 	readonly type: 'SET_TIMER_P2'
-	payload: number
+	payload?: any
+}
+export interface setTotalTime {
+	readonly type: 'SET_TOTAL_TIME'
+	payload: any
 }
 
-export type AppActions = setSettingsModel | setTimerPlayer1 | setTimerPlayer2
+export type AppActions =
+	| setSettingsModel
+	| setTimerPlayer1
+	| setTimerPlayer2
+	| setTotalTime
 
-export const setSettings = (value: any) => {
+export const setSettings = (value: ISettings) => {
 	return async (dispatch: Dispatch<AppActions>) => {
 		dispatch({
 			type: 'ON_LOAD_SETTINGS',
@@ -39,6 +47,15 @@ export const setTimerPlayer2 = (value: any) => {
 	return async (dispatch: Dispatch<AppActions>) => {
 		dispatch({
 			type: 'SET_TIMER_P2',
+			payload: value,
+		})
+	}
+}
+
+export const setTotalTime = (value: any) => {
+	return async (dispatch: Dispatch<AppActions>) => {
+		dispatch({
+			type: 'SET_TOTAL_TIME',
 			payload: value,
 		})
 	}

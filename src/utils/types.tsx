@@ -1,3 +1,19 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { StackNavigationProp } from '@react-navigation/stack'
+
+export type NavigationProp = StackNavigationProp<StackParamList, 'Home'>
+export type NavigationParamsProp = NativeStackScreenProps<
+	StackParamList,
+	'Home'
+>
+
+export type StackParamList = {
+	Home: undefined
+	Settings: undefined
+	Ruleset: undefined
+	Rule: undefined
+}
+
 export interface ISettings {
 	themeColor: string
 	playSound: boolean
@@ -8,7 +24,7 @@ export interface ISettings {
 
 export interface IRule {
 	stages: Array<IStage>
-	increment: 'fischer' | 'bronstein'
+	increment: 'fischer' | 'bronstein' | null
 	delay: boolean
 	delayPlayer1: number
 	delayPlayer2: number

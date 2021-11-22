@@ -4,6 +4,7 @@ import { AppActions } from './actions'
 type initialStateModel = {
 	timePlayer1: number
 	timePlayer2: number
+	totalTime: number
 	settings: ISettings
 }
 
@@ -18,6 +19,7 @@ const initialSettings: ISettings = {
 const initialState: initialStateModel = {
 	timePlayer1: 0,
 	timePlayer2: 0,
+	totalTime: 0,
 	settings: initialSettings,
 }
 
@@ -40,6 +42,11 @@ export const settingsReducer = (
 			return {
 				...state,
 				timePlayer2: action.payload,
+			}
+		case 'SET_TOTAL_TIME':
+			return {
+				...state,
+				totalTime: action.payload,
 			}
 		default:
 			return state
