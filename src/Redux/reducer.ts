@@ -41,5 +41,7 @@ export const settingsReducer = (
 				...state,
 				timePlayer2: action.payload,
 			}
+		default:
+			return state
 	}
 }
