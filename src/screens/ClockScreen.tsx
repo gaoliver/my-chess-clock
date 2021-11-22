@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { RoundedButton } from '../components'
+import { AppBox, RoundedButton } from '../components'
 import PlayIcon from '../../assets/icons/play.svg'
 import PauseIcon from '../../assets/icons/pause.svg'
 import SettingsIcon from '../../assets/icons/settings.svg'
@@ -12,8 +12,9 @@ const ClockScreen = () => {
 	const styles = StyleSheet.create({
 		container: {
 			flex: 1,
-			justifyContent: 'center',
+			paddingVertical: 20,
 			alignItems: 'center',
+			justifyContent: 'space-around',
 		},
 		buttons: {
 			width: '100%',
@@ -25,6 +26,7 @@ const ClockScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+			<AppBox />
 			<View style={styles.buttons}>
 				<RoundedButton icon={<SettingsIcon />} size={55} />
 				<RoundedButton icon={<PlayIcon />} size={65} />
