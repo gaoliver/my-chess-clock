@@ -15,22 +15,20 @@ const translator = (props: IProps) => ({
 	disabled: props.disabled ? props.disabled : false,
 })
 
-export const AppBox = (props: IProps) => {
+export const AppBox: React.FC<IProps> = (props) => {
 	const { color, height, disabled } = translator(props)
 
 	const styles = StyleSheet.create({
 		box: {
 			width: '90%',
+			alignItems: 'center',
 			height: height,
 			backgroundColor: color,
+			padding: 20,
 			borderRadius: Settings.radius,
 			opacity: disabled ? Settings.disabledOpacity : 1,
 		},
 	})
 
-	return (
-		<View style={styles.box}>
-			<Text></Text>
-		</View>
-	)
+	return <View style={styles.box}>{props.children}</View>
 }

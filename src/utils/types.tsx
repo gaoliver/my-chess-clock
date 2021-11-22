@@ -14,6 +14,11 @@ export type StackParamList = {
 	Rule: undefined
 }
 
+export enum fontFamily {
+	digitalNumber = 'digital-number',
+	whiteDream = 'white-dream',
+}
+
 export interface ISettings {
 	themeColor: string
 	playSound: boolean

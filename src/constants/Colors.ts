@@ -6,5 +6,5 @@ export default {
 	themeColor: primaryColor,
 	textColor: '#FFF',
 	screenTextColor: '#333',
-	totalTimerColor: '#FFF7',
+	totalTimerColor: '#FFF8',
 }

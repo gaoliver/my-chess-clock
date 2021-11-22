@@ -1,8 +1,8 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { AppBox, RoundedButton } from '../components'
+import { AppBox, AppTimer, RoundedButton } from '../components'
 import PlayIcon from '../../assets/icons/play.svg'
 import PauseIcon from '../../assets/icons/pause.svg'
 import SettingsIcon from '../../assets/icons/settings.svg'
@@ -26,12 +26,13 @@ const ClockScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<AppBox />
+			<AppTimer />
 			<View style={styles.buttons}>
 				<RoundedButton icon={<SettingsIcon />} size={55} />
 				<RoundedButton icon={<PlayIcon />} size={65} />
 				<RoundedButton icon={<RefreshIcon />} size={55} />
 			</View>
+			<AppBox disabled />
 		</SafeAreaView>
 	)
 }
