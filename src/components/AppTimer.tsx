@@ -1,7 +1,8 @@
 import React from 'react'
-import { RotateZTransform, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 import { AppBox } from '.'
 import Colors from '../constants/Colors'
+import Timer from '../utils/timer'
 import { fontFamily, IDirectionTranslator } from '../utils/types'
 
 interface IProps {
@@ -9,7 +10,7 @@ interface IProps {
 	totalTime?: number
 	direction?: 'up' | 'down' | 'landscape'
 	disabled?: boolean
-	onPress?: () => {}
+	onPress?: () => void
 }
 
 const translator = (props: IProps) => ({
@@ -66,8 +67,8 @@ export const AppTimer = (props: IProps) => {
 			disabled={disabled}
 			onPress={onPress}
 		>
-			<Text style={styles.total}>{`total time - 00:00:00`}</Text>
-			<Text style={styles.playerTime}>{`00:00:00`}</Text>
+			<Text style={styles.total}>{`total time - ${totalTime}`}</Text>
+			<Text style={styles.playerTime}>{Timer(playerTime)}</Text>
 		</AppBox>
 	)
 }

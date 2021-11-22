@@ -19,11 +19,17 @@ export interface setTotalTime {
 	payload: any
 }
 
+export interface setPlay {
+	readonly type: 'SET_PLAY_PAUSE'
+	payload: boolean
+}
+
 export type AppActions =
 	| setSettingsModel
 	| setTimerPlayer1
 	| setTimerPlayer2
 	| setTotalTime
+	| setPlay
 
 export const setSettings = (value: ISettings) => {
 	return async (dispatch: Dispatch<AppActions>) => {
@@ -56,6 +62,15 @@ export const setTotalTime = (value: any) => {
 	return async (dispatch: Dispatch<AppActions>) => {
 		dispatch({
 			type: 'SET_TOTAL_TIME',
+			payload: value,
+		})
+	}
+}
+
+export const setPlayPause = (value: boolean) => {
+	return async (dispatch: Dispatch<AppActions>) => {
+		dispatch({
+			type: 'SET_PLAY_PAUSE',
 			payload: value,
 		})
 	}

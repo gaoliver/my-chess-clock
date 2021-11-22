@@ -2,9 +2,12 @@ import { ISettings } from '../utils/types'
 import { AppActions } from './actions'
 
 type initialStateModel = {
+	player1: boolean
+	player2: boolean
 	timePlayer1: number
 	timePlayer2: number
 	totalTime: number
+	play: boolean
 	settings: ISettings
 }
 
@@ -17,9 +20,12 @@ const initialSettings: ISettings = {
 }
 
 const initialState: initialStateModel = {
+	player1: true,
+	player2: false,
 	timePlayer1: 0,
 	timePlayer2: 0,
 	totalTime: 0,
+	play: false,
 	settings: initialSettings,
 }
 
@@ -47,6 +53,11 @@ export const settingsReducer = (
 			return {
 				...state,
 				totalTime: action.payload,
+			}
+		case 'SET_PLAY_PAUSE':
+			return {
+				...state,
+				play: action.payload,
 			}
 		default:
 			return state

@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { AppTimer, RoundedButton } from '../components'
+import * as gameActions from '../redux'
 import PlayIcon from '../../assets/icons/play.svg'
 import PauseIcon from '../../assets/icons/pause.svg'
 import SettingsIcon from '../../assets/icons/settings.svg'
@@ -11,7 +12,24 @@ import RefreshIcon from '../../assets/icons/refresh.svg'
 import { ApplicationState } from '../redux'
 
 const ClockScreen = () => {
-	const { settings } = useSelector((state: ApplicationState) => state)
+	const dispatch = useDispatch()
+	const {
+		settings,
+		timePlayer1,
+		timePlayer2,
+		totalTime,
+		play,
+		player1,
+		player2,
+	} = useSelector((state: ApplicationState) => state)
+
+	const [thisPlay, setThisPlay] = useState(play)
+	const [thisPlayer1, setThisPlayer1] = useState(player1)
+	const [thisPlayer2, setThisPlayer2] = useState(player2)
+	const [counterPlayer1, setCounterPlayer1] = useState(timePlayer1)
+	const [counterPlayer2, setCounterPlayer2] = useState(timePlayer2)
+	const [thisTotalTime, setThisTotalTime] = useState(totalTime)
+	const [timer, setTimer] = useState<any>()
 
 	const landscape = (direction: string) => {
 		let landscape = settings.landscape
@@ -21,6 +39,45 @@ const ClockScreen = () => {
 			return direction
 		}
 	}
+
+	const handleTapPlayer = () => {
+		clearInterval(timer)
+		if (thisPlayer1) {
+			setThisPlayer1(false)
+			setThisPlayer2(true)
+		} else {
+			setThisPlayer1(true)
+			setThisPlayer2(false)
+		}
+		dispatch(gameActions.setTimerPlayer1(thisPlayer1))
+		dispatch(gameActions.setTimerPlayer2(thisPlayer2))
+	}
+
+	const handlePlayPause = () => {
+		if (thisPlay) {
+			setThisPlay(false)
+			dispatch(gameActions.setTimerPlayer1(counterPlayer1))
+			dispatch(gameActions.setTimerPlayer2(counterPlayer2))
+		} else {
+			setThisPlay(true)
+		}
+		dispatch(gameActions.setPlayPause(thisPlay))
+	}
+
+	useEffect(() => {
+		if (thisPlay) {
+			const timerId = setInterval(() => {
+				if (thisPlayer1) {
+					setCounterPlayer1((value) => value + 1)
+				} else if (thisPlayer2) {
+					setCounterPlayer2((value) => value + 1)
+				}
+			}, 1000)
+			setTimer(timerId)
+		} else {
+			clearInterval(timer)
+		}
+	}, [thisPlay, thisPlayer1, thisPlayer2])
 
 	const styles = StyleSheet.create({
 		container: {
@@ -39,7 +96,13 @@ const ClockScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<AppTimer direction={landscape('down')} />
+			<AppTimer
+				direction={landscape('down')}
+				playerTime={counterPlayer2}
+				totalTime={thisTotalTime}
+				disabled={!thisPlayer2}
+				onPress={handleTapPlayer}
+			/>
 			<View style={styles.buttons}>
 				<RoundedButton
 					landscape={settings.landscape}
@@ -48,7 +111,8 @@ const ClockScreen = () => {
 				/>
 				<RoundedButton
 					landscape={settings.landscape}
-					icon={<PlayIcon />}
+					onPress={handlePlayPause}
+					icon={thisPlay ? <PauseIcon /> : <PlayIcon />}
 					size={65}
 				/>
 				<RoundedButton
@@ -57,7 +121,13 @@ const ClockScreen = () => {
 					size={55}
 				/>
 			</View>
-			<AppTimer disabled direction={landscape('up')} />
+			<AppTimer
+				disabled={!thisPlayer1}
+				direction={landscape('up')}
+				playerTime={counterPlayer1}
+				totalTime={thisTotalTime}
+				onPress={handleTapPlayer}
+			/>
 		</SafeAreaView>
 	)
 }
