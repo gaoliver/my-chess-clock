@@ -36,8 +36,11 @@ export interface IDirectionTranslator {
 			| undefined;
 		rotate: any;
 	};
+	total: {
+		top: any;
+		left: any;
+	};
 	playerTime: {
-		marginTop: any;
 		fontSize: number;
 	};
 	rotate: any;

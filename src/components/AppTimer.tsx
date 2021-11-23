@@ -1,16 +1,16 @@
-import React from 'react'
-import { StyleSheet, Text } from 'react-native'
-import { AppBox } from '../components/AppBox'
-import Colors from '../constants/Colors'
-import Timer from '../utils/timer'
-import { fontFamily, IDirectionTranslator } from '../utils/types'
+import React from 'react';
+import { StyleSheet, Text } from 'react-native';
+import { AppBox } from '../components/AppBox';
+import Colors from '../constants/Colors';
+import Timer from '../utils/timer';
+import { fontFamily, IDirectionTranslator } from '../utils/types';
 
 interface IProps {
-	playerTime?: number
-	totalTime?: number
-	direction?: 'up' | 'down' | 'landscape'
-	disabled?: boolean
-	onPress?: () => void
+	playerTime?: number;
+	totalTime?: number;
+	direction?: 'up' | 'down' | 'landscape';
+	disabled?: boolean;
+	onPress?: () => void;
 }
 
 const translator = (props: IProps) => ({
@@ -19,11 +19,11 @@ const translator = (props: IProps) => ({
 	direction: props.direction ? props.direction : 'up',
 	disabled: props.disabled ? props.disabled : false,
 	onPress: props.onPress ? props.onPress : () => {},
-})
+});
 
 export const AppTimer = (props: IProps) => {
 	const { totalTime, playerTime, direction, disabled, onPress } =
-		translator(props)
+		translator(props);
 
 	const directionTranslator: IDirectionTranslator = {
 		container: {
@@ -31,12 +31,15 @@ export const AppTimer = (props: IProps) => {
 			justifyContent: direction === 'landscape' ? 'space-around' : 'center',
 			rotate: direction === 'down' ? [{ rotateZ: '180deg' }] : [],
 		},
+		total: {
+			top: direction === 'landscape' ? null : 30,
+			left: direction === 'landscape' ? 0 : null,
+		},
 		playerTime: {
-			marginTop: direction === 'landscape' ? 0 : '15%',
-			fontSize: direction === 'landscape' ? 60 : 80,
+			fontSize: direction === 'landscape' ? 60 : 90,
 		},
 		rotate: direction === 'landscape' ? [{ rotateZ: '270deg' }] : [],
-	}
+	};
 
 	const styles = StyleSheet.create({
 		container: {
@@ -46,6 +49,9 @@ export const AppTimer = (props: IProps) => {
 			transform: directionTranslator.container.rotate,
 		},
 		total: {
+			position: 'absolute',
+			top: directionTranslator.total.top,
+			left: directionTranslator.total.left,
 			color: Colors.totalTimerColor,
 			fontFamily: fontFamily.digitalNumber,
 			fontSize: 20,
@@ -55,10 +61,9 @@ export const AppTimer = (props: IProps) => {
 			color: Colors.textColor,
 			fontFamily: fontFamily.digitalNumber,
 			fontSize: directionTranslator.playerTime.fontSize,
-			marginTop: directionTranslator.playerTime.marginTop,
 			transform: directionTranslator.rotate,
 		},
-	})
+	});
 
 	return (
 		<AppBox
@@ -69,5 +74,5 @@ export const AppTimer = (props: IProps) => {
 			<Text style={styles.total}>{`total time - ${Timer(totalTime)}`}</Text>
 			<Text style={styles.playerTime}>{Timer(playerTime)}</Text>
 		</AppBox>
-	)
-}
+	);
+};
