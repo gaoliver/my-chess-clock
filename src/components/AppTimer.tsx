@@ -43,14 +43,13 @@ export const AppTimer = (props: IProps) => {
 	} = translator(props);
 
 	const directionTranslator: directionTranslator = {
-		height: direction === 'landscape' ? '50%' : 230,
+		height: direction === 'landscape' ? '50%' : '40%',
 		width: direction === 'landscape' ? '65%' : '90%',
 		transform: direction === 'landscape' ? [{ rotateZ: '270deg' }] : [],
 	};
 
 	const styles = StyleSheet.create({
 		container: {
-			flex: 1,
 			height: directionTranslator.height,
 			width: directionTranslator.width,
 			justifyContent: 'flex-start',
