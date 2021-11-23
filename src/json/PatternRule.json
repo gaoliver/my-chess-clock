@@ -35,13 +35,13 @@
                 "movements": 3
             }
         ],
-        "increment": null,
-        "delay": true,
+        "increment": "fischer",
+        "delay": false,
         "bronsteinPlayer1": 0,
         "bronsteinPlayer2": 0,
-        "delayPlayer1": 500,
-        "delayPlayer2": 500,
-        "fischerPlayer1": 0,
-        "fischerPlayer2": 0
+        "delayPlayer1": 0,
+        "delayPlayer2": 0,
+        "fischerPlayer1": 10,
+        "fischerPlayer2": 10
     }
 ]

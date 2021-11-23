@@ -46,6 +46,15 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			setHasIncrement(false);
 		} else {
 			setHasIncrement(true);
+			setIncrementType('fischer');
+		}
+	};
+
+	const handleIncrementType = () => {
+		if (incrementType === 'fischer') {
+			setIncrementType('bronstein');
+		} else {
+			setIncrementType('fischer');
 		}
 	};
 
@@ -62,6 +71,20 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 				setDelaySameForBoth(false);
 				setDelayPlayer1(rule.delayPlayer1);
 				setDelayPlayer2(rule.delayPlayer2);
+			}
+			if (rule.increment) {
+				setHasIncrement(true);
+				setIncrementType(rule.increment);
+				setIncrementPlayer1(
+					rule.increment === 'bronstein'
+						? rule.bronsteinPlayer1
+						: rule.fischerPlayer1
+				);
+				setIncrementPlayer2(
+					rule.increment === 'bronstein'
+						? rule.bronsteinPlayer2
+						: rule.fischerPlayer2
+				);
 			}
 		}
 	}, []);
@@ -151,17 +174,19 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 								style={{
 									flexDirection: 'row',
 									justifyContent: 'space-between',
+									paddingHorizontal: 10,
+									marginBottom: 10,
 								}}
 							>
 								<AppCheckbox
 									label="Fischer"
-									value={delaySameForBoth}
-									onValueChange={handleDelayValue}
+									value={incrementType === 'fischer'}
+									onValueChange={handleIncrementType}
 								/>
 								<AppCheckbox
 									label="Bronstein"
-									value={delaySameForBoth}
-									onValueChange={handleDelayValue}
+									value={incrementType === 'bronstein'}
+									onValueChange={handleIncrementType}
 								/>
 							</View>
 							<AppSwitcher
