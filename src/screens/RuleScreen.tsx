@@ -96,6 +96,13 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		setTimeout(() => setStageModal(true), 500);
 	};
 
+	const onPressDelete = () => {
+		if (selectedStage) {
+			stages.splice(selectedStage - 1, 1);
+		}
+		setStageModalOptions(false);
+	};
+
 	const handleModalHeight = () => {
 		if (counterSameForBoth && stageHasMovements && hasTotalTime) {
 			return 500;
@@ -381,6 +388,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 					onDismiss={() => setStageModalOptions(false)}
 					hide="set"
 					onPressEdit={onPressEdit}
+					onPressRemove={onPressDelete}
 				/>
 				<AppModal
 					visible={stageModal}
