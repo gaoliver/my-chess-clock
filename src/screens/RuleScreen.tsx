@@ -91,27 +91,28 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							onValueChange={handleAddDelay}
 						/>
 					</View>
-					<View style={styles.sectionContent}>
-						<AppSwitcher
-							label="Same for both"
-							value={delaySameForBoth}
-							onValueChange={handleDelayValue}
-						/>
-						<TimeInput
-							label={!delaySameForBoth ? 'Player 1' : undefined}
-							disabled={hasDelay}
-							onChangeTime={(value) => setDelayPlayer1(value)}
-						/>
-						{!delaySameForBoth && (
-							<View style={{ marginTop: 10 }}>
-								<TimeInput
-									label="Player 2"
-									interval={delayPlayer2}
-									onChangeTime={(value) => setDelayPlayer2(value)}
-								/>
-							</View>
-						)}
-					</View>
+					{hasDelay && (
+						<View style={styles.sectionContent}>
+							<AppSwitcher
+								label="Same for both"
+								value={delaySameForBoth}
+								onValueChange={handleDelayValue}
+							/>
+							<TimeInput
+								label={!delaySameForBoth ? 'Player 1' : undefined}
+								onChangeTime={(value) => setDelayPlayer1(value)}
+							/>
+							{!delaySameForBoth && (
+								<View style={{ marginTop: 10 }}>
+									<TimeInput
+										label="Player 2"
+										interval={delayPlayer2}
+										onChangeTime={(value) => setDelayPlayer2(value)}
+									/>
+								</View>
+							)}
+						</View>
+					)}
 				</View>
 			</Content>
 		</Container>
