@@ -48,6 +48,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const [delayCounter1, setDelayCounter1] = useState(mainRule.delayPlayer1);
 	const [delayCounter2, setDelayCounter2] = useState(mainRule.delayPlayer2);
 	const [currentStage, setCurrentStage] = useState(0);
+	const [stageTimeCounter, setStageTimeCounter] = useState(0);
 	const [counterPlayer1, setCounterPlayer1] = useState(
 		settings.mainRule?.stages[currentStage].timePlayer1
 	);
@@ -106,6 +107,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		setMovementsPlayer1(0);
 		setMovementsPlayer2(0);
 		setThisTotalTime(0);
+		setStageTimeCounter(0);
 	};
 
 	const onSettings = () => {
@@ -191,20 +193,32 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	useEffect(() => {
+		let thisStage = mainRule.stages[currentStage];
 		if (
-			mainRule.stages[currentStage].movements !== 0 &&
-			(movementsPlayer1 < mainRule.stages[currentStage].movements ||
-				movementsPlayer2 < mainRule.stages[currentStage].movements)
+			thisStage.movements !== 0 &&
+			(movementsPlayer1 < thisStage.movements ||
+				movementsPlayer2 < thisStage.movements) &&
+			counterPlayer1 > 0 &&
+			counterPlayer2 > 0 &&
+			thisStage.maxTime !== 0 &&
+			stageTimeCounter < thisStage.maxTime
 		) {
 			return;
 		} else if (currentStage < mainRule.stages.length - 1) {
 			setCurrentStage((value) => value + 1);
+			setStageTimeCounter(0);
 		} else if (currentStage >= mainRule.stages.length - 1) {
 			alert('Finish!');
 			stopInterval();
 			handlePlayPause();
 		}
-	}, [movementsPlayer1, movementsPlayer2, counterPlayer1, counterPlayer2]);
+	}, [
+		movementsPlayer1,
+		movementsPlayer2,
+		counterPlayer1,
+		counterPlayer2,
+		stageTimeCounter,
+	]);
 
 	useEffect(() => {
 		if (!thisPlay) return;
@@ -246,10 +260,10 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	useEffect(() => {
 		if (thisPlay) {
-			const totalTimerId = setInterval(
-				() => setThisTotalTime((value) => value + 1),
-				1000
-			);
+			const totalTimerId = setInterval(() => {
+				setThisTotalTime((value) => value + 1);
+				setStageTimeCounter((value) => value + 1);
+			}, 1000);
 			setTotalTimer(totalTimerId);
 		} else {
 			clearInterval(totalTimer);
