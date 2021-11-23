@@ -1,34 +1,36 @@
-import React from 'react'
-import { StyleSheet, Text, View, Switch } from 'react-native'
-import Colors from '../constants/Colors'
+import React from 'react';
+import { StyleSheet, Text, View, Switch } from 'react-native';
+import Colors from '../constants/Colors';
 
 interface IProps {
-	label?: string
-	value?: boolean
-	onValueChange?: () => void
+	label?: string;
+	value?: boolean;
+	onValueChange?: () => void;
+	noMargin?: boolean;
 }
 
 const translator = (props: IProps) => ({
 	label: props.label ? props.label : '',
 	value: props.value ? props.value : false,
+	noMargin: props.noMargin ? props.noMargin : false,
 	onValueChange: props.onValueChange ? props.onValueChange : () => {},
-})
+});
 
 export const AppSwitcher = (props: IProps) => {
-	const { label, value, onValueChange } = translator(props)
+	const { label, value, onValueChange, noMargin } = translator(props);
 
 	const styles = StyleSheet.create({
 		line: {
 			flexDirection: 'row',
 			alignItems: 'center',
-			marginBottom: 10,
+			marginBottom: noMargin ? 0 : 10,
 		},
 		label: {
 			marginRight: 20,
 			fontSize: 20,
 			color: Colors.screenTextColor,
 		},
-	})
+	});
 
 	return (
 		<View style={styles.line}>
@@ -41,5 +43,5 @@ export const AppSwitcher = (props: IProps) => {
 				style={{ transform: [{ scale: 0.8 }] }}
 			/>
 		</View>
-	)
-}
+	);
+};

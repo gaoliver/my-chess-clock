@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { SectionTitle } from './SectionTitle';
 import { MainButton } from './MainButton';
 import { MainList } from './MainList';
 
@@ -7,8 +8,9 @@ interface IProps {
 	listData?: Array<any>;
 	title?: string;
 	buttonTitle?: string;
-	onPressButton?: () => void;
+	itemName?: string;
 	selected?: number;
+	onPressButton?: () => void;
 	onPressItem?: (id: number) => void;
 }
 
@@ -16,26 +18,34 @@ const translator = (props: IProps) => ({
 	listData: props.listData ? props.listData : [],
 	title: props.title ? props.title : '',
 	buttonTitle: props.buttonTitle ? props.buttonTitle : '',
-	selected: props.selected ? props.selected : 1,
+	itemName: props.itemName ? props.itemName : undefined,
+	selected: props.selected ? props.selected : undefined,
 	onPressButton: props.onPressButton ? props.onPressButton : () => {},
 	onPressItem: props.onPressItem ? props.onPressItem : () => {},
 });
 
 export const ListCreator = (props: IProps) => {
-	const { title, buttonTitle, listData, onPressButton, selected, onPressItem } =
-		translator(props);
+	const {
+		title,
+		buttonTitle,
+		listData,
+		onPressButton,
+		selected,
+		onPressItem,
+		itemName,
+	} = translator(props);
 
 	return (
 		<>
 			<View style={styles.sectionHeader}>
-				<Text style={styles.sectionTitle}>{title}</Text>
+				<SectionTitle text={title} />
 				<MainButton label={buttonTitle} onPress={onPressButton} />
 			</View>
 			{listData.map((item) => {
 				return (
 					<MainList
 						key={Math.random()}
-						name={item.name}
+						name={itemName ? `${itemName} ${item?.id + 1}` : item.name}
 						id={item.id}
 						selected={selected}
 						onPress={() => onPressItem(item?.id)}
@@ -52,8 +62,5 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		marginBottom: 10,
-	},
-	sectionTitle: {
-		fontSize: 28,
 	},
 });

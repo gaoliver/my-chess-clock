@@ -2,6 +2,7 @@
         "id": 1,
         "name": "5 Minutes",
         "stages": [{
+            "id": 0,
             "maxTime": 7000,
             "timePlayer1": 5000,
             "timePlayer2": 5000,
@@ -20,12 +21,14 @@
         "id": 2,
         "name": "Teste 2",
         "stages": [{
+                "id": 0,
                 "maxTime": 20,
                 "timePlayer1": 20,
                 "timePlayer2": 20,
                 "movements": 5
             },
             {
+                "id": 1,
                 "maxTime": 10,
                 "timePlayer1": 20,
                 "timePlayer2": 20,

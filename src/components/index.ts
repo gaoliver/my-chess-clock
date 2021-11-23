@@ -7,3 +7,4 @@ export * from './MainButton';
 export * from './MainList';
 export * from './AlertModal';
 export * from './ListCreator';
+export * from './SectionTitle';

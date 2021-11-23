@@ -13,7 +13,7 @@ const translator = (props: IProps) => ({
 	name: props.name ? props.name : '',
 	id: props.id ? props.id : Math.round(Math.random() * 135),
 	onPress: props.onPress ? props.onPress : () => {},
-	selected: props.selected ? props.selected : 1,
+	selected: props.selected ? props.selected : undefined,
 });
 
 export const MainList = (props: IProps) => {

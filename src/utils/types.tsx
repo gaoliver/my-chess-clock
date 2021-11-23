@@ -40,6 +40,7 @@ export interface IRule {
 }
 
 export interface IStage {
+	id: number;
 	maxTime: number;
 	timePlayer1: number;
 	timePlayer2: number;
