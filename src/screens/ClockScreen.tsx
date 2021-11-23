@@ -170,6 +170,24 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		}
 	};
 
+	const useBronstein = () => {
+		if (thisPlayer1 && movementsPlayer1 > 0) {
+			setCounterPlayer1((value) =>
+				Math.min(
+					value + mainRule.bronsteinPlayer1,
+					mainRule.stages[0].timePlayer1
+				)
+			);
+		} else if (thisPlayer2 && movementsPlayer2 > 0) {
+			setCounterPlayer2((value) =>
+				Math.min(
+					value + mainRule.bronsteinPlayer2,
+					mainRule.stages[0].timePlayer2
+				)
+			);
+		}
+	};
+
 	useEffect(() => {
 		if (!thisPlay) return;
 		if (thisPlayer1) {
@@ -196,6 +214,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			}
 			if (mainRule.increment === 'fischer') {
 				useFisher();
+				startCounter();
+			} else if (mainRule.increment === 'bronstein') {
+				useBronstein();
 				startCounter();
 			} else {
 				startCounter();
