@@ -41,6 +41,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const [totalTimer, setTotalTimer] = useState<any>();
 	const [timer, setTimer] = useState<any>();
 	const [countDown, setCountDown] = useState<any>();
+	const [movementsPlayer1, setMovementsPlayer1] = useState(0);
+	const [movementsPlayer2, setMovementsPlayer2] = useState(0);
 	const [showCountDown1, setShowCountDown1] = useState(false);
 	const [showCountDown2, setShowCountDown2] = useState(false);
 	const [delayCounter1, setDelayCounter1] = useState(mainRule.delayPlayer1);
@@ -99,6 +101,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		setThisPlay(false);
 		setCounterPlayer1(settings.mainRule?.stages[0].timePlayer1);
 		setCounterPlayer2(settings.mainRule?.stages[0].timePlayer2);
+		setMovementsPlayer1(0);
+		setMovementsPlayer2(0);
 		setThisTotalTime(0);
 	};
 
@@ -158,6 +162,23 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		}
 	};
 
+	const useFisher = () => {
+		if (thisPlayer1 && movementsPlayer1 > 0) {
+			setCounterPlayer1((value) => value + mainRule.fischerPlayer1);
+		} else if (thisPlayer2 && movementsPlayer2 > 0) {
+			setCounterPlayer2((value) => value + mainRule.fischerPlayer2);
+		}
+	};
+
+	useEffect(() => {
+		if (!thisPlay) return;
+		if (thisPlayer1) {
+			setMovementsPlayer1((value) => value + 1);
+		} else if (thisPlayer2) {
+			setMovementsPlayer2((value) => value + 1);
+		}
+	}, [thisPlay, thisPlayer1, thisPlayer2]);
+
 	useEffect(() => {
 		if (delayCounter1 === 0) {
 			clearInterval(countDown);
@@ -172,6 +193,10 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		if (thisPlay) {
 			if (mainRule.delay) {
 				useDelay();
+			}
+			if (mainRule.increment === 'fischer') {
+				useFisher();
+				startCounter();
 			} else {
 				startCounter();
 			}
