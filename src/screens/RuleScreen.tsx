@@ -402,6 +402,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 								style={[styles.input, { marginTop: 10 }]}
 								value={stageMovements.toFixed()}
 								onChangeText={(value) => setStageMovements(Number(value))}
+								keyboardType="numeric"
 							/>
 						)}
 					</View>
@@ -418,6 +419,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 								style={[styles.input, { marginTop: 10 }]}
 								value={totalTime.toFixed()}
 								onChangeText={(value) => setTotalTime(Number(value))}
+								keyboardType="numeric"
 							/>
 						)}
 					</View>
