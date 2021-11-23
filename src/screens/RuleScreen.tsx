@@ -4,6 +4,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import {
+	AlertModal,
 	AppCheckbox,
 	AppHeader,
 	AppSwitcher,
@@ -30,6 +31,9 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const [incrementPlayer1, setIncrementPlayer1] = useState<number>(0);
 	const [incrementPlayer2, setIncrementPlayer2] = useState<number>(0);
 	const [name, setName] = useState<string>('');
+	const [stageModalOptions, setStageModalOptions] = useState<boolean>(false);
+	const [stageModal, setStageModal] = useState<boolean>(false);
+	const [selectedStage, setSelectedStage] = useState<number>(0);
 
 	const handleAddDelay = () => {
 		if (hasDelay) {
@@ -69,6 +73,11 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		} else {
 			setIncrementType('fischer');
 		}
+	};
+
+	const handleModalOptions = (id: number) => {
+		setSelectedStage(id);
+		setStageModalOptions(true);
 	};
 
 	const handleSave = () => {
@@ -179,6 +188,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 					buttonTitle="New Stage"
 					listData={stages}
 					itemName="Stage"
+					onPressItem={handleModalOptions}
 				/>
 				<View style={styles.section}>
 					<View style={styles.sectionHeader}>
@@ -265,6 +275,11 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 						</View>
 					)}
 				</View>
+				<AlertModal
+					visible={stageModalOptions}
+					onDismiss={() => setStageModalOptions(false)}
+					hide="set"
+				/>
 			</Content>
 		</Container>
 	);
