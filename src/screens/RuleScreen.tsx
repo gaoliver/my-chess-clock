@@ -34,15 +34,22 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		}
 	};
 
+	const handleSave = () => {
+		console.log(delayPlayer1, delayPlayer2);
+		// navigation.goBack();
+	};
+
 	useEffect(() => {
 		if (rule) {
 			setStages(rule.stages);
 		}
 	}, []);
 
-	const handleSave = () => {
-		navigation.goBack();
-	};
+	useEffect(() => {
+		if (delaySameForBoth) {
+			setDelayPlayer2(delayPlayer1);
+		}
+	}, [delayPlayer1, delayPlayer2]);
 
 	const styles = StyleSheet.create({
 		content: {
@@ -90,10 +97,17 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							value={delaySameForBoth}
 							onValueChange={handleDelayValue}
 						/>
-						<TimeInput label={!delaySameForBoth ? 'Player 1' : undefined} />
+						<TimeInput
+							label={!delaySameForBoth ? 'Player 1' : undefined}
+							disabled={hasDelay}
+							onChangeTime={(value) => setDelayPlayer1(value)}
+						/>
 						{!delaySameForBoth && (
 							<View style={{ marginTop: 10 }}>
-								<TimeInput label="Player 2" />
+								<TimeInput
+									label="Player 2"
+									onChangeTime={(value) => setDelayPlayer2(value)}
+								/>
 							</View>
 						)}
 					</View>

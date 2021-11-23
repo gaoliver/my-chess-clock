@@ -83,8 +83,8 @@ export const TimeInput = (props: IProps) => {
 				value={minutes.toFixed()}
 				onChangeText={(value) => {
 					setMinutes(Number(value));
-					handleConvertTime();
 				}}
+				onBlur={() => handleConvertTime()}
 				keyboardType="number-pad"
 				returnKeyType="next"
 				ref={minutesRef}
@@ -98,8 +98,8 @@ export const TimeInput = (props: IProps) => {
 				value={seconds.toFixed()}
 				onChangeText={(value) => {
 					setSeconds(Number(value));
-					handleConvertTime();
 				}}
+				onBlur={() => handleConvertTime()}
 				keyboardType="number-pad"
 				returnKeyType="done"
 				ref={secondsRef}
