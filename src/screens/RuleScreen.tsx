@@ -41,6 +41,14 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		}
 	};
 
+	const handleIncrementValue = () => {
+		if (incrementSameForBoth) {
+			setIncrementSameForBoth(false);
+		} else {
+			setIncrementSameForBoth(true);
+		}
+	};
+
 	const handleIncrement = () => {
 		if (hasIncrement) {
 			setHasIncrement(false);
@@ -94,6 +102,12 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			setDelayPlayer2(delayPlayer1);
 		}
 	}, [delaySameForBoth, delayPlayer1, delayPlayer2]);
+
+	useEffect(() => {
+		if (incrementSameForBoth) {
+			setIncrementPlayer2(incrementPlayer1);
+		}
+	}, [incrementSameForBoth, incrementPlayer1, incrementPlayer2]);
 
 	const styles = StyleSheet.create({
 		content: {
@@ -191,8 +205,8 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							</View>
 							<AppSwitcher
 								label="Same for both"
-								value={delaySameForBoth}
-								onValueChange={handleDelayValue}
+								value={incrementSameForBoth}
+								onValueChange={handleIncrementValue}
 							/>
 							<TimeInput
 								label={!incrementSameForBoth ? 'Player 1' : undefined}
