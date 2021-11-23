@@ -8,3 +8,4 @@ export * from './MainList';
 export * from './AlertModal';
 export * from './ListCreator';
 export * from './SectionTitle';
+export * from './TimeInput';

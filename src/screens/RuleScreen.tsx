@@ -6,6 +6,7 @@ import {
 	AppSwitcher,
 	ListCreator,
 	SectionTitle,
+	TimeInput,
 } from '../components';
 import Colors from '../constants/Colors';
 import { IStage, NavigationParamsProp } from '../utils/types';
@@ -79,6 +80,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 					</View>
 					<View style={styles.sectionContent}>
 						<AppSwitcher label="Same for both" />
+						<TimeInput />
 					</View>
 				</View>
 			</Content>

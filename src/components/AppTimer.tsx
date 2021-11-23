@@ -43,8 +43,8 @@ export const AppTimer = (props: IProps) => {
 	} = translator(props);
 
 	const directionTranslator: directionTranslator = {
-		height: direction === 'landscape' ? '50%' : '40%',
-		width: direction === 'landscape' ? '65%' : '90%',
+		height: direction === 'landscape' ? '45%' : '40%',
+		width: direction === 'landscape' ? '70%' : '90%',
 		transform:
 			direction === 'landscape'
 				? [{ rotateZ: '270deg' }]
@@ -81,7 +81,7 @@ export const AppTimer = (props: IProps) => {
 		playerTime: {
 			color: Colors.textColor,
 			fontFamily: fontFamily.digitalNumber,
-			fontSize: direction === 'landscape' ? 80 : 90,
+			fontSize: direction === 'landscape' ? 70 : 90,
 		},
 	});
 
