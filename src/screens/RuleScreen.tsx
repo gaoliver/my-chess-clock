@@ -1,6 +1,6 @@
 import { Container, Content } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import {
@@ -98,6 +98,8 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			return 500;
 		} else if (!stageHasMovements || !hasTotalTime) {
 			return 400;
+		} else if (!counterSameForBoth) {
+			return 550;
 		} else {
 			return 350;
 		}
@@ -160,6 +162,29 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			setIncrementPlayer2(incrementPlayer1);
 		}
 	}, [incrementSameForBoth, incrementPlayer1, incrementPlayer2]);
+
+	useEffect(() => {
+		if (counterSameForBoth) {
+			setCounterPlayer2(counterPlayer1);
+		}
+	}, [counterSameForBoth, counterPlayer1, counterPlayer2]);
+
+	useEffect(() => {
+		let thisStage = stages.find((stage) => stage.id === selectedStage);
+		if (thisStage) {
+			setCounterSameForBoth(false);
+			setCounterPlayer1(thisStage.timePlayer1);
+			setCounterPlayer2(thisStage.timePlayer2);
+			if (thisStage.movements > 0) {
+				setstageHasMovements(true);
+				setStageMovements(thisStage.movements);
+			}
+			if (thisStage.maxTime > 0) {
+				setHasTotalTime(true);
+				setTotalTime(thisStage.maxTime);
+			}
+		}
+	}, [stageModal]);
 
 	const styles = StyleSheet.create({
 		content: {
