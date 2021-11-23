@@ -45,7 +45,12 @@ export const AppTimer = (props: IProps) => {
 	const directionTranslator: directionTranslator = {
 		height: direction === 'landscape' ? '50%' : '40%',
 		width: direction === 'landscape' ? '65%' : '90%',
-		transform: direction === 'landscape' ? [{ rotateZ: '270deg' }] : [],
+		transform:
+			direction === 'landscape'
+				? [{ rotateZ: '270deg' }]
+				: direction === 'down'
+				? [{ rotateZ: '180deg' }]
+				: [],
 	};
 
 	const styles = StyleSheet.create({
