@@ -1,35 +1,36 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, Pressable } from 'react-native'
-import { Container, Content } from 'native-base'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { Container, Content } from 'native-base';
+import { useDispatch, useSelector } from 'react-redux';
 
-import * as gameActions from '../redux/actions'
-import { AppHeader, AppSwitcher, MainButton, MainList } from '../components'
-import { ApplicationState } from '../redux'
-import Colors from '../constants/Colors'
+import * as gameActions from '../redux/actions';
+import { AppHeader, AppSwitcher, MainButton, MainList } from '../components';
+import { ApplicationState } from '../redux';
+import Colors from '../constants/Colors';
+import { IRule } from '../utils/types';
 
 const SettingsScreen = () => {
-	const dispatch = useDispatch()
-	const settings = useSelector((state: ApplicationState) => state.settings)
-	const [translator, setTranslator] = useState(settings)
+	const dispatch = useDispatch();
+	const settings = useSelector((state: ApplicationState) => state.settings);
+	const [translator, setTranslator] = useState(settings);
 
 	const toggleLandscape = () => {
 		setTranslator({
 			...translator,
 			landscape: !translator.landscape ? true : false,
-		})
-	}
+		});
+	};
 
 	const toggleSound = () => {
 		setTranslator({
 			...translator,
 			playSound: !translator.playSound ? true : false,
-		})
-	}
+		});
+	};
 
 	useEffect(() => {
-		dispatch(gameActions.setSettings(translator))
-	}, [translator])
+		dispatch(gameActions.setSettings(translator));
+	}, [translator]);
 
 	const styles = StyleSheet.create({
 		screenContent: {
@@ -51,7 +52,48 @@ const SettingsScreen = () => {
 		sectionTitle: {
 			fontSize: 28,
 		},
-	})
+	});
+
+	const DATA: Array<IRule> = [
+		{
+			id: 0,
+			name: 'Teste 1',
+			stages: [
+				{
+					timePlayer1: 300,
+					timePlayer2: 300,
+					movements: 0,
+				},
+			],
+			increment: null,
+			delay: false,
+			bronsteinPlayer1: 0,
+			bronsteinPlayer2: 0,
+			delayPlayer1: 0,
+			delayPlayer2: 0,
+			fischerPlayer1: 0,
+			fischerPlayer2: 0,
+		},
+		{
+			id: 2,
+			name: 'Teste 2',
+			stages: [
+				{
+					timePlayer1: 300,
+					timePlayer2: 300,
+					movements: 0,
+				},
+			],
+			increment: null,
+			delay: false,
+			bronsteinPlayer1: 0,
+			bronsteinPlayer2: 0,
+			delayPlayer1: 0,
+			delayPlayer2: 0,
+			fischerPlayer1: 0,
+			fischerPlayer2: 0,
+		},
+	];
 
 	return (
 		<Container>
@@ -72,10 +114,18 @@ const SettingsScreen = () => {
 					<Text style={styles.sectionTitle}>Ruleset</Text>
 					<MainButton label="New Rule" />
 				</View>
-				<MainList name="Teste" />
+				{DATA.map((rule) => {
+					return (
+						<MainList
+							name={rule.name}
+							id={rule.id}
+							selected={settings.mainRule?.id}
+						/>
+					);
+				})}
 			</Content>
 		</Container>
-	)
-}
+	);
+};
 
-export default SettingsScreen
+export default SettingsScreen;
