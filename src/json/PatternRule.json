@@ -7,11 +7,11 @@
         "movements": 0
     }],
     "increment": null,
-    "delay": false,
+    "delay": true,
     "bronsteinPlayer1": 0,
     "bronsteinPlayer2": 0,
-    "delayPlayer1": 0,
-    "delayPlayer2": 0,
+    "delayPlayer1": 5,
+    "delayPlayer2": 5,
     "fischerPlayer1": 0,
     "fischerPlayer2": 0
 }

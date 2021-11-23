@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
+import { StatusBar } from 'expo-status-bar';
 
 import { AppTimer, RoundedButton } from '../components';
 import * as gameActions from '../redux';
@@ -11,7 +12,6 @@ import SettingsIcon from '../../assets/icons/settings.svg';
 import RefreshIcon from '../../assets/icons/refresh.svg';
 import { ApplicationState } from '../redux';
 import { NavigationParamsProp } from '../utils/types';
-import { StatusBar } from 'expo-status-bar';
 import Colors from '../constants/Colors';
 
 const ClockScreen = ({ navigation }: NavigationParamsProp) => {
@@ -40,12 +40,20 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const [thisTotalTime, setThisTotalTime] = useState(totalTime);
 	const [totalTimer, setTotalTimer] = useState<any>();
 	const [timer, setTimer] = useState<any>();
+	const [countDown, setCountDown] = useState<any>();
+	const [showCountDown, setshowCountDown] = useState(false);
+	const [delayCounter1, setDelayCounter1] = useState(mainRule.delayPlayer1);
+	const [delayCounter2, setDelayCounter2] = useState(mainRule.delayPlayer2);
 	const [counterPlayer1, setCounterPlayer1] = useState(
 		settings.mainRule?.stages[0].timePlayer1
 	);
 	const [counterPlayer2, setCounterPlayer2] = useState(
 		settings.mainRule?.stages[0].timePlayer2
 	);
+
+	const translator = {
+		showPlayer1: showCountDown ? delayCounter1 : counterPlayer1,
+	};
 
 	const landscape = (direction: string) => {
 		let landscape = settings.landscape;
@@ -107,21 +115,41 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		setTimer(timerId);
 	};
 
+	const handleCountDown = () => {
+		const delayShow = setInterval(() => {
+			if (delayCounter1 > 0) {
+				setDelayCounter1((value) => value - 1);
+			}
+		}, 1000);
+		setCountDown(delayShow);
+	};
+
+	const stopInterval = () => {
+		clearInterval(countDown);
+		clearInterval(timer);
+	};
+
+	useEffect(() => {
+		if (delayCounter1 === 0) {
+			clearInterval(countDown);
+			setDelayCounter1((value) => value + mainRule.delayPlayer1);
+		}
+	}, [delayCounter1]);
+
 	useEffect(() => {
 		if (thisPlay) {
 			if (mainRule.delay && thisPlayer1) {
+				setshowCountDown(true);
+				handleCountDown();
 				setTimeout(() => {
+					setshowCountDown(false);
 					startCounter();
-				}, mainRule.delayPlayer1);
-			} else if (mainRule.delay && thisPlayer2) {
-				setTimeout(() => {
-					startCounter();
-				}, mainRule.delayPlayer2);
+				}, 5000);
 			} else {
 				startCounter();
 			}
 		} else {
-			clearInterval(timer);
+			stopInterval();
 		}
 	}, [thisPlay, thisPlayer1, thisPlayer2]);
 
@@ -186,7 +214,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			<AppTimer
 				disabled={!thisPlayer1}
 				direction={landscape('up')}
-				playerTime={counterPlayer1}
+				playerTime={translator.showPlayer1}
 				totalTime={thisTotalTime}
 				onPress={handleTapPlayer}
 			/>
