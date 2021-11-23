@@ -3,59 +3,71 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AppBox } from '../components/AppBox';
 import Colors from '../constants/Colors';
 import Timer from '../utils/timer';
-import { fontFamily, IDirectionTranslator } from '../utils/types';
+import { fontFamily } from '../utils/types';
 
 interface IProps {
 	playerTime?: number;
 	totalTime?: number;
 	stage?: number;
+	moviments?: number;
 	direction?: 'up' | 'down' | 'landscape';
 	disabled?: boolean;
 	onPress?: () => void;
+}
+
+interface directionTranslator {
+	height?: string | number;
+	width?: string | number;
+	transform?: any;
 }
 
 const translator = (props: IProps) => ({
 	playerTime: props.playerTime ? props.playerTime : 0,
 	totalTime: props.totalTime ? props.totalTime : 0,
 	stage: props.stage ? props.stage : 1,
+	moviments: props.moviments ? props.moviments : false,
 	direction: props.direction ? props.direction : 'up',
 	disabled: props.disabled ? props.disabled : false,
 	onPress: props.onPress ? props.onPress : () => {},
 });
 
 export const AppTimer = (props: IProps) => {
-	const { totalTime, playerTime, direction, disabled, onPress, stage } =
-		translator(props);
+	const {
+		totalTime,
+		playerTime,
+		direction,
+		disabled,
+		onPress,
+		stage,
+		moviments,
+	} = translator(props);
 
-	const directionTranslator: IDirectionTranslator = {
-		container: {
-			rotate: direction === 'down' ? [{ rotateZ: '180deg' }] : [],
-		},
-		total: {
-			top: direction === 'landscape' ? null : 30,
-			left: direction === 'landscape' ? 0 : null,
-			transform:
-				direction === 'landscape'
-					? [{ rotateZ: '270deg' }, { translateY: -40 }]
-					: [],
-		},
-		playerTime: {
-			fontSize: direction === 'landscape' ? 60 : 90,
-		},
-		rotate: direction === 'landscape' ? [{ rotateZ: '270deg' }] : [],
+	const directionTranslator: directionTranslator = {
+		height: direction === 'landscape' ? '50%' : 230,
+		width: direction === 'landscape' ? '65%' : '90%',
+		transform: direction === 'landscape' ? [{ rotateZ: '270deg' }] : [],
 	};
 
 	const styles = StyleSheet.create({
 		container: {
-			height: '40%',
-			justifyContent: 'center',
-			transform: directionTranslator.container.rotate,
+			flex: 1,
+			height: directionTranslator.height,
+			width: directionTranslator.width,
+			justifyContent: 'flex-start',
+			alignItems: 'flex-start',
+			transform: directionTranslator.transform,
 		},
-		totalView: {
-			position: 'absolute',
-			top: directionTranslator.total.top,
-			left: directionTranslator.total.left,
-			transform: directionTranslator.total.transform,
+		topBottomView: {
+			flex: 0.1,
+			width: '100%',
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		middleView: {
+			flex: 1,
+			width: '100%',
+			justifyContent: 'center',
+			alignItems: 'center',
 		},
 		total: {
 			color: Colors.totalTimerColor,
@@ -65,8 +77,7 @@ export const AppTimer = (props: IProps) => {
 		playerTime: {
 			color: Colors.textColor,
 			fontFamily: fontFamily.digitalNumber,
-			fontSize: directionTranslator.playerTime.fontSize,
-			transform: directionTranslator.rotate,
+			fontSize: direction === 'landscape' ? 80 : 90,
 		},
 	});
 
@@ -76,12 +87,18 @@ export const AppTimer = (props: IProps) => {
 			disabled={disabled}
 			onPress={onPress}
 		>
-			<View style={styles.totalView}>
-				<Text style={styles.total}>{`total time - ${Timer(
-					totalTime
-				)} - ST ${stage}`}</Text>
+			<View style={styles.topBottomView}>
+				<Text style={styles.total}>{`total time - ${Timer(totalTime)}`}</Text>
 			</View>
-			<Text style={styles.playerTime}>{Timer(playerTime)}</Text>
+			<View style={styles.middleView}>
+				<Text style={styles.playerTime}>{Timer(playerTime)}</Text>
+			</View>
+			<View style={styles.topBottomView}>
+				<Text style={styles.total}>
+					{`Stage ${stage}`}
+					{moviments && ` - Moviments ${moviments}`}
+				</Text>
+			</View>
 		</AppBox>
 	);
 };

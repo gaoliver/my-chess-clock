@@ -25,7 +25,6 @@ export const AppBox: React.FC<IProps> = (props) => {
 	const styles = StyleSheet.create({
 		box: {
 			width: '90%',
-			alignItems: 'center',
 			height: height,
 			backgroundColor: color,
 			padding: 20,

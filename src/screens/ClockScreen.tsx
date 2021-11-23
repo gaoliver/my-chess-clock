@@ -196,8 +196,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		let thisStage = mainRule.stages[currentStage];
 		if (
 			thisStage.movements !== 0 &&
-			(movementsPlayer1 < thisStage.movements ||
-				movementsPlayer2 < thisStage.movements) &&
+			movementsPlayer1 < thisStage.movements &&
+			movementsPlayer2 < thisStage.movements &&
 			counterPlayer1 > 0 &&
 			counterPlayer2 > 0 &&
 			thisStage.maxTime !== 0 &&
@@ -231,7 +231,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		} else if (thisPlayer2) {
 			setMovementsPlayer2((value) => value + 1);
 		}
-	}, [thisPlay, thisPlayer1, thisPlayer2]);
+	}, [thisPlayer1, thisPlayer2]);
 
 	useEffect(() => {
 		if (delayCounter1 === 0) {
@@ -277,7 +277,6 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const styles = StyleSheet.create({
 		container: {
 			flex: 1,
-			paddingVertical: 20,
 			alignItems: 'center',
 			justifyContent: 'space-around',
 		},
@@ -297,6 +296,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				playerTime={translator.showPlayer2}
 				totalTime={thisTotalTime}
 				stage={currentStage + 1}
+				moviments={mainRule.stages[currentStage].movements - movementsPlayer1}
 				disabled={!thisPlayer2}
 				onPress={handleTapPlayer}
 			/>
@@ -327,6 +327,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				playerTime={translator.showPlayer1}
 				totalTime={thisTotalTime}
 				stage={currentStage + 1}
+				moviments={mainRule.stages[currentStage].movements - movementsPlayer2}
 				onPress={handleTapPlayer}
 			/>
 		</SafeAreaView>

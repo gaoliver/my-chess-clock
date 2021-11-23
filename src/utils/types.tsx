@@ -17,22 +17,6 @@ export enum fontFamily {
 	digitalNumber = 'digital-number',
 	whiteDream = 'white-dream',
 }
-
-export interface IDirectionTranslator {
-	container: {
-		rotate: any;
-	};
-	total: {
-		top: any;
-		left: any;
-		transform: any;
-	};
-	playerTime: {
-		fontSize: number;
-	};
-	rotate: any;
-}
-
 export interface ISettings {
 	themeColor: string;
 	playSound: boolean;
