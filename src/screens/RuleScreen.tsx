@@ -99,8 +99,10 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const handleModalHeight = () => {
 		if (counterSameForBoth && stageHasMovements && hasTotalTime) {
 			return 500;
-		} else if (!stageHasMovements || !hasTotalTime) {
-			return 400;
+		} else if (!counterSameForBoth && (!stageHasMovements || !hasTotalTime)) {
+			return 500;
+		} else if (counterSameForBoth && (!stageHasMovements || !hasTotalTime)) {
+			return 450;
 		} else if (!counterSameForBoth) {
 			return 550;
 		} else {
