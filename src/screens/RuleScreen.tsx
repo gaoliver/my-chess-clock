@@ -29,7 +29,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const [delayPlayer2, setDelayPlayer2] = useState<number>(0);
 	const [incrementPlayer1, setIncrementPlayer1] = useState<number>(0);
 	const [incrementPlayer2, setIncrementPlayer2] = useState<number>(0);
-	const [name, setName] = useState<string>();
+	const [name, setName] = useState<string>('');
 
 	const handleAddDelay = () => {
 		if (hasDelay) {
@@ -72,9 +72,21 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	const handleSave = () => {
-		// let saveData: IRule = {
-		// 	id: ruleset.length + 1,
-		// }
+		let saveData: IRule = {
+			id: ruleset.length + 1,
+			name: name,
+			delay: hasDelay,
+			delayPlayer1: delayPlayer1,
+			delayPlayer2: delayPlayer2,
+			increment: incrementType ? incrementType : null,
+			fischerPlayer1: incrementType === 'fischer' ? incrementPlayer1 : 0,
+			fischerPlayer2: incrementType === 'fischer' ? incrementPlayer2 : 0,
+			bronsteinPlayer1: incrementType === 'bronstein' ? incrementPlayer1 : 0,
+			bronsteinPlayer2: incrementType === 'bronstein' ? incrementPlayer2 : 0,
+			stages: stages,
+		};
+
+		console.log(saveData);
 		// navigation.goBack();
 	};
 
