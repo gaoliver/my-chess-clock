@@ -209,6 +209,17 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	}, [hasTotalTime]);
 
 	useEffect(() => {
+		if (!stageModal) {
+			setCounterSameForBoth(false);
+			setCounterPlayer1(0);
+			setCounterPlayer2(0);
+			setstageHasMovements(false);
+			setStageMovements(0);
+			setHasTotalTime(false);
+			setTotalTime(0);
+			return setSelectedStage(undefined);
+		}
+
 		let thisStage = stages.find((stage) => stage.id === selectedStage);
 		if (thisStage) {
 			setCounterSameForBoth(false);
@@ -276,6 +287,9 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 					listData={stages}
 					itemName="Stage"
 					onPressItem={handleModalOptions}
+					onPressButton={() => {
+						setStageModal(true);
+					}}
 				/>
 				<View style={styles.section}>
 					<View style={styles.sectionHeader}>
