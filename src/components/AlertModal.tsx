@@ -3,7 +3,8 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import { AntDesign } from '@expo/vector-icons';
 
-import { AppBox, MainButton } from '.';
+import { AppBox } from './AppBox';
+import { MainButton } from './MainButton';
 import Colors from '../constants/Colors';
 
 interface IProps {
@@ -53,13 +54,26 @@ export const AlertModal = (props: IProps) => {
 					</Pressable>
 				</View>
 				<View style={styles.boxBody}>
-					<MainButton label="Set" fullWidth center fontSize={fontSize} />
-					<MainButton label="Edit" fullWidth center fontSize={fontSize} />
+					<MainButton
+						label="Set"
+						fullWidth
+						center
+						fontSize={fontSize}
+						onPress={onPressSet}
+					/>
+					<MainButton
+						label="Edit"
+						fullWidth
+						center
+						fontSize={fontSize}
+						onPress={onPressEdit}
+					/>
 					<MainButton
 						label="Remove"
 						fullWidth
 						center
 						fontSize={fontSize}
+						onPress={onPressRemove}
 						color="red"
 					/>
 				</View>
@@ -70,6 +84,8 @@ export const AlertModal = (props: IProps) => {
 		<ReactNativeModal
 			isVisible={visible}
 			onDismiss={onDismiss}
+			onBackButtonPress={onDismiss}
+			onBackdropPress={onDismiss}
 			children={<Children />}
 		/>
 	);

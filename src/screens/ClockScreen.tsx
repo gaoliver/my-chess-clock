@@ -1,115 +1,113 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { AppTimer, RoundedButton } from '../components'
-import * as gameActions from '../redux'
-import PlayIcon from '../../assets/icons/play.svg'
-import PauseIcon from '../../assets/icons/pause.svg'
-import SettingsIcon from '../../assets/icons/settings.svg'
-import RefreshIcon from '../../assets/icons/refresh.svg'
-import { ApplicationState } from '../redux'
-import { NavigationParamsProp } from '../utils/types'
-import { StatusBar } from 'expo-status-bar'
-import Colors from '../constants/Colors'
+import { AppTimer, RoundedButton } from '../components';
+import * as gameActions from '../redux';
+import PlayIcon from '../../assets/icons/play.svg';
+import PauseIcon from '../../assets/icons/pause.svg';
+import SettingsIcon from '../../assets/icons/settings.svg';
+import RefreshIcon from '../../assets/icons/refresh.svg';
+import { ApplicationState } from '../redux';
+import { NavigationParamsProp } from '../utils/types';
+import { StatusBar } from 'expo-status-bar';
+import Colors from '../constants/Colors';
 
 const ClockScreen = ({ navigation }: NavigationParamsProp) => {
-	const dispatch = useDispatch()
-	const {
-		settings,
-		timePlayer1,
-		timePlayer2,
-		totalTime,
-		play,
-		player1,
-		player2,
-	} = useSelector((state: ApplicationState) => state)
+	const dispatch = useDispatch();
+	const { settings, totalTime, play, player1, player2 } = useSelector(
+		(state: ApplicationState) => state
+	);
 
-	const [thisPlay, setThisPlay] = useState(play)
-	const [thisPlayer1, setThisPlayer1] = useState(player1)
-	const [thisPlayer2, setThisPlayer2] = useState(player2)
-	const [counterPlayer1, setCounterPlayer1] = useState(timePlayer1)
-	const [counterPlayer2, setCounterPlayer2] = useState(timePlayer2)
-	const [thisTotalTime, setThisTotalTime] = useState(totalTime)
-	const [totalTimer, setTotalTimer] = useState<any>()
-	const [timer, setTimer] = useState<any>()
+	const [thisPlay, setThisPlay] = useState(play);
+	const [thisPlayer1, setThisPlayer1] = useState(player1);
+	const [thisPlayer2, setThisPlayer2] = useState(player2);
+	const [counterPlayer1, setCounterPlayer1] = useState(
+		settings.mainRule?.stages[0].timePlayer1
+	);
+	const [counterPlayer2, setCounterPlayer2] = useState(
+		settings.mainRule?.stages[0].timePlayer2
+	);
+	const [thisTotalTime, setThisTotalTime] = useState(totalTime);
+	const [totalTimer, setTotalTimer] = useState<any>();
+	const [timer, setTimer] = useState<any>();
 
 	const landscape = (direction: string) => {
-		let landscape = settings.landscape
+		let landscape = settings.landscape;
 		if (landscape) {
-			return 'landscape'
+			return 'landscape';
 		} else if (direction === 'up' || direction === 'down') {
-			return direction
+			return direction;
 		}
-	}
+	};
 
 	const handleTapPlayer = () => {
-		clearInterval(timer)
+		clearInterval(timer);
 		if (thisPlayer1) {
-			setThisPlayer1(false)
-			setThisPlayer2(true)
+			setThisPlayer1(false);
+			setThisPlayer2(true);
 		} else {
-			setThisPlayer1(true)
-			setThisPlayer2(false)
+			setThisPlayer1(true);
+			setThisPlayer2(false);
 		}
-		dispatch(gameActions.setTimerPlayer1(thisPlayer1))
-		dispatch(gameActions.setTimerPlayer2(thisPlayer2))
-	}
+		dispatch(gameActions.setTimerPlayer1(thisPlayer1));
+		dispatch(gameActions.setTimerPlayer2(thisPlayer2));
+	};
 
 	const handlePlayPause = () => {
 		if (thisPlay) {
-			setThisPlay(false)
-			dispatch(gameActions.setTimerPlayer1(counterPlayer1))
-			dispatch(gameActions.setTimerPlayer2(counterPlayer2))
+			setThisPlay(false);
+			dispatch(gameActions.setTimerPlayer1(counterPlayer1));
+			dispatch(gameActions.setTimerPlayer2(counterPlayer2));
 		} else {
-			setThisPlay(true)
+			setThisPlay(true);
 		}
-		dispatch(gameActions.setPlayPause(thisPlay))
-	}
+		dispatch(gameActions.setPlayPause(thisPlay));
+	};
 
 	const onReset = () => {
-		dispatch(gameActions.setPlayPause(false))
-		dispatch(gameActions.setTimerPlayer1(0))
-		dispatch(gameActions.setTimerPlayer2(0))
-		dispatch(gameActions.setTotalTime(0))
+		dispatch(gameActions.setPlayPause(false));
+		dispatch(gameActions.setTimerPlayer1(0));
+		dispatch(gameActions.setTimerPlayer2(0));
+		dispatch(gameActions.setTotalTime(0));
 
-		setThisPlay(false)
-		setCounterPlayer1(0)
-		setCounterPlayer2(0)
-		setThisTotalTime(0)
-	}
+		setThisPlay(false);
+		setCounterPlayer1(settings.mainRule?.stages[0].timePlayer1);
+		setCounterPlayer2(settings.mainRule?.stages[0].timePlayer2);
+		setThisTotalTime(0);
+	};
 
 	const onSettings = () => {
-		navigation.navigate('Settings')
-	}
+		navigation.navigate('Settings');
+	};
 
 	useEffect(() => {
 		if (thisPlay) {
 			const timerId = setInterval(() => {
 				if (thisPlayer1) {
-					setCounterPlayer1((value) => value + 1)
+					setCounterPlayer1((value) => value && value - 1);
 				} else if (thisPlayer2) {
-					setCounterPlayer2((value) => value + 1)
+					setCounterPlayer2((value) => value && value - 1);
 				}
-			}, 1000)
-			setTimer(timerId)
+			}, 1000);
+			setTimer(timerId);
 		} else {
-			clearInterval(timer)
+			clearInterval(timer);
 		}
-	}, [thisPlay, thisPlayer1, thisPlayer2])
+	}, [thisPlay, thisPlayer1, thisPlayer2]);
 
 	useEffect(() => {
 		if (thisPlay) {
 			const totalTimerId = setInterval(
 				() => setThisTotalTime((value) => value + 1),
 				1000
-			)
-			setTotalTimer(totalTimerId)
+			);
+			setTotalTimer(totalTimerId);
 		} else {
-			clearInterval(totalTimer)
+			clearInterval(totalTimer);
 		}
-	}, [thisPlay])
+	}, [thisPlay]);
 
 	const styles = StyleSheet.create({
 		container: {
@@ -124,7 +122,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			alignItems: 'center',
 			justifyContent: 'space-around',
 		},
-	})
+	});
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -164,7 +162,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				onPress={handleTapPlayer}
 			/>
 		</SafeAreaView>
-	)
-}
+	);
+};
 
-export default ClockScreen
+export default ClockScreen;

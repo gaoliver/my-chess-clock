@@ -15,10 +15,55 @@ import { ApplicationState } from '../redux';
 import Colors from '../constants/Colors';
 import { IRule } from '../utils/types';
 
+const DATA: Array<IRule> = [
+	{
+		id: 1,
+		name: 'Teste 1',
+		stages: [
+			{
+				timePlayer1: 300,
+				timePlayer2: 300,
+				movements: 0,
+			},
+		],
+		increment: null,
+		delay: false,
+		bronsteinPlayer1: 0,
+		bronsteinPlayer2: 0,
+		delayPlayer1: 0,
+		delayPlayer2: 0,
+		fischerPlayer1: 0,
+		fischerPlayer2: 0,
+	},
+	{
+		id: 2,
+		name: 'Teste 2',
+		stages: [
+			{
+				timePlayer1: 300,
+				timePlayer2: 300,
+				movements: 0,
+			},
+		],
+		increment: null,
+		delay: false,
+		bronsteinPlayer1: 0,
+		bronsteinPlayer2: 0,
+		delayPlayer1: 0,
+		delayPlayer2: 0,
+		fischerPlayer1: 0,
+		fischerPlayer2: 0,
+	},
+];
+
 const SettingsScreen = () => {
 	const dispatch = useDispatch();
 	const settings = useSelector((state: ApplicationState) => state.settings);
-	const [translator, setTranslator] = useState(settings);
+	const [translator, setTranslator] = useState({
+		...settings,
+		ruleset: DATA,
+	});
+	const [modal, setModal] = useState(false);
 
 	const toggleLandscape = () => {
 		setTranslator({
@@ -32,6 +77,17 @@ const SettingsScreen = () => {
 			...translator,
 			playSound: !translator.playSound ? true : false,
 		});
+	};
+
+	const onSetRule = (id: number) => {
+		let newRule = translator.ruleset.find((rule) => rule.id === id);
+		setTranslator({
+			...translator,
+			mainRule: newRule,
+		});
+		dispatch(gameActions.setSettings(translator));
+		setModal(false);
+		alert(translator.mainRule?.id);
 	};
 
 	useEffect(() => {
@@ -60,47 +116,6 @@ const SettingsScreen = () => {
 		},
 	});
 
-	const DATA: Array<IRule> = [
-		{
-			id: 0,
-			name: 'Teste 1',
-			stages: [
-				{
-					timePlayer1: 300,
-					timePlayer2: 300,
-					movements: 0,
-				},
-			],
-			increment: null,
-			delay: false,
-			bronsteinPlayer1: 0,
-			bronsteinPlayer2: 0,
-			delayPlayer1: 0,
-			delayPlayer2: 0,
-			fischerPlayer1: 0,
-			fischerPlayer2: 0,
-		},
-		{
-			id: 2,
-			name: 'Teste 2',
-			stages: [
-				{
-					timePlayer1: 300,
-					timePlayer2: 300,
-					movements: 0,
-				},
-			],
-			increment: null,
-			delay: false,
-			bronsteinPlayer1: 0,
-			bronsteinPlayer2: 0,
-			delayPlayer1: 0,
-			delayPlayer2: 0,
-			fischerPlayer1: 0,
-			fischerPlayer2: 0,
-		},
-	];
-
 	return (
 		<Container>
 			<AppHeader title="Settings" hasGoBack />
@@ -120,16 +135,24 @@ const SettingsScreen = () => {
 					<Text style={styles.sectionTitle}>Ruleset</Text>
 					<MainButton label="New Rule" />
 				</View>
-				{DATA.map((rule) => {
+				{translator.ruleset.map((rule) => {
 					return (
-						<MainList
-							name={rule.name}
-							id={rule.id}
-							selected={settings.mainRule?.id}
-						/>
+						<>
+							<MainList
+								key={rule.id}
+								name={rule.name}
+								id={rule.id}
+								selected={translator.mainRule?.id}
+								onPress={() => setModal(true)}
+							/>
+							<AlertModal
+								visible={modal}
+								onDismiss={() => setModal(false)}
+								onPressSet={() => onSetRule(rule.id)}
+							/>
+						</>
 					);
 				})}
-				<AlertModal />
 			</Content>
 		</Container>
 	);

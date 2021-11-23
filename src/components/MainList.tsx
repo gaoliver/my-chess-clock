@@ -13,7 +13,7 @@ const translator = (props: IProps) => ({
 	name: props.name ? props.name : '',
 	id: props.id ? props.id : Math.round(Math.random() * 135),
 	onPress: props.onPress ? props.onPress : () => {},
-	selected: props.selected ? props.selected : 0,
+	selected: props.selected ? props.selected : 1,
 });
 
 export const MainList = (props: IProps) => {
@@ -36,7 +36,6 @@ export const MainList = (props: IProps) => {
 	return (
 		<TouchableOpacity
 			style={styles.container}
-			key={id}
 			onPress={onPress}
 			activeOpacity={0.7}
 		>
