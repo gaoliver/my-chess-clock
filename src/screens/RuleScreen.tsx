@@ -26,7 +26,13 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			setHasDelay(true);
 		}
 	};
-	const handleDelayValue = () => {};
+	const handleDelayValue = () => {
+		if (delaySameForBoth) {
+			setDelaySameForBoth(false);
+		} else {
+			setDelaySameForBoth(true);
+		}
+	};
 
 	useEffect(() => {
 		if (rule) {
@@ -79,8 +85,17 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 						/>
 					</View>
 					<View style={styles.sectionContent}>
-						<AppSwitcher label="Same for both" />
-						<TimeInput />
+						<AppSwitcher
+							label="Same for both"
+							value={delaySameForBoth}
+							onValueChange={handleDelayValue}
+						/>
+						<TimeInput label={!delaySameForBoth ? 'Player 1' : undefined} />
+						{!delaySameForBoth && (
+							<View style={{ marginTop: 10 }}>
+								<TimeInput label="Player 2" />
+							</View>
+						)}
 					</View>
 				</View>
 			</Content>

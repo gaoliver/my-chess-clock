@@ -7,23 +7,26 @@ interface IProps {
 	value?: boolean;
 	onValueChange?: () => void;
 	noMargin?: boolean;
+	disabled?: boolean;
 }
 
 const translator = (props: IProps) => ({
 	label: props.label ? props.label : '',
 	value: props.value ? props.value : false,
 	noMargin: props.noMargin ? props.noMargin : false,
+	disabled: props.disabled ? props.disabled : false,
 	onValueChange: props.onValueChange ? props.onValueChange : () => {},
 });
 
 export const AppSwitcher = (props: IProps) => {
-	const { label, value, onValueChange, noMargin } = translator(props);
+	const { label, value, onValueChange, noMargin, disabled } = translator(props);
 
 	const styles = StyleSheet.create({
 		line: {
 			flexDirection: 'row',
 			alignItems: 'center',
 			marginBottom: noMargin ? 0 : 10,
+			opacity: disabled ? 0.7 : 1,
 		},
 		label: {
 			marginRight: 20,
@@ -41,6 +44,7 @@ export const AppSwitcher = (props: IProps) => {
 				onValueChange={onValueChange}
 				value={value}
 				style={{ transform: [{ scale: 0.8 }] }}
+				disabled={disabled}
 			/>
 		</View>
 	);

@@ -6,17 +6,19 @@ import Colors from '../constants/Colors';
 interface IProps {
 	interval?: number;
 	label?: string;
+	disabled?: boolean;
 	onChangeTime?: (value: number) => void;
 }
 
 const translator = (props: IProps) => ({
 	interval: props.interval ? props.interval : 0,
 	label: props.label ? props.label : undefined,
+	disabled: props.disabled ? props.disabled : false,
 	onChangeTime: props.onChangeTime ? props.onChangeTime : () => {},
 });
 
 export const TimeInput = (props: IProps) => {
-	const { interval, onChangeTime, label } = translator(props);
+	const { interval, onChangeTime, label, disabled } = translator(props);
 	const duration = moment.duration(interval, 'seconds');
 
 	const [hours, setHours] = useState<number>(duration.hours());
@@ -39,6 +41,7 @@ export const TimeInput = (props: IProps) => {
 		container: {
 			flexDirection: 'row',
 			alignItems: 'center',
+			opacity: disabled ? 0.7 : 1,
 		},
 		input: {
 			width: 40,
@@ -61,6 +64,7 @@ export const TimeInput = (props: IProps) => {
 			<TextInput
 				style={styles.input}
 				textAlign="center"
+				editable={!disabled}
 				value={hours.toFixed()}
 				onChangeText={(value) => {
 					setHours(Number(value));
@@ -75,6 +79,7 @@ export const TimeInput = (props: IProps) => {
 			<TextInput
 				style={styles.input}
 				textAlign="center"
+				editable={!disabled}
 				value={minutes.toFixed()}
 				onChangeText={(value) => {
 					setMinutes(Number(value));
@@ -89,6 +94,7 @@ export const TimeInput = (props: IProps) => {
 			<TextInput
 				style={styles.input}
 				textAlign="center"
+				editable={!disabled}
 				value={seconds.toFixed()}
 				onChangeText={(value) => {
 					setSeconds(Number(value));
