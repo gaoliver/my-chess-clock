@@ -27,7 +27,6 @@ export const AppTimer = (props: IProps) => {
 
 	const directionTranslator: IDirectionTranslator = {
 		container: {
-			height: direction === 'landscape' ? 260 : 230,
 			flexDirection: direction === 'landscape' ? 'row' : 'column',
 			justifyContent: direction === 'landscape' ? 'space-around' : 'center',
 			rotate: direction === 'down' ? [{ rotateZ: '180deg' }] : [],
@@ -41,7 +40,7 @@ export const AppTimer = (props: IProps) => {
 
 	const styles = StyleSheet.create({
 		container: {
-			height: directionTranslator.container.height,
+			height: '40%',
 			flexDirection: directionTranslator.container.flexDirection,
 			justifyContent: directionTranslator.container.justifyContent,
 			transform: directionTranslator.container.rotate,

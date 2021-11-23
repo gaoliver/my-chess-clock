@@ -34,6 +34,7 @@ export const AppSwitcher = (props: IProps) => {
 			<Text style={styles.label}>{label}</Text>
 			<Switch
 				trackColor={{ false: '#767577', true: Colors.themeColor }}
+				thumbColor={Colors.textColor}
 				onValueChange={onValueChange}
 				value={value}
 			/>

@@ -33,7 +33,10 @@ export const AppHeader = (props: IProps) => {
 	})
 
 	return (
-		<Header style={styles.headerContainer}>
+		<Header
+			style={styles.headerContainer}
+			androidStatusBarColor={Colors.themeColor}
+		>
 			<Left>
 				{hasGoBack && (
 					<Pressable onPress={onGoBack}>

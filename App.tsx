@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import * as Font from 'expo-font'
 import AppLoading from 'expo-app-loading'
@@ -29,7 +28,6 @@ export default function App() {
 	return (
 		<Provider store={store}>
 			<PersistGate loading={null} persistor={persistor}>
-				<StatusBar />
 				<NavigationContainer>
 					<Stack.Navigator
 						screenOptions={{ headerShown: false }}

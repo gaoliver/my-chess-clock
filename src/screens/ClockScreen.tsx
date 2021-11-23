@@ -11,6 +11,8 @@ import SettingsIcon from '../../assets/icons/settings.svg'
 import RefreshIcon from '../../assets/icons/refresh.svg'
 import { ApplicationState } from '../redux'
 import { NavigationParamsProp } from '../utils/types'
+import { StatusBar } from 'expo-status-bar'
+import Colors from '../constants/Colors'
 
 const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const dispatch = useDispatch()
@@ -126,6 +128,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+			<StatusBar translucent={false} backgroundColor={Colors.textColor} />
 			<AppTimer
 				direction={landscape('down')}
 				playerTime={counterPlayer2}

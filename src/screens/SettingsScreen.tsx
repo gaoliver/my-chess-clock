@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as gameActions from '../redux/actions'
 import { AppHeader, AppSwitcher } from '../components'
 import { ApplicationState } from '../redux'
+import { TriangleColorPicker as ColorPicker } from 'react-native-color-picker'
 
 const SettingsScreen = () => {
 	const dispatch = useDispatch()
@@ -29,6 +30,10 @@ const SettingsScreen = () => {
 				label="Landscape"
 				value={translator.landscape}
 				onValueChange={toggleLandscape}
+			/>
+			<ColorPicker
+				onColorSelected={(color) => alert(`Color selected: ${color}`)}
+				style={{ flex: 1 }}
 			/>
 		</View>
 	)
