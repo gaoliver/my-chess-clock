@@ -16,8 +16,8 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const [stages, setStages] = useState<Array<IStage>>([]);
 	const [hasDelay, setHasDelay] = useState<boolean>(false);
 	const [delaySameForBoth, setDelaySameForBoth] = useState<boolean>(true);
-	const [delayPlayer1, setDelayPlayer1] = useState<Number>(0);
-	const [delayPlayer2, setDelayPlayer2] = useState<Number>(0);
+	const [delayPlayer1, setDelayPlayer1] = useState<number>(0);
+	const [delayPlayer2, setDelayPlayer2] = useState<number>(0);
 
 	const handleAddDelay = () => {
 		if (hasDelay) {
@@ -49,7 +49,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		if (delaySameForBoth) {
 			setDelayPlayer2(delayPlayer1);
 		}
-	}, [delayPlayer1, delayPlayer2]);
+	}, [delaySameForBoth, delayPlayer1, delayPlayer2]);
 
 	const styles = StyleSheet.create({
 		content: {
@@ -106,6 +106,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							<View style={{ marginTop: 10 }}>
 								<TimeInput
 									label="Player 2"
+									interval={delayPlayer2}
 									onChangeTime={(value) => setDelayPlayer2(value)}
 								/>
 							</View>
