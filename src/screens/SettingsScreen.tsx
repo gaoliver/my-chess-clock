@@ -4,7 +4,7 @@ import { Container, Content } from 'native-base'
 import { useDispatch, useSelector } from 'react-redux'
 
 import * as gameActions from '../redux/actions'
-import { AppHeader, AppSwitcher, MainButton } from '../components'
+import { AppHeader, AppSwitcher, MainButton, MainList } from '../components'
 import { ApplicationState } from '../redux'
 import Colors from '../constants/Colors'
 
@@ -46,10 +46,10 @@ const SettingsScreen = () => {
 			flexDirection: 'row',
 			justifyContent: 'space-between',
 			alignItems: 'center',
+			marginBottom: 10,
 		},
 		sectionTitle: {
 			fontSize: 28,
-			marginBottom: 10,
 		},
 	})
 
@@ -72,6 +72,7 @@ const SettingsScreen = () => {
 					<Text style={styles.sectionTitle}>Ruleset</Text>
 					<MainButton label="New Rule" />
 				</View>
+				<MainList name="Teste" />
 			</Content>
 		</Container>
 	)

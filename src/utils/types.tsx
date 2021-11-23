@@ -53,6 +53,8 @@ export interface ISettings {
 }
 
 export interface IRule {
+	id: number
+	name: string
 	stages: Array<IStage>
 	increment: 'fischer' | 'bronstein' | null
 	delay: boolean
