@@ -2,6 +2,7 @@ import { Container, Content } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
+	AppCheckbox,
 	AppHeader,
 	AppSwitcher,
 	ListCreator,
@@ -152,12 +153,12 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 									justifyContent: 'space-between',
 								}}
 							>
-								<AppSwitcher
+								<AppCheckbox
 									label="Fischer"
 									value={delaySameForBoth}
 									onValueChange={handleDelayValue}
 								/>
-								<AppSwitcher
+								<AppCheckbox
 									label="Bronstein"
 									value={delaySameForBoth}
 									onValueChange={handleDelayValue}

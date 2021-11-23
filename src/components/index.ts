@@ -9,3 +9,4 @@ export * from './AlertModal';
 export * from './ListCreator';
 export * from './SectionTitle';
 export * from './TimeInput';
+export * from './AppCheckbox';
