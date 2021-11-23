@@ -140,6 +140,24 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		clearInterval(timer);
 	};
 
+	const useDelay = () => {
+		if (mainRule.delay && thisPlayer1) {
+			setShowCountDown1(true);
+			handleCountDown1();
+			setTimeout(() => {
+				setShowCountDown1(false);
+				startCounter();
+			}, mainRule.delayPlayer1 * 1000);
+		} else if (mainRule.delay && thisPlayer2) {
+			setShowCountDown2(true);
+			handleCountDown2();
+			setTimeout(() => {
+				setShowCountDown2(false);
+				startCounter();
+			}, mainRule.delayPlayer2 * 1000);
+		}
+	};
+
 	useEffect(() => {
 		if (delayCounter1 === 0) {
 			clearInterval(countDown);
@@ -152,20 +170,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	useEffect(() => {
 		if (thisPlay) {
-			if (mainRule.delay && thisPlayer1) {
-				setShowCountDown1(true);
-				handleCountDown1();
-				setTimeout(() => {
-					setShowCountDown1(false);
-					startCounter();
-				}, mainRule.delayPlayer1 * 1000);
-			} else if (mainRule.delay && thisPlayer2) {
-				setShowCountDown2(true);
-				handleCountDown2();
-				setTimeout(() => {
-					setShowCountDown2(false);
-					startCounter();
-				}, mainRule.delayPlayer2 * 1000);
+			if (mainRule.delay) {
+				useDelay();
 			} else {
 				startCounter();
 			}
