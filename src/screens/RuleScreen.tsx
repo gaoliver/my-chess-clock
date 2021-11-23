@@ -7,6 +7,7 @@ import {
 	AlertModal,
 	AppCheckbox,
 	AppHeader,
+	AppModal,
 	AppSwitcher,
 	ListCreator,
 	SectionTitle,
@@ -34,6 +35,13 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const [stageModalOptions, setStageModalOptions] = useState<boolean>(false);
 	const [stageModal, setStageModal] = useState<boolean>(false);
 	const [selectedStage, setSelectedStage] = useState<number>(0);
+	const [counterSameForBoth, setCounterSameForBoth] = useState<boolean>(false);
+	const [counterPlayer1, setCounterPlayer1] = useState<number>(0);
+	const [counterPlayer2, setCounterPlayer2] = useState<number>(0);
+	const [stageHasMovements, setstageHasMovements] = useState<boolean>(false);
+	const [stageMovements, setStageMovements] = useState<number>(0);
+	const [hasTotalTime, setHasTotalTime] = useState<boolean>(false);
+	const [totalTime, setTotalTime] = useState<number>(0);
 
 	const handleAddDelay = () => {
 		if (hasDelay) {
@@ -78,6 +86,21 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const handleModalOptions = (id: number) => {
 		setSelectedStage(id);
 		setStageModalOptions(true);
+	};
+
+	const onPressEdit = () => {
+		setStageModalOptions(false);
+		setTimeout(() => setStageModal(true), 500);
+	};
+
+	const handleModalHeight = () => {
+		if (counterSameForBoth && stageHasMovements && hasTotalTime) {
+			return 500;
+		} else if (!stageHasMovements || !hasTotalTime) {
+			return 400;
+		} else {
+			return 350;
+		}
 	};
 
 	const handleSave = () => {
@@ -279,7 +302,77 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 					visible={stageModalOptions}
 					onDismiss={() => setStageModalOptions(false)}
 					hide="set"
+					onPressEdit={onPressEdit}
 				/>
+				<AppModal
+					visible={stageModal}
+					onDismiss={() => setStageModal(false)}
+					height={handleModalHeight()}
+					justifyContent="space-between"
+				>
+					<View>
+						<AppSwitcher
+							label="Same turn timer for both"
+							value={counterSameForBoth}
+							onValueChange={() =>
+								setCounterSameForBoth((value) => (value ? false : true))
+							}
+						/>
+						<View
+							style={{
+								backgroundColor: Colors.sectionBackground,
+								padding: 10,
+							}}
+						>
+							<TimeInput
+								label={counterSameForBoth ? '' : 'Player 1'}
+								interval={counterPlayer1}
+								onChangeTime={(value) => setCounterPlayer1(value)}
+								padding
+							/>
+							{!counterSameForBoth && (
+								<TimeInput
+									label={'Player 2'}
+									interval={counterPlayer2}
+									onChangeTime={(value) => setCounterPlayer2(value)}
+									padding
+								/>
+							)}
+						</View>
+					</View>
+					<View>
+						<AppSwitcher
+							label="Maximum movements"
+							value={stageHasMovements}
+							onValueChange={() =>
+								setstageHasMovements((value) => (value ? false : true))
+							}
+						/>
+						{stageHasMovements && (
+							<TextInput
+								style={[styles.input, { marginTop: 10 }]}
+								value={stageMovements.toFixed()}
+								onChangeText={(value) => setStageMovements(Number(value))}
+							/>
+						)}
+					</View>
+					<View>
+						<AppSwitcher
+							label="Total time"
+							value={hasTotalTime}
+							onValueChange={() =>
+								setHasTotalTime((value) => (value ? false : true))
+							}
+						/>
+						{hasTotalTime && (
+							<TextInput
+								style={[styles.input, { marginTop: 10 }]}
+								value={totalTime.toFixed()}
+								onChangeText={(value) => setTotalTime(Number(value))}
+							/>
+						)}
+					</View>
+				</AppModal>
 			</Content>
 		</Container>
 	);

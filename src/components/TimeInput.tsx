@@ -8,17 +8,20 @@ interface IProps {
 	label?: string;
 	disabled?: boolean;
 	onChangeTime?: (value: number) => void;
+	padding?: boolean;
 }
 
 const translator = (props: IProps) => ({
 	interval: props.interval ? props.interval : 0,
 	label: props.label ? props.label : undefined,
 	disabled: props.disabled ? props.disabled : false,
+	padding: props.padding ? props.padding : false,
 	onChangeTime: props.onChangeTime ? props.onChangeTime : () => {},
 });
 
 export const TimeInput = (props: IProps) => {
-	const { interval, onChangeTime, label, disabled } = translator(props);
+	const { interval, onChangeTime, label, disabled, padding } =
+		translator(props);
 	const duration = moment.duration(interval, 'seconds');
 
 	const [hours, setHours] = useState<number>(duration.hours());
@@ -42,6 +45,7 @@ export const TimeInput = (props: IProps) => {
 			flexDirection: 'row',
 			alignItems: 'center',
 			opacity: disabled ? 0.7 : 1,
+			padding: padding ? 10 : 0,
 		},
 		input: {
 			width: 40,

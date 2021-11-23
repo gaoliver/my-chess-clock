@@ -9,29 +9,41 @@ import Colors from '../constants/Colors';
 interface IProps {
 	visible?: boolean;
 	onDismiss?: () => void;
+	height?: number | string;
+	justifyContent?:
+		| 'flex-end'
+		| 'flex-start'
+		| 'center'
+		| 'space-between'
+		| 'space-around'
+		| 'space-evenly'
+		| undefined;
 }
 
 const translator = (props: IProps) => ({
 	visible: props.visible ? props.visible : false,
+	height: props.height ? props.height : 230,
+	justifyContent: props.justifyContent ? props.justifyContent : 'space-evenly',
 	onDismiss: props.onDismiss ? props.onDismiss : () => {},
 });
 
 export const AppModal: React.FC<IProps> = (props) => {
-	const { visible, onDismiss } = translator(props);
+	const { visible, onDismiss, height, justifyContent } = translator(props);
 
 	const styles = StyleSheet.create({
 		boxContainer: {
 			width: '100%',
+			height: height,
 		},
 		boxHeader: {
 			width: '100%',
 			alignItems: 'flex-end',
-			marginBottom: 10,
+			marginBottom: 25,
 		},
 		boxBody: {
 			flex: 1,
 			width: '100%',
-			justifyContent: 'space-around',
+			justifyContent: justifyContent,
 		},
 	});
 
