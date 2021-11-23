@@ -47,11 +47,12 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const [showCountDown2, setShowCountDown2] = useState(false);
 	const [delayCounter1, setDelayCounter1] = useState(mainRule.delayPlayer1);
 	const [delayCounter2, setDelayCounter2] = useState(mainRule.delayPlayer2);
+	const [currentStage, setCurrentStage] = useState(0);
 	const [counterPlayer1, setCounterPlayer1] = useState(
-		settings.mainRule?.stages[0].timePlayer1
+		settings.mainRule?.stages[currentStage].timePlayer1
 	);
 	const [counterPlayer2, setCounterPlayer2] = useState(
-		settings.mainRule?.stages[0].timePlayer2
+		settings.mainRule?.stages[currentStage].timePlayer2
 	);
 
 	const translator = {
@@ -99,8 +100,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		dispatch(gameActions.setTotalTime(0));
 
 		setThisPlay(false);
-		setCounterPlayer1(settings.mainRule?.stages[0].timePlayer1);
-		setCounterPlayer2(settings.mainRule?.stages[0].timePlayer2);
+		setCurrentStage(0);
+		setCounterPlayer1(settings.mainRule?.stages[currentStage].timePlayer1);
+		setCounterPlayer2(settings.mainRule?.stages[currentStage].timePlayer2);
 		setMovementsPlayer1(0);
 		setMovementsPlayer2(0);
 		setThisTotalTime(0);
@@ -187,6 +189,22 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			);
 		}
 	};
+
+	useEffect(() => {
+		if (
+			mainRule.stages[currentStage].movements !== 0 &&
+			(movementsPlayer1 < mainRule.stages[currentStage].movements ||
+				movementsPlayer2 < mainRule.stages[currentStage].movements)
+		) {
+			return;
+		} else if (currentStage < mainRule.stages.length - 1) {
+			setCurrentStage((value) => value + 1);
+		} else if (currentStage >= mainRule.stages.length - 1) {
+			alert('Finish!');
+			stopInterval();
+			handlePlayPause();
+		}
+	}, [movementsPlayer1, movementsPlayer2, counterPlayer1, counterPlayer2]);
 
 	useEffect(() => {
 		if (!thisPlay) return;
