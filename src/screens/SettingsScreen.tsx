@@ -4,7 +4,13 @@ import { Container, Content } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as gameActions from '../redux/actions';
-import { AppHeader, AppSwitcher, MainButton, MainList } from '../components';
+import {
+	AlertModal,
+	AppHeader,
+	AppSwitcher,
+	MainButton,
+	MainList,
+} from '../components';
 import { ApplicationState } from '../redux';
 import Colors from '../constants/Colors';
 import { IRule } from '../utils/types';
@@ -123,6 +129,7 @@ const SettingsScreen = () => {
 						/>
 					);
 				})}
+				<AlertModal />
 			</Content>
 		</Container>
 	);
