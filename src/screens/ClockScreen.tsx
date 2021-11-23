@@ -20,18 +20,32 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		(state: ApplicationState) => state
 	);
 
+	const mainRule = {
+		id: settings.mainRule.id,
+		name: settings.mainRule.name,
+		stages: settings.mainRule.stages,
+		increment: settings.mainRule.increment,
+		delay: settings.mainRule.delay,
+		delayPlayer1: settings.mainRule.delayPlayer1,
+		delayPlayer2: settings.mainRule.delayPlayer2,
+		fischerPlayer1: settings.mainRule.fischerPlayer1,
+		fischerPlayer2: settings.mainRule.fischerPlayer2,
+		bronsteinPlayer1: settings.mainRule.bronsteinPlayer1,
+		bronsteinPlayer2: settings.mainRule.bronsteinPlayer2,
+	};
+
 	const [thisPlay, setThisPlay] = useState(play);
 	const [thisPlayer1, setThisPlayer1] = useState(player1);
 	const [thisPlayer2, setThisPlayer2] = useState(player2);
+	const [thisTotalTime, setThisTotalTime] = useState(totalTime);
+	const [totalTimer, setTotalTimer] = useState<any>();
+	const [timer, setTimer] = useState<any>();
 	const [counterPlayer1, setCounterPlayer1] = useState(
 		settings.mainRule?.stages[0].timePlayer1
 	);
 	const [counterPlayer2, setCounterPlayer2] = useState(
 		settings.mainRule?.stages[0].timePlayer2
 	);
-	const [thisTotalTime, setThisTotalTime] = useState(totalTime);
-	const [totalTimer, setTotalTimer] = useState<any>();
-	const [timer, setTimer] = useState<any>();
 
 	const landscape = (direction: string) => {
 		let landscape = settings.landscape;
@@ -82,16 +96,30 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		navigation.navigate('Settings');
 	};
 
+	const startCounter = () => {
+		const timerId = setInterval(() => {
+			if (thisPlayer1) {
+				setCounterPlayer1((value) => value && value - 1);
+			} else if (thisPlayer2) {
+				setCounterPlayer2((value) => value && value - 1);
+			}
+		}, 1000);
+		setTimer(timerId);
+	};
+
 	useEffect(() => {
 		if (thisPlay) {
-			const timerId = setInterval(() => {
-				if (thisPlayer1) {
-					setCounterPlayer1((value) => value && value - 1);
-				} else if (thisPlayer2) {
-					setCounterPlayer2((value) => value && value - 1);
-				}
-			}, 1000);
-			setTimer(timerId);
+			if (mainRule.delay && thisPlayer1) {
+				setTimeout(() => {
+					startCounter();
+				}, mainRule.delayPlayer1);
+			} else if (mainRule.delay && thisPlayer2) {
+				setTimeout(() => {
+					startCounter();
+				}, mainRule.delayPlayer2);
+			} else {
+				startCounter();
+			}
 		} else {
 			clearInterval(timer);
 		}
