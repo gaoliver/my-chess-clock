@@ -10,6 +10,7 @@ import {
 	AppModal,
 	AppSwitcher,
 	ListCreator,
+	MainButton,
 	SectionTitle,
 	TimeInput,
 } from '../components';
@@ -34,7 +35,9 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const [name, setName] = useState<string>('');
 	const [stageModalOptions, setStageModalOptions] = useState<boolean>(false);
 	const [stageModal, setStageModal] = useState<boolean>(false);
-	const [selectedStage, setSelectedStage] = useState<number>(0);
+	const [selectedStage, setSelectedStage] = useState<number | undefined>(
+		undefined
+	);
 	const [counterSameForBoth, setCounterSameForBoth] = useState<boolean>(false);
 	const [counterPlayer1, setCounterPlayer1] = useState<number>(0);
 	const [counterPlayer2, setCounterPlayer2] = useState<number>(0);
@@ -102,6 +105,27 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			return 550;
 		} else {
 			return 350;
+		}
+	};
+
+	const handleSaveStage = () => {
+		if (selectedStage) {
+			stages[selectedStage] = {
+				id: selectedStage,
+				maxTime: totalTime,
+				movements: stageMovements,
+				timePlayer1: counterPlayer1,
+				timePlayer2: counterPlayer2,
+			};
+		} else {
+			let newStage = {
+				id: stages.length + 1,
+				maxTime: totalTime,
+				movements: stageMovements,
+				timePlayer1: counterPlayer1,
+				timePlayer2: counterPlayer2,
+			};
+			stages.push(newStage);
 		}
 	};
 
@@ -397,6 +421,13 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							/>
 						)}
 					</View>
+					<MainButton
+						fullWidth
+						center
+						label="Save"
+						fontSize={20}
+						onPress={handleSaveStage}
+					/>
 				</AppModal>
 			</Content>
 		</Container>
