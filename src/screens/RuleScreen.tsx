@@ -1,6 +1,8 @@
 import { Container, Content } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { useSelector } from 'react-redux';
+
 import {
 	AppCheckbox,
 	AppHeader,
@@ -10,10 +12,12 @@ import {
 	TimeInput,
 } from '../components';
 import Colors from '../constants/Colors';
-import { IStage, NavigationParamsProp } from '../utils/types';
+import { ApplicationState } from '../redux';
+import { IRule, IStage, NavigationParamsProp } from '../utils/types';
 
 const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const { rule } = route.params;
+	const { ruleset } = useSelector((state: ApplicationState) => state.settings);
 	const [stages, setStages] = useState<Array<IStage>>([]);
 	const [hasDelay, setHasDelay] = useState<boolean>(false);
 	const [hasIncrement, setHasIncrement] = useState<boolean>(false);
@@ -25,6 +29,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const [delayPlayer2, setDelayPlayer2] = useState<number>(0);
 	const [incrementPlayer1, setIncrementPlayer1] = useState<number>(0);
 	const [incrementPlayer2, setIncrementPlayer2] = useState<number>(0);
+	const [name, setName] = useState<string>();
 
 	const handleAddDelay = () => {
 		if (hasDelay) {
@@ -67,13 +72,16 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	const handleSave = () => {
-		console.log(delayPlayer1, delayPlayer2);
+		// let saveData: IRule = {
+		// 	id: ruleset.length + 1,
+		// }
 		// navigation.goBack();
 	};
 
 	useEffect(() => {
 		if (rule) {
 			setStages(rule.stages);
+			setName(rule.name);
 			if (rule.delay) {
 				setHasDelay(true);
 				setDelaySameForBoth(false);
@@ -128,12 +136,32 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			marginTop: 10,
 			backgroundColor: Colors.sectionBackground,
 		},
+		input: {
+			width: '100%',
+			padding: 10,
+			borderWidth: 1,
+			borderColor: Colors.screenTextColor,
+			backgroundColor: Colors.sectionBackground,
+			marginBottom: 30,
+			borderRadius: 10,
+		},
 	});
 
 	return (
 		<Container>
-			<AppHeader title={rule.name} onSave={handleSave} hasSave hasGoBack />
+			<AppHeader
+				title={name ? 'Edit Rule' : 'New Rule'}
+				onSave={handleSave}
+				hasSave
+				hasGoBack
+			/>
 			<Content style={styles.content}>
+				<TextInput
+					value={name}
+					onChangeText={(value) => setName(value)}
+					style={styles.input}
+					placeholder="Write a name"
+				/>
 				<ListCreator
 					title="Stages"
 					buttonTitle="New Stage"
