@@ -41,7 +41,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const [totalTimer, setTotalTimer] = useState<any>();
 	const [timer, setTimer] = useState<any>();
 	const [countDown, setCountDown] = useState<any>();
-	const [showCountDown, setshowCountDown] = useState(false);
+	const [showCountDown1, setShowCountDown1] = useState(false);
+	const [showCountDown2, setShowCountDown2] = useState(false);
 	const [delayCounter1, setDelayCounter1] = useState(mainRule.delayPlayer1);
 	const [delayCounter2, setDelayCounter2] = useState(mainRule.delayPlayer2);
 	const [counterPlayer1, setCounterPlayer1] = useState(
@@ -52,7 +53,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	);
 
 	const translator = {
-		showPlayer1: showCountDown ? delayCounter1 : counterPlayer1,
+		showPlayer1: showCountDown1 ? delayCounter1 : counterPlayer1,
+		showPlayer2: showCountDown2 ? delayCounter2 : counterPlayer2,
 	};
 
 	const landscape = (direction: string) => {
@@ -115,10 +117,19 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		setTimer(timerId);
 	};
 
-	const handleCountDown = () => {
+	const handleCountDown1 = () => {
 		const delayShow = setInterval(() => {
 			if (delayCounter1 > 0) {
 				setDelayCounter1((value) => value - 1);
+			}
+		}, 1000);
+		setCountDown(delayShow);
+	};
+
+	const handleCountDown2 = () => {
+		const delayShow = setInterval(() => {
+			if (delayCounter2 > 0) {
+				setDelayCounter2((value) => value - 1);
 			}
 		}, 1000);
 		setCountDown(delayShow);
@@ -133,18 +144,28 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		if (delayCounter1 === 0) {
 			clearInterval(countDown);
 			setDelayCounter1((value) => value + mainRule.delayPlayer1);
+		} else if (delayCounter2 === 0) {
+			clearInterval(countDown);
+			setDelayCounter2((value) => value + mainRule.delayPlayer2);
 		}
-	}, [delayCounter1]);
+	}, [delayCounter1, delayCounter2]);
 
 	useEffect(() => {
 		if (thisPlay) {
 			if (mainRule.delay && thisPlayer1) {
-				setshowCountDown(true);
-				handleCountDown();
+				setShowCountDown1(true);
+				handleCountDown1();
 				setTimeout(() => {
-					setshowCountDown(false);
+					setShowCountDown1(false);
 					startCounter();
-				}, 5000);
+				}, mainRule.delayPlayer1 * 1000);
+			} else if (mainRule.delay && thisPlayer2) {
+				setShowCountDown2(true);
+				handleCountDown2();
+				setTimeout(() => {
+					setShowCountDown2(false);
+					startCounter();
+				}, mainRule.delayPlayer2 * 1000);
 			} else {
 				startCounter();
 			}
@@ -185,7 +206,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			<StatusBar translucent={false} backgroundColor={Colors.textColor} />
 			<AppTimer
 				direction={landscape('down')}
-				playerTime={counterPlayer2}
+				playerTime={translator.showPlayer2}
 				totalTime={thisTotalTime}
 				disabled={!thisPlayer2}
 				onPress={handleTapPlayer}
