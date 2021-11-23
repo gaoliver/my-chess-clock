@@ -4,18 +4,13 @@ import { Container, Content } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as gameActions from '../redux/actions';
-import {
-	AlertModal,
-	AppHeader,
-	AppSwitcher,
-	MainButton,
-	MainList,
-} from '../components';
+import { AlertModal, AppHeader, AppSwitcher, ListCreator } from '../components';
 import { ApplicationState } from '../redux';
 import Colors from '../constants/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationParamsProp } from '../utils/types';
 
-const SettingsScreen = () => {
+const SettingsScreen = ({ navigation }: NavigationParamsProp) => {
 	const dispatch = useDispatch();
 	const settings = useSelector((state: ApplicationState) => state.settings);
 	const [translator, setTranslator] = useState(settings);
@@ -43,12 +38,22 @@ const SettingsScreen = () => {
 
 	const onSetRule = (id: number) => {
 		let newRule = translator.ruleset.find((rule) => rule.id === id);
-		setTranslator({
-			...translator,
-			mainRule: newRule,
-		});
+		if (newRule) {
+			setTranslator({
+				...translator,
+				mainRule: newRule,
+			});
+		}
 		dispatch(gameActions.setSettings(translator));
 		setModal(false);
+	};
+
+	const onEditRule = () => {
+		let thisRule = translator.ruleset.find((rule) => rule.id === modalRuleId);
+		setModal(false);
+		if (thisRule) {
+			navigation.navigate('Rule', { rule: thisRule });
+		}
 	};
 
 	useEffect(() => {
@@ -70,36 +75,19 @@ const SettingsScreen = () => {
 			backgroundColor: Colors.themeColor,
 			marginVertical: 20,
 		},
-		sectionHeader: {
-			flexDirection: 'row',
-			justifyContent: 'space-between',
-			alignItems: 'center',
-			marginBottom: 10,
-		},
-		sectionTitle: {
-			fontSize: 28,
-		},
 	});
 
 	return (
 		<Container>
 			<AppHeader title="Settings" hasGoBack />
 			<Content style={styles.screenContent}>
-				<View style={styles.sectionHeader}>
-					<Text style={styles.sectionTitle}>Ruleset</Text>
-					<MainButton label="New Rule" />
-				</View>
-				{translator.ruleset.map((rule) => {
-					return (
-						<MainList
-							key={Math.round(100)}
-							name={rule.name}
-							id={rule.id}
-							selected={translator.mainRule?.id}
-							onPress={() => handleOpenModal(rule?.id)}
-						/>
-					);
-				})}
+				<ListCreator
+					title="Ruleset"
+					buttonTitle="New Rule"
+					listData={translator.ruleset}
+					onPressItem={handleOpenModal}
+					selected={translator.mainRule?.id}
+				/>
 				<View style={styles.divisor} />
 				<AppSwitcher
 					label="Landscape"
@@ -115,6 +103,7 @@ const SettingsScreen = () => {
 					visible={modal}
 					onDismiss={() => setModal(false)}
 					onPressSet={() => onSetRule(modalRuleId)}
+					onPressEdit={onEditRule}
 				/>
 			</Content>
 		</Container>

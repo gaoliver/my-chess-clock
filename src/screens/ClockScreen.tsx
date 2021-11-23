@@ -152,6 +152,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 					icon={<RefreshIcon />}
 					size={55}
 					onPress={onReset}
+					disabled={thisTotalTime === 0}
 				/>
 			</View>
 			<AppTimer

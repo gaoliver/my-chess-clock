@@ -4,13 +4,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 export type NavigationProp = StackNavigationProp<StackParamList, 'Home'>;
 export type NavigationParamsProp = NativeStackScreenProps<
 	StackParamList,
-	'Home'
+	'Rule'
 >;
 
 export type StackParamList = {
 	Home: undefined;
 	Settings: undefined;
-	Rule: undefined;
+	Rule: { rule: IRule };
 };
 
 export enum fontFamily {
@@ -51,7 +51,7 @@ export interface ISettings {
 	playSound: boolean;
 	landscape: boolean;
 	ruleset: Array<IRule>;
-	mainRule: IRule | undefined;
+	mainRule: IRule;
 }
 
 export interface IRule {

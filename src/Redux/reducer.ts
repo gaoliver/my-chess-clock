@@ -16,7 +16,7 @@ const initialSettings: ISettings = {
 	landscape: false,
 	playSound: true,
 	ruleset: [PatternRule],
-	mainRule: undefined,
+	mainRule: PatternRule,
 	themeColor: '#3B1C95',
 };
 

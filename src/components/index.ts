@@ -6,3 +6,4 @@ export * from './AppSwitcher';
 export * from './MainButton';
 export * from './MainList';
 export * from './AlertModal';
+export * from './ListCreator';
