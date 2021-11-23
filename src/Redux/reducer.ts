@@ -1,23 +1,24 @@
-import { ISettings } from '../utils/types'
-import { AppActions } from './actions'
+import { ISettings } from '../utils/types';
+import { AppActions } from './actions';
+import PatternRule from '../json/PatternRule.json';
 
 type initialStateModel = {
-	player1: boolean
-	player2: boolean
-	timePlayer1: number
-	timePlayer2: number
-	totalTime: number
-	play: boolean
-	settings: ISettings
-}
+	player1: boolean;
+	player2: boolean;
+	timePlayer1: number;
+	timePlayer2: number;
+	totalTime: number;
+	play: boolean;
+	settings: ISettings;
+};
 
 const initialSettings: ISettings = {
 	landscape: false,
 	playSound: true,
-	ruleset: [],
+	ruleset: [PatternRule],
 	mainRule: undefined,
 	themeColor: '#3B1C95',
-}
+};
 
 const initialState: initialStateModel = {
 	player1: true,
@@ -27,7 +28,7 @@ const initialState: initialStateModel = {
 	totalTime: 0,
 	play: false,
 	settings: initialSettings,
-}
+};
 
 export const settingsReducer = (
 	state: initialStateModel = initialState,
@@ -38,28 +39,28 @@ export const settingsReducer = (
 			return {
 				...state,
 				settings: action.payload,
-			}
+			};
 		case 'SET_TIMER_P1':
 			return {
 				...state,
 				timePlayer1: action.payload,
-			}
+			};
 		case 'SET_TIMER_P2':
 			return {
 				...state,
 				timePlayer2: action.payload,
-			}
+			};
 		case 'SET_TOTAL_TIME':
 			return {
 				...state,
 				totalTime: action.payload,
-			}
+			};
 		case 'SET_PLAY_PAUSE':
 			return {
 				...state,
 				play: action.payload,
-			}
+			};
 		default:
-			return state
+			return state;
 	}
-}
+};

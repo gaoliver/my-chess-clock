@@ -13,57 +13,19 @@ import {
 } from '../components';
 import { ApplicationState } from '../redux';
 import Colors from '../constants/Colors';
-import { IRule } from '../utils/types';
-
-const DATA: Array<IRule> = [
-	{
-		id: 1,
-		name: 'Teste 1',
-		stages: [
-			{
-				timePlayer1: 300,
-				timePlayer2: 300,
-				movements: 0,
-			},
-		],
-		increment: null,
-		delay: false,
-		bronsteinPlayer1: 0,
-		bronsteinPlayer2: 0,
-		delayPlayer1: 0,
-		delayPlayer2: 0,
-		fischerPlayer1: 0,
-		fischerPlayer2: 0,
-	},
-	{
-		id: 2,
-		name: 'Teste 2',
-		stages: [
-			{
-				timePlayer1: 300,
-				timePlayer2: 300,
-				movements: 0,
-			},
-		],
-		increment: null,
-		delay: false,
-		bronsteinPlayer1: 0,
-		bronsteinPlayer2: 0,
-		delayPlayer1: 0,
-		delayPlayer2: 0,
-		fischerPlayer1: 0,
-		fischerPlayer2: 0,
-	},
-];
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SettingsScreen = () => {
 	const dispatch = useDispatch();
 	const settings = useSelector((state: ApplicationState) => state.settings);
-	const [translator, setTranslator] = useState({
-		...settings,
-		ruleset: DATA,
-	});
+	const [translator, setTranslator] = useState(settings);
 	const [modal, setModal] = useState(false);
+	const [modalRuleId, setModalRuleId] = useState(0);
+
+	const handleOpenModal = (id: number) => {
+		setModal(true);
+		setModalRuleId(id);
+	};
 
 	const toggleLandscape = () => {
 		setTranslator({
@@ -87,12 +49,15 @@ const SettingsScreen = () => {
 		});
 		dispatch(gameActions.setSettings(translator));
 		setModal(false);
-		alert(translator.mainRule?.id);
 	};
 
 	useEffect(() => {
 		dispatch(gameActions.setSettings(translator));
 	}, [translator]);
+
+	useEffect(() => {
+		// AsyncStorage.clear();
+	}, []);
 
 	const styles = StyleSheet.create({
 		screenContent: {
@@ -126,20 +91,13 @@ const SettingsScreen = () => {
 				</View>
 				{translator.ruleset.map((rule) => {
 					return (
-						<>
-							<MainList
-								key={rule.id}
-								name={rule.name}
-								id={rule.id}
-								selected={translator.mainRule?.id}
-								onPress={() => setModal(true)}
-							/>
-							<AlertModal
-								visible={modal}
-								onDismiss={() => setModal(false)}
-								onPressSet={() => onSetRule(rule.id)}
-							/>
-						</>
+						<MainList
+							key={Math.round(100)}
+							name={rule.name}
+							id={rule.id}
+							selected={translator.mainRule?.id}
+							onPress={() => handleOpenModal(rule?.id)}
+						/>
 					);
 				})}
 				<View style={styles.divisor} />
@@ -152,6 +110,11 @@ const SettingsScreen = () => {
 					label="Sound"
 					value={translator.playSound}
 					onValueChange={toggleSound}
+				/>
+				<AlertModal
+					visible={modal}
+					onDismiss={() => setModal(false)}
+					onPressSet={() => onSetRule(modalRuleId)}
 				/>
 			</Content>
 		</Container>
