@@ -127,6 +127,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			};
 			stages.push(newStage);
 		}
+		setStageModal(false);
 	};
 
 	const handleSave = () => {
@@ -192,6 +193,18 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			setCounterPlayer2(counterPlayer1);
 		}
 	}, [counterSameForBoth, counterPlayer1, counterPlayer2]);
+
+	useEffect(() => {
+		if (!stageHasMovements) {
+			setStageMovements(0);
+		}
+	}, [stageHasMovements]);
+
+	useEffect(() => {
+		if (!hasTotalTime) {
+			setTotalTime(0);
+		}
+	}, [hasTotalTime]);
 
 	useEffect(() => {
 		let thisStage = stages.find((stage) => stage.id === selectedStage);
