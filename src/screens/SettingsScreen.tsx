@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
+import { Container, Content } from 'native-base'
 import { useDispatch, useSelector } from 'react-redux'
 
 import * as gameActions from '../redux/actions'
 import { AppHeader, AppSwitcher } from '../components'
 import { ApplicationState } from '../redux'
-import { TriangleColorPicker as ColorPicker } from 'react-native-color-picker'
+import Colors from '../constants/Colors'
 
 const SettingsScreen = () => {
 	const dispatch = useDispatch()
@@ -19,26 +20,48 @@ const SettingsScreen = () => {
 		})
 	}
 
+	const toggleSound = () => {
+		setTranslator({
+			...translator,
+			playSound: !translator.playSound ? true : false,
+		})
+	}
+
 	useEffect(() => {
 		dispatch(gameActions.setSettings(translator))
 	}, [translator])
 
+	const styles = StyleSheet.create({
+		screenContent: {
+			paddingHorizontal: 20,
+			paddingVertical: 10,
+		},
+		divisor: {
+			width: '100%',
+			height: 1,
+			backgroundColor: Colors.screenTextColor,
+			marginVertical: 20,
+		},
+	})
+
 	return (
-		<View>
+		<Container>
 			<AppHeader title="Settings" hasGoBack />
-			<AppSwitcher
-				label="Landscape"
-				value={translator.landscape}
-				onValueChange={toggleLandscape}
-			/>
-			<ColorPicker
-				onColorSelected={(color) => alert(`Color selected: ${color}`)}
-				style={{ flex: 1 }}
-			/>
-		</View>
+			<Content style={styles.screenContent}>
+				<View style={styles.divisor} />
+				<AppSwitcher
+					label="Landscape"
+					value={translator.landscape}
+					onValueChange={toggleLandscape}
+				/>
+				<AppSwitcher
+					label="Sound"
+					value={translator.playSound}
+					onValueChange={toggleSound}
+				/>
+			</Content>
+		</Container>
 	)
 }
 
 export default SettingsScreen
-
-const styles = StyleSheet.create({})

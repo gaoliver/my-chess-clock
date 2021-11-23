@@ -21,6 +21,7 @@ export const AppSwitcher = (props: IProps) => {
 		line: {
 			flexDirection: 'row',
 			alignItems: 'center',
+			marginBottom: 10,
 		},
 		label: {
 			marginRight: 20,
@@ -37,6 +38,7 @@ export const AppSwitcher = (props: IProps) => {
 				thumbColor={Colors.textColor}
 				onValueChange={onValueChange}
 				value={value}
+				style={{ transform: [{ scale: 0.8 }] }}
 			/>
 		</View>
 	)
