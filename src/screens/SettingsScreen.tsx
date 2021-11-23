@@ -4,7 +4,7 @@ import { Container, Content } from 'native-base'
 import { useDispatch, useSelector } from 'react-redux'
 
 import * as gameActions from '../redux/actions'
-import { AppHeader, AppSwitcher } from '../components'
+import { AppHeader, AppSwitcher, MainButton } from '../components'
 import { ApplicationState } from '../redux'
 import Colors from '../constants/Colors'
 
@@ -51,15 +51,6 @@ const SettingsScreen = () => {
 			fontSize: 28,
 			marginBottom: 10,
 		},
-		addNewButton: {
-			padding: 10,
-			backgroundColor: Colors.themeColor,
-			borderRadius: 10,
-		},
-		addNewText: {
-			color: Colors.textColor,
-			fontWeight: 'bold',
-		},
 	})
 
 	return (
@@ -79,9 +70,7 @@ const SettingsScreen = () => {
 				<View style={styles.divisor} />
 				<View style={styles.sectionHeader}>
 					<Text style={styles.sectionTitle}>Ruleset</Text>
-					<Pressable style={styles.addNewButton}>
-						<Text style={styles.addNewText}>New Rule</Text>
-					</Pressable>
+					<MainButton label="New Rule" />
 				</View>
 			</Content>
 		</Container>
