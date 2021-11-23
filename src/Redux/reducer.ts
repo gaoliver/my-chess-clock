@@ -15,8 +15,8 @@ type initialStateModel = {
 const initialSettings: ISettings = {
 	landscape: false,
 	playSound: true,
-	ruleset: [PatternRule],
-	mainRule: PatternRule,
+	ruleset: PatternRule,
+	mainRule: PatternRule[0],
 	themeColor: '#3B1C95',
 };
 

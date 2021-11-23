@@ -1,18 +1,44 @@
-{
-    "id": 1,
-    "name": "5 Minutes",
-    "stages": [{
-        "maxTime": 20,
-        "timePlayer1": 20,
-        "timePlayer2": 20,
-        "movements": 5
-    }],
-    "increment": null,
-    "delay": false,
-    "bronsteinPlayer1": 0,
-    "bronsteinPlayer2": 0,
-    "delayPlayer1": 0,
-    "delayPlayer2": 0,
-    "fischerPlayer1": 0,
-    "fischerPlayer2": 0
-}
+[{
+        "id": 1,
+        "name": "5 Minutes",
+        "stages": [{
+                "maxTime": 20,
+                "timePlayer1": 20,
+                "timePlayer2": 20,
+                "movements": 5
+            },
+            {
+                "maxTime": 10,
+                "timePlayer1": 20,
+                "timePlayer2": 20,
+                "movements": 3
+            }
+        ],
+        "increment": null,
+        "delay": false,
+        "bronsteinPlayer1": 0,
+        "bronsteinPlayer2": 0,
+        "delayPlayer1": 0,
+        "delayPlayer2": 0,
+        "fischerPlayer1": 0,
+        "fischerPlayer2": 0
+    },
+    {
+        "id": 2,
+        "name": "Teste 2",
+        "stages": [{
+            "maxTime": 5,
+            "timePlayer1": 10,
+            "timePlayer2": 10,
+            "movements": 3
+        }],
+        "increment": null,
+        "delay": true,
+        "bronsteinPlayer1": 0,
+        "bronsteinPlayer2": 0,
+        "delayPlayer1": 3,
+        "delayPlayer2": 3,
+        "fischerPlayer1": 0,
+        "fischerPlayer2": 0
+    }
+]

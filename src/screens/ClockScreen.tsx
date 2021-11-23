@@ -206,6 +206,10 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			return;
 		} else if (currentStage < mainRule.stages.length - 1) {
 			setCurrentStage((value) => value + 1);
+			setCounterPlayer1(thisStage.timePlayer1);
+			setCounterPlayer2(thisStage.timePlayer2);
+			setMovementsPlayer1(0);
+			setMovementsPlayer2(0);
 			setStageTimeCounter(0);
 		} else if (currentStage >= mainRule.stages.length - 1) {
 			alert('Finish!');
@@ -292,6 +296,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				direction={landscape('down')}
 				playerTime={translator.showPlayer2}
 				totalTime={thisTotalTime}
+				stage={currentStage + 1}
 				disabled={!thisPlayer2}
 				onPress={handleTapPlayer}
 			/>
@@ -321,6 +326,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				direction={landscape('up')}
 				playerTime={translator.showPlayer1}
 				totalTime={thisTotalTime}
+				stage={currentStage + 1}
 				onPress={handleTapPlayer}
 			/>
 		</SafeAreaView>

@@ -20,25 +20,12 @@ export enum fontFamily {
 
 export interface IDirectionTranslator {
 	container: {
-		flexDirection:
-			| 'row'
-			| 'column'
-			| 'row-reverse'
-			| 'column-reverse'
-			| undefined;
-		justifyContent:
-			| 'space-around'
-			| 'center'
-			| 'flex-start'
-			| 'flex-end'
-			| 'space-between'
-			| 'space-evenly'
-			| undefined;
 		rotate: any;
 	};
 	total: {
 		top: any;
 		left: any;
+		transform: any;
 	};
 	playerTime: {
 		fontSize: number;
