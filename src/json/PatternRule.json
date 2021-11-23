@@ -36,11 +36,11 @@
             }
         ],
         "increment": null,
-        "delay": null,
+        "delay": true,
         "bronsteinPlayer1": 0,
         "bronsteinPlayer2": 0,
-        "delayPlayer1": 0,
-        "delayPlayer2": 0,
+        "delayPlayer1": 500,
+        "delayPlayer2": 500,
         "fischerPlayer1": 0,
         "fischerPlayer2": 0
     }

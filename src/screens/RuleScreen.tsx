@@ -15,9 +15,15 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const { rule } = route.params;
 	const [stages, setStages] = useState<Array<IStage>>([]);
 	const [hasDelay, setHasDelay] = useState<boolean>(false);
-	const [delaySameForBoth, setDelaySameForBoth] = useState<boolean>(true);
+	const [hasIncrement, setHasIncrement] = useState<boolean>(false);
+	const [incrementType, setIncrementType] = useState<'fischer' | 'bronstein'>();
+	const [delaySameForBoth, setDelaySameForBoth] = useState<boolean>(false);
+	const [incrementSameForBoth, setIncrementSameForBoth] =
+		useState<boolean>(false);
 	const [delayPlayer1, setDelayPlayer1] = useState<number>(0);
 	const [delayPlayer2, setDelayPlayer2] = useState<number>(0);
+	const [incrementPlayer1, setIncrementPlayer1] = useState<number>(0);
+	const [incrementPlayer2, setIncrementPlayer2] = useState<number>(0);
 
 	const handleAddDelay = () => {
 		if (hasDelay) {
@@ -34,6 +40,14 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		}
 	};
 
+	const handleIncrement = () => {
+		if (hasIncrement) {
+			setHasIncrement(false);
+		} else {
+			setHasIncrement(true);
+		}
+	};
+
 	const handleSave = () => {
 		console.log(delayPlayer1, delayPlayer2);
 		// navigation.goBack();
@@ -42,6 +56,12 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	useEffect(() => {
 		if (rule) {
 			setStages(rule.stages);
+			if (rule.delay) {
+				setHasDelay(true);
+				setDelaySameForBoth(false);
+				setDelayPlayer1(rule.delayPlayer1);
+				setDelayPlayer2(rule.delayPlayer2);
+			}
 		}
 	}, []);
 
@@ -100,6 +120,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							/>
 							<TimeInput
 								label={!delaySameForBoth ? 'Player 1' : undefined}
+								interval={delayPlayer1}
 								onChangeTime={(value) => setDelayPlayer1(value)}
 							/>
 							{!delaySameForBoth && (
@@ -108,6 +129,56 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 										label="Player 2"
 										interval={delayPlayer2}
 										onChangeTime={(value) => setDelayPlayer2(value)}
+									/>
+								</View>
+							)}
+						</View>
+					)}
+				</View>
+				<View style={[styles.section, { marginBottom: 50 }]}>
+					<View style={styles.sectionHeader}>
+						<SectionTitle text="Increment" />
+						<AppSwitcher
+							noMargin
+							value={hasIncrement}
+							onValueChange={handleIncrement}
+						/>
+					</View>
+					{hasIncrement && (
+						<View style={styles.sectionContent}>
+							<View
+								style={{
+									flexDirection: 'row',
+									justifyContent: 'space-between',
+								}}
+							>
+								<AppSwitcher
+									label="Fischer"
+									value={delaySameForBoth}
+									onValueChange={handleDelayValue}
+								/>
+								<AppSwitcher
+									label="Bronstein"
+									value={delaySameForBoth}
+									onValueChange={handleDelayValue}
+								/>
+							</View>
+							<AppSwitcher
+								label="Same for both"
+								value={delaySameForBoth}
+								onValueChange={handleDelayValue}
+							/>
+							<TimeInput
+								label={!incrementSameForBoth ? 'Player 1' : undefined}
+								interval={incrementPlayer1}
+								onChangeTime={(value) => setIncrementPlayer1(value)}
+							/>
+							{!incrementSameForBoth && (
+								<View style={{ marginTop: 10 }}>
+									<TimeInput
+										label="Player 2"
+										interval={incrementPlayer2}
+										onChangeTime={(value) => setIncrementPlayer2(value)}
 									/>
 								</View>
 							)}
