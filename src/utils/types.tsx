@@ -21,7 +21,6 @@ export enum fontFamily {
 
 export interface IDirectionTranslator {
 	container: {
-		height: number | undefined
 		flexDirection:
 			| 'row'
 			| 'column'
