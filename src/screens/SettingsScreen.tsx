@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Text, Pressable } from 'react-native'
 import { Container, Content } from 'native-base'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -42,13 +42,30 @@ const SettingsScreen = () => {
 			backgroundColor: Colors.screenTextColor,
 			marginVertical: 20,
 		},
+		sectionHeader: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+		sectionTitle: {
+			fontSize: 28,
+			marginBottom: 10,
+		},
+		addNewButton: {
+			padding: 10,
+			backgroundColor: Colors.themeColor,
+			borderRadius: 10,
+		},
+		addNewText: {
+			color: Colors.textColor,
+			fontWeight: 'bold',
+		},
 	})
 
 	return (
 		<Container>
 			<AppHeader title="Settings" hasGoBack />
 			<Content style={styles.screenContent}>
-				<View style={styles.divisor} />
 				<AppSwitcher
 					label="Landscape"
 					value={translator.landscape}
@@ -59,6 +76,13 @@ const SettingsScreen = () => {
 					value={translator.playSound}
 					onValueChange={toggleSound}
 				/>
+				<View style={styles.divisor} />
+				<View style={styles.sectionHeader}>
+					<Text style={styles.sectionTitle}>Ruleset</Text>
+					<Pressable style={styles.addNewButton}>
+						<Text style={styles.addNewText}>New Rule</Text>
+					</Pressable>
+				</View>
 			</Content>
 		</Container>
 	)
