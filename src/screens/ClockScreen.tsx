@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
+import { useIsFocused } from '@react-navigation/core';
 
 import { AppTimer, RoundedButton } from '../components';
 import * as gameActions from '../redux';
@@ -15,6 +16,7 @@ import { NavigationParamsProp } from '../utils/types';
 import Colors from '../constants/Colors';
 
 const ClockScreen = ({ navigation }: NavigationParamsProp) => {
+	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
 	const { settings, totalTime, play, player1, player2 } = useSelector(
 		(state: ApplicationState) => state
@@ -191,6 +193,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			);
 		}
 	};
+
+	useEffect(() => onReset(), [isFocused]);
 
 	useEffect(() => {
 		let thisStage = mainRule.stages[currentStage];

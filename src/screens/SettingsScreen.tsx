@@ -8,9 +8,13 @@ import { AlertModal, AppHeader, AppSwitcher, ListCreator } from '../components';
 import { ApplicationState } from '../redux';
 import Colors from '../constants/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationParamsProp } from '../utils/types';
+import { NavigationProp } from '../utils/types';
 
-const SettingsScreen = ({ navigation }: NavigationParamsProp) => {
+interface IProps {
+	navigation: NavigationProp;
+}
+
+const SettingsScreen = ({ navigation }: IProps) => {
 	const dispatch = useDispatch();
 	const settings = useSelector((state: ApplicationState) => state.settings);
 	const [translator, setTranslator] = useState(settings);

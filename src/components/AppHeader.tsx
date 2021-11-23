@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/core';
 interface IProps {
 	title?: string;
 	hasGoBack?: boolean;
+	onGoBack?: () => void;
 	hasSave?: boolean;
 	onSave?: () => void;
 }
@@ -17,13 +18,17 @@ const translator = (props: IProps) => ({
 	hasGoBack: props.hasGoBack ? props.hasGoBack : false,
 	hasSave: props.hasSave ? props.hasSave : false,
 	onSave: props.onSave ? props.onSave : () => {},
+	onGoBack: props.onGoBack ? props.onGoBack : undefined,
 });
 
 export const AppHeader = (props: IProps) => {
-	const { title, hasGoBack, hasSave, onSave } = translator(props);
+	const { title, hasGoBack, hasSave, onSave, onGoBack } = translator(props);
 	const navigation = useNavigation();
 
-	const onGoBack = () => {
+	const handleGoBack = () => {
+		if (onGoBack) {
+			return onGoBack();
+		}
 		navigation.goBack();
 	};
 
@@ -43,7 +48,7 @@ export const AppHeader = (props: IProps) => {
 		>
 			<Left>
 				{hasGoBack && (
-					<Pressable onPress={onGoBack}>
+					<Pressable onPress={handleGoBack}>
 						<Ionicons
 							name="chevron-back-sharp"
 							size={24}
