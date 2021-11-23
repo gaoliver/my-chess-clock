@@ -19,17 +19,20 @@ const translator = (props: IProps) => ({
 export const MainList = (props: IProps) => {
 	const { name, id, onPress, selected } = translator(props);
 
-	const backgroundColor = Colors.themeColor + (selected === id ? '50' : '15');
+	const backgroundColor = Colors.themeColor + (selected === id ? 'FF' : '40');
 
 	const styles = StyleSheet.create({
 		container: {
-			backgroundColor: backgroundColor,
 			padding: 10,
-			marginBottom: 5,
+			marginBottom: 10,
+			borderRadius: 8,
+			borderWidth: 1,
+			borderColor: backgroundColor,
 		},
 		label: {
 			color: Colors.screenTextColor,
 			fontSize: 16,
+			fontWeight: selected === id ? 'bold' : 'normal',
 		},
 	});
 

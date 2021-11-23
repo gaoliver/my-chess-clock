@@ -35,9 +35,10 @@ export const MainButton = (props: IProps) => {
 	const styles = StyleSheet.create({
 		addNewButton: {
 			width: fullWidth ? '100%' : undefined,
-			padding: 10,
+			paddingVertical: 10,
+			paddingHorizontal: 20,
 			backgroundColor: color,
-			borderRadius: 10,
+			borderRadius: 8,
 			alignItems: center ? 'center' : 'flex-start',
 		},
 		addNewText: {

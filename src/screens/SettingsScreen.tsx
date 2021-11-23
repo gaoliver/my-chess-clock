@@ -101,8 +101,8 @@ const SettingsScreen = () => {
 		},
 		divisor: {
 			width: '100%',
-			height: 1,
-			backgroundColor: Colors.screenTextColor,
+			height: 2,
+			backgroundColor: Colors.themeColor,
 			marginVertical: 20,
 		},
 		sectionHeader: {
@@ -120,17 +120,6 @@ const SettingsScreen = () => {
 		<Container>
 			<AppHeader title="Settings" hasGoBack />
 			<Content style={styles.screenContent}>
-				<AppSwitcher
-					label="Landscape"
-					value={translator.landscape}
-					onValueChange={toggleLandscape}
-				/>
-				<AppSwitcher
-					label="Sound"
-					value={translator.playSound}
-					onValueChange={toggleSound}
-				/>
-				<View style={styles.divisor} />
 				<View style={styles.sectionHeader}>
 					<Text style={styles.sectionTitle}>Ruleset</Text>
 					<MainButton label="New Rule" />
@@ -153,6 +142,17 @@ const SettingsScreen = () => {
 						</>
 					);
 				})}
+				<View style={styles.divisor} />
+				<AppSwitcher
+					label="Landscape"
+					value={translator.landscape}
+					onValueChange={toggleLandscape}
+				/>
+				<AppSwitcher
+					label="Sound"
+					value={translator.playSound}
+					onValueChange={toggleSound}
+				/>
 			</Content>
 		</Container>
 	);
