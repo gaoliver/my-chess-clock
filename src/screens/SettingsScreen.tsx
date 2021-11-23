@@ -61,7 +61,7 @@ const SettingsScreen = ({ navigation }: NavigationParamsProp) => {
 	}, [translator]);
 
 	useEffect(() => {
-		AsyncStorage.clear();
+		// AsyncStorage.clear();
 	}, []);
 
 	const styles = StyleSheet.create({

@@ -195,9 +195,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	useEffect(() => {
 		let thisStage = mainRule.stages[currentStage];
 		if (
-			thisStage.movements !== 0 &&
-			movementsPlayer1 < thisStage.movements &&
-			movementsPlayer2 < thisStage.movements &&
+			(thisStage.movements === 0 ||
+				(movementsPlayer1 < thisStage.movements &&
+					movementsPlayer2 < thisStage.movements)) &&
 			counterPlayer1 > 0 &&
 			counterPlayer2 > 0 &&
 			thisStage.maxTime !== 0 &&
@@ -226,6 +226,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	useEffect(() => {
 		if (!thisPlay) return;
+		if (mainRule.stages[currentStage].movements === 0) return;
 		if (thisPlayer1) {
 			setMovementsPlayer1((value) => value + 1);
 		} else if (thisPlayer2) {
