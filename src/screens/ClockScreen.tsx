@@ -159,7 +159,6 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const useDelay = () => {
-		console.log(mainRule.delayPlayer1);
 		if (mainRule.delay && thisPlayer1) {
 			setShowCountDown1(true);
 			handleCountDown1();
