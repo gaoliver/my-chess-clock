@@ -43,10 +43,6 @@ export const TimeInput = (props: IProps) => {
 		setSeconds(secondsConvert);
 	};
 
-	const hoursRef = useRef<any>(null);
-	const minutesRef = useRef<any>(null);
-	const secondsRef = useRef<any>(null);
-
 	const styles = StyleSheet.create({
 		container: {
 			flexDirection: 'row',
@@ -80,11 +76,10 @@ export const TimeInput = (props: IProps) => {
 				onChangeText={(value) => {
 					setHours(Number(value));
 				}}
-				onBlur={() => handleConvertTime()}
 				keyboardType="number-pad"
 				returnKeyType="next"
-				ref={hoursRef}
-				onSubmitEditing={() => minutesRef.current.focus()}
+				onBlur={handleConvertTime}
+				onSubmitEditing={handleConvertTime}
 			/>
 			<Text style={styles.divider}>:</Text>
 			<TextInput
@@ -95,11 +90,10 @@ export const TimeInput = (props: IProps) => {
 				onChangeText={(value) => {
 					setMinutes(Number(value));
 				}}
-				onBlur={() => handleConvertTime()}
 				keyboardType="number-pad"
 				returnKeyType="next"
-				ref={minutesRef}
-				onSubmitEditing={() => secondsRef.current.focus()}
+				onBlur={handleConvertTime}
+				onSubmitEditing={handleConvertTime}
 			/>
 			<Text style={styles.divider}>:</Text>
 			<TextInput
@@ -110,10 +104,10 @@ export const TimeInput = (props: IProps) => {
 				onChangeText={(value) => {
 					setSeconds(Number(value));
 				}}
-				onBlur={() => handleConvertTime()}
 				keyboardType="number-pad"
 				returnKeyType="done"
-				ref={secondsRef}
+				onBlur={handleConvertTime}
+				onSubmitEditing={handleConvertTime}
 			/>
 		</View>
 	);
