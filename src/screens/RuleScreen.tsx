@@ -27,7 +27,9 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const [stages, setStages] = useState<Array<IStage>>([]);
 	const [hasDelay, setHasDelay] = useState<boolean>(false);
 	const [hasIncrement, setHasIncrement] = useState<boolean>(false);
-	const [incrementType, setIncrementType] = useState<'fischer' | 'bronstein'>();
+	const [incrementType, setIncrementType] = useState<
+		'fischer' | 'bronstein' | null
+	>(null);
 	const [delaySameForBoth, setDelaySameForBoth] = useState<boolean>(false);
 	const [incrementSameForBoth, setIncrementSameForBoth] =
 		useState<boolean>(false);
@@ -143,13 +145,14 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	const handleSave = () => {
+		let newSettings = settings;
 		let saveData: IRule = {
 			id: ruleset.length + 1,
 			name: name,
 			delay: hasDelay,
 			delayPlayer1: delayPlayer1,
 			delayPlayer2: delayPlayer2,
-			increment: incrementType ? incrementType : null,
+			increment: hasIncrement ? incrementType : null,
 			fischerPlayer1: incrementType === 'fischer' ? incrementPlayer1 : 0,
 			fischerPlayer2: incrementType === 'fischer' ? incrementPlayer2 : 0,
 			bronsteinPlayer1: incrementType === 'bronstein' ? incrementPlayer1 : 0,
@@ -159,11 +162,11 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		if (rule) {
 			let ruleIndex = ruleset.findIndex((thisRule) => thisRule.id === rule.id);
 			ruleset[ruleIndex] = saveData;
-			settings.ruleset = ruleset;
+			newSettings.ruleset = ruleset;
 		} else {
-			settings.ruleset.push(saveData);
+			newSettings.ruleset.push(saveData);
 		}
-		dispatch(gameActions.setSettings(settings));
+		dispatch(gameActions.setSettings(newSettings));
 		navigation.goBack();
 	};
 
@@ -177,7 +180,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 				setDelayPlayer1(rule.delayPlayer1);
 				setDelayPlayer2(rule.delayPlayer2);
 			}
-			if (rule.increment) {
+			if (rule.increment !== null) {
 				setHasIncrement(true);
 				setIncrementType(rule.increment);
 				setIncrementPlayer1(
@@ -211,6 +214,12 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			setCounterPlayer2(counterPlayer1);
 		}
 	}, [counterSameForBoth, counterPlayer1, counterPlayer2]);
+
+	useEffect(() => {
+		if (!hasIncrement) {
+			setIncrementType(null);
+		}
+	}, [hasIncrement]);
 
 	useEffect(() => {
 		if (!stageHasMovements) {
