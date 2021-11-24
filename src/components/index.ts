@@ -11,3 +11,4 @@ export * from './SectionTitle';
 export * from './TimeInput';
 export * from './AppCheckbox';
 export * from './AppModal';
+export * from './WinnerAlert';

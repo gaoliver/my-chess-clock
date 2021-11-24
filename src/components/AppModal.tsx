@@ -1,5 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import {
+	FlexAlignType,
+	Pressable,
+	StyleProp,
+	StyleSheet,
+	View,
+	ViewStyle,
+} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -10,6 +17,8 @@ interface IProps {
 	visible?: boolean;
 	onDismiss?: () => void;
 	height?: number | string;
+	style?: StyleProp<ViewStyle>;
+	alignItems?: FlexAlignType | undefined;
 	justifyContent?:
 		| 'flex-end'
 		| 'flex-start'
@@ -23,12 +32,15 @@ interface IProps {
 const translator = (props: IProps) => ({
 	visible: props.visible ? props.visible : false,
 	height: props.height ? props.height : 230,
+	style: props.style ? props.style : {},
 	justifyContent: props.justifyContent ? props.justifyContent : 'space-evenly',
+	alignItems: props.alignItems ? props.alignItems : undefined,
 	onDismiss: props.onDismiss ? props.onDismiss : () => {},
 });
 
 export const AppModal: React.FC<IProps> = (props) => {
-	const { visible, onDismiss, height, justifyContent } = translator(props);
+	const { visible, onDismiss, height, justifyContent, alignItems, style } =
+		translator(props);
 
 	const styles = StyleSheet.create({
 		boxContainer: {
@@ -44,12 +56,13 @@ export const AppModal: React.FC<IProps> = (props) => {
 			flex: 1,
 			width: '100%',
 			justifyContent: justifyContent,
+			alignItems: alignItems,
 		},
 	});
 
 	const Children = () => {
 		return (
-			<AppBox color={Colors.textColor} style={styles.boxContainer}>
+			<AppBox color={Colors.textColor} style={[styles.boxContainer, style]}>
 				<View style={styles.boxHeader}>
 					<Pressable onPress={onDismiss}>
 						<AntDesign name="close" size={25} />

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 import { useIsFocused } from '@react-navigation/core';
 
-import { AppTimer, RoundedButton } from '../components';
+import { AppTimer, RoundedButton, WinnerAlert } from '../components';
 import * as gameActions from '../redux';
 import PlayIcon from '../../assets/icons/play.svg';
 import PauseIcon from '../../assets/icons/pause.svg';
@@ -51,6 +51,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const [delayCounter2, setDelayCounter2] = useState(mainRule.delayPlayer2);
 	const [currentStage, setCurrentStage] = useState(0);
 	const [stageTimeCounter, setStageTimeCounter] = useState(0);
+	const [winnderModal, setwinnderModal] = useState(false);
 	const [counterPlayer1, setCounterPlayer1] = useState(
 		settings.mainRule?.stages[currentStage].timePlayer1
 	);
@@ -216,7 +217,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			setMovementsPlayer2(0);
 			setStageTimeCounter(0);
 		} else if (currentStage >= mainRule.stages.length - 1) {
-			alert('Finish!');
+			setwinnderModal(true);
 			stopInterval();
 			handlePlayPause();
 		}
@@ -334,6 +335,12 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				stage={currentStage + 1}
 				moviments={mainRule.stages[currentStage].movements - movementsPlayer2}
 				onPress={handleTapPlayer}
+			/>
+			<WinnerAlert
+				visible={winnderModal}
+				onDismiss={() => setwinnderModal(false)}
+				name={thisPlayer1 ? 'Player 1' : 'Player 2'}
+				time={thisTotalTime}
 			/>
 		</SafeAreaView>
 	);
