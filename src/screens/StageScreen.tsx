@@ -20,6 +20,7 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const { settings } = useSelector((state: ApplicationState) => state);
 	const dispatch = useDispatch();
 
+	const [constantTrue, setconstantTrue] = useState<boolean>(false);
 	const [counterSameForBoth, setCounterSameForBoth] = useState<boolean>(false);
 	const [counterPlayer1, setCounterPlayer1] = useState<number>(0);
 	const [counterPlayer2, setCounterPlayer2] = useState<number>(0);
@@ -80,6 +81,7 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 	}, [hasTotalTime]);
 
 	useEffect(() => {
+		setconstantTrue(true);
 		if (stage) {
 			setCounterSameForBoth(false);
 			setCounterPlayer1(stage.timePlayer1);
@@ -124,7 +126,12 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 
 	return (
 		<Container>
-			<AppHeader title="Editar" hasGoBack hasSave onSave={handleSaveStage} />
+			<AppHeader
+				title={stage ? 'Edit Stage' : 'New Stage'}
+				hasGoBack
+				hasSave
+				onSave={handleSaveStage}
+			/>
 			<Content style={styles.content}>
 				<View>
 					<AppSwitcher
@@ -134,22 +141,24 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 							setCounterSameForBoth((value) => (value ? false : true))
 						}
 					/>
-					<View style={styles.stageInnerFieldView}>
-						<TimeInput
-							label={counterSameForBoth ? undefined : 'Player 1'}
-							interval={counterPlayer1}
-							onChangeTime={(value) => setCounterPlayer1(value)}
-							padding
-						/>
-						{!counterSameForBoth && (
+					{constantTrue && (
+						<View style={styles.stageInnerFieldView}>
 							<TimeInput
-								label={'Player 2'}
-								interval={counterPlayer2}
-								onChangeTime={(value) => setCounterPlayer2(value)}
+								label={counterSameForBoth ? undefined : 'Player 1'}
+								interval={counterPlayer1}
+								onChangeTime={(value) => setCounterPlayer1(value)}
 								padding
 							/>
-						)}
-					</View>
+							{!counterSameForBoth && (
+								<TimeInput
+									label={'Player 2'}
+									interval={counterPlayer2}
+									onChangeTime={(value) => setCounterPlayer2(value)}
+									padding
+								/>
+							)}
+						</View>
+					)}
 				</View>
 				<View>
 					<AppSwitcher
