@@ -1,6 +1,6 @@
 import { Container, Content } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -238,7 +238,22 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	}, [hasTotalTime]);
 
 	useEffect(() => {
-		if (!stageModal) {
+		if (stageModal) {
+			let thisStage = stages.find((stage) => stage.id === selectedStage);
+			if (thisStage) {
+				setCounterSameForBoth(false);
+				setCounterPlayer1(thisStage.timePlayer1);
+				setCounterPlayer2(thisStage.timePlayer2);
+				if (thisStage.movements > 0) {
+					setstageHasMovements(true);
+					setStageMovements(thisStage.movements);
+				}
+				if (thisStage.maxTime > 0) {
+					setHasTotalTime(true);
+					setTotalTime(thisStage.maxTime);
+				}
+			}
+		} else {
 			setCounterSameForBoth(false);
 			setCounterPlayer1(0);
 			setCounterPlayer2(0);
@@ -246,22 +261,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			setStageMovements(0);
 			setHasTotalTime(false);
 			setTotalTime(0);
-			return setSelectedStage(undefined);
-		}
-
-		let thisStage = stages.find((stage) => stage.id === selectedStage);
-		if (thisStage) {
-			setCounterSameForBoth(false);
-			setCounterPlayer1(thisStage.timePlayer1);
-			setCounterPlayer2(thisStage.timePlayer2);
-			if (thisStage.movements > 0) {
-				setstageHasMovements(true);
-				setStageMovements(thisStage.movements);
-			}
-			if (thisStage.maxTime > 0) {
-				setHasTotalTime(true);
-				setTotalTime(thisStage.maxTime);
-			}
+			setSelectedStage(undefined);
 		}
 	}, [stageModal]);
 
@@ -432,7 +432,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 						/>
 						<View style={styles.stageInnerFieldView}>
 							<TimeInput
-								label={counterSameForBoth ? '' : 'Player 1'}
+								label={counterSameForBoth ? undefined : 'Player 1'}
 								interval={counterPlayer1}
 								onChangeTime={(value) => setCounterPlayer1(value)}
 								padding
