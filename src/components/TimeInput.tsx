@@ -24,16 +24,25 @@ export const TimeInput = (props: IProps) => {
 		translator(props);
 	const duration = moment.duration(interval, 'seconds');
 
-	const [hours, setHours] = useState<number>(duration.hours());
-	const [minutes, setMinutes] = useState<number>(duration.minutes());
-	const [seconds, setSeconds] = useState<number>(duration.seconds());
+	let hoursConvert = duration.hours();
+	let minutesConvert = duration.minutes();
+	let secondsConvert = duration.seconds();
+
+	const [hours, setHours] = useState<number>(hoursConvert);
+	const [minutes, setMinutes] = useState<number>(minutesConvert);
+	const [seconds, setSeconds] = useState<number>(secondsConvert);
 
 	const handleConvertTime = () => {
-		let hourToMinute = hours * 60;
-		let sumMinutes = hourToMinute + minutes;
-		let minuteToSeconds = sumMinutes * 60;
-		let sumSeconds = minuteToSeconds + seconds;
-		onChangeTime(sumSeconds);
+		let hoursToSeconds = moment.duration(hours, 'hours').asSeconds();
+		let minutesToSeconds = moment.duration(minutes, 'minutes').asSeconds();
+		let sum = hoursToSeconds + minutesToSeconds + seconds;
+		onChangeTime(sum);
+
+		setHours(hoursConvert);
+		setMinutes(minutesConvert);
+		setSeconds(secondsConvert);
+
+		console.log(sum);
 	};
 
 	const hoursRef = useRef<any>(null);
