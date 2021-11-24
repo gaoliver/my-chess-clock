@@ -7,10 +7,8 @@ import {
 	AlertModal,
 	AppCheckbox,
 	AppHeader,
-	AppModal,
 	AppSwitcher,
 	ListCreator,
-	MainButton,
 	SectionTitle,
 	TimeInput,
 } from '../components';
@@ -20,7 +18,7 @@ import { IRule, IStage, NavigationParamsProp } from '../utils/types';
 import * as gameActions from '../redux/actions';
 
 const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
-	const { rule } = route.params;
+	const { rule, stage } = route.params;
 	const { settings } = useSelector((state: ApplicationState) => state);
 	const ruleset = settings.ruleset;
 	const dispatch = useDispatch();
@@ -128,6 +126,13 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		dispatch(gameActions.setSettings(newSettings));
 		navigation.goBack();
 	};
+
+	useEffect(() => {
+		if (stage) {
+			stages.push(stage);
+		}
+		setStages([...stages]);
+	}, [stage]);
 
 	useEffect(() => {
 		if (rule) {

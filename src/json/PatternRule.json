@@ -3,9 +3,9 @@
         "name": "5 Minutes",
         "stages": [{
             "id": 0,
-            "maxTime": 7000,
-            "timePlayer1": 5000,
-            "timePlayer2": 5000,
+            "maxTime": 900,
+            "timePlayer1": 300,
+            "timePlayer2": 300,
             "movements": 0
         }],
         "increment": null,

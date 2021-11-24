@@ -12,7 +12,7 @@ export type StackParamList = {
 	Settings: undefined;
 	ColorPicker: undefined;
 	StageScreen: { stage?: IStage; ruleId?: number };
-	Rule: { rule?: IRule };
+	Rule: { rule?: IRule; stage?: IStage };
 };
 
 export enum fontFamily {

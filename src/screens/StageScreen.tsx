@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { Container, Content } from 'native-base';
 
 import { AppHeader, AppSwitcher, TimeInput } from '../components';
@@ -33,7 +33,7 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 		let ruleIndex = settings.ruleset.findIndex((rule) => rule.id === ruleId);
 		let newStage;
 		let newSettings = settings;
-		if (stage !== undefined) {
+		if (stage) {
 			let stageIndex = settings.ruleset[ruleIndex].stages.findIndex(
 				(item) => item.id === stage.id
 			);
@@ -53,7 +53,11 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 				timePlayer1: counterPlayer1,
 				timePlayer2: counterPlayer2,
 			};
-			newSettings.ruleset[ruleIndex].stages.push(newStage);
+			if (ruleId !== undefined) {
+				newSettings.ruleset[ruleIndex].stages.push(newStage);
+			} else {
+				return navigation.navigate('Rule', { stage: newStage });
+			}
 		}
 		dispatch(gameActions.setSettings(newSettings));
 		navigation.goBack();
