@@ -459,7 +459,9 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							<TextInput
 								style={[styles.input, { marginTop: 10 }]}
 								value={stageMovements.toFixed()}
-								onChangeText={(value) => setStageMovements(Number(value))}
+								onChangeText={(value) => {
+									setStageMovements(Number(value));
+								}}
 								keyboardType="numeric"
 							/>
 						)}

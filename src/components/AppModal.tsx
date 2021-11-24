@@ -59,9 +59,13 @@ export const AppModal: React.FC<IProps> = (props) => {
 			alignItems: alignItems,
 		},
 	});
-
-	const Children = () => {
-		return (
+	return (
+		<ReactNativeModal
+			isVisible={visible}
+			onDismiss={onDismiss}
+			onBackButtonPress={onDismiss}
+			onBackdropPress={onDismiss}
+		>
 			<AppBox color={Colors.textColor} style={[styles.boxContainer, style]}>
 				<View style={styles.boxHeader}>
 					<Pressable onPress={onDismiss}>
@@ -70,15 +74,6 @@ export const AppModal: React.FC<IProps> = (props) => {
 				</View>
 				<View style={styles.boxBody}>{props.children}</View>
 			</AppBox>
-		);
-	};
-	return (
-		<ReactNativeModal
-			isVisible={visible}
-			onDismiss={onDismiss}
-			onBackButtonPress={onDismiss}
-			onBackdropPress={onDismiss}
-			children={<Children />}
-		/>
+		</ReactNativeModal>
 	);
 };
