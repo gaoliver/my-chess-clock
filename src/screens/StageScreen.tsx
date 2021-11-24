@@ -6,6 +6,9 @@ import { AppHeader, AppSwitcher, TimeInput } from '../components';
 import Colors from '../constants/Colors';
 import { StackParamList } from '../utils/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useDispatch, useSelector } from 'react-redux';
+import { ApplicationState } from '../redux';
+import * as gameActions from '../redux/actions';
 
 export type NavigationParamsProp = NativeStackScreenProps<
 	StackParamList,
@@ -13,7 +16,9 @@ export type NavigationParamsProp = NativeStackScreenProps<
 >;
 
 const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
-	const { stage } = route.params;
+	const { stage, ruleId } = route.params;
+	const { settings } = useSelector((state: ApplicationState) => state);
+	const dispatch = useDispatch();
 
 	const [counterSameForBoth, setCounterSameForBoth] = useState<boolean>(false);
 	const [counterPlayer1, setCounterPlayer1] = useState<number>(0);
@@ -23,33 +28,42 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const [hasTotalTime, setHasTotalTime] = useState<boolean>(false);
 	const [totalTime, setTotalTime] = useState<number>(0);
 
-	// const handleSaveStage = () => {
-	// 	console.log(selectedStage);
-	// 	if (selectedStage !== undefined) {
-	// 		let stageIndex = stages.findIndex((item) => item.id === selectedStage);
-	// 		stages[stageIndex] = {
-	// 			...stages[stageIndex],
-	// 			maxTime: totalTime,
-	// 			movements: stageMovements,
-	// 			timePlayer1: counterPlayer1,
-	// 			timePlayer2: counterPlayer2,
-	// 		};
-	// 	} else {
-	// 		let newStage = {
-	// 			id: stages.length + 1,
-	// 			maxTime: totalTime,
-	// 			movements: stageMovements,
-	// 			timePlayer1: counterPlayer1,
-	// 			timePlayer2: counterPlayer2,
-	// 		};
-	// 		stages.push(newStage);
-	// 	}
-	// 	setStageModal(false);
-	// };
+	const handleSaveStage = () => {
+		let ruleIndex = settings.ruleset.findIndex((rule) => rule.id === ruleId);
+		let newStage;
+		let newSettings = settings;
+		if (stage !== undefined) {
+			let stageIndex = settings.ruleset[ruleIndex].stages.findIndex(
+				(item) => item.id === stage.id
+			);
+			newStage = {
+				...stage,
+				maxTime: totalTime,
+				movements: stageMovements,
+				timePlayer1: counterPlayer1,
+				timePlayer2: counterPlayer2,
+			};
+			newSettings.ruleset[ruleIndex].stages[stageIndex] = newStage;
+		} else {
+			newStage = {
+				id: Math.random() * 135,
+				maxTime: totalTime,
+				movements: stageMovements,
+				timePlayer1: counterPlayer1,
+				timePlayer2: counterPlayer2,
+			};
+			newSettings.ruleset[ruleIndex].stages.push(newStage);
+		}
+		dispatch(gameActions.setSettings(newSettings));
+		navigation.goBack();
+	};
 
 	useEffect(() => {
+		setCounterPlayer1(counterPlayer1);
 		if (counterSameForBoth) {
 			setCounterPlayer2(counterPlayer1);
+		} else {
+			setCounterPlayer2(counterPlayer2);
 		}
 	}, [counterSameForBoth, counterPlayer1, counterPlayer2]);
 
@@ -110,7 +124,7 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 
 	return (
 		<Container>
-			<AppHeader title="Editar" hasGoBack hasSave onSave={() => {}} />
+			<AppHeader title="Editar" hasGoBack hasSave onSave={handleSaveStage} />
 			<Content style={styles.content}>
 				<View>
 					<AppSwitcher

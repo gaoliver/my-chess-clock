@@ -24,25 +24,25 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const { settings } = useSelector((state: ApplicationState) => state);
 	const ruleset = settings.ruleset;
 	const dispatch = useDispatch();
+
 	const [stages, setStages] = useState<Array<IStage>>([]);
-	const [hasDelay, setHasDelay] = useState<boolean>(false);
-	const [hasIncrement, setHasIncrement] = useState<boolean>(false);
-	const [incrementType, setIncrementType] = useState<
-		'fischer' | 'bronstein' | null
-	>(null);
-	const [delaySameForBoth, setDelaySameForBoth] = useState<boolean>(false);
-	const [incrementSameForBoth, setIncrementSameForBoth] =
-		useState<boolean>(false);
+	const [name, setName] = useState<string>('');
 	const [delayPlayer1, setDelayPlayer1] = useState<number>(0);
 	const [delayPlayer2, setDelayPlayer2] = useState<number>(0);
 	const [incrementPlayer1, setIncrementPlayer1] = useState<number>(0);
 	const [incrementPlayer2, setIncrementPlayer2] = useState<number>(0);
-	const [name, setName] = useState<string>('');
-	const [stageModalOptions, setStageModalOptions] = useState<boolean>(false);
-	const [stageModal, setStageModal] = useState<boolean>(false);
 	const [selectedStage, setSelectedStage] = useState<number | undefined>(
 		undefined
 	);
+	const [stageModalOptions, setStageModalOptions] = useState<boolean>(false);
+	const [hasDelay, setHasDelay] = useState<boolean>(false);
+	const [delaySameForBoth, setDelaySameForBoth] = useState<boolean>(false);
+	const [hasIncrement, setHasIncrement] = useState<boolean>(false);
+	const [incrementSameForBoth, setIncrementSameForBoth] =
+		useState<boolean>(false);
+	const [incrementType, setIncrementType] = useState<
+		'fischer' | 'bronstein' | null
+	>(null);
 
 	const handleAddDelay = () => {
 		if (hasDelay) {
@@ -92,7 +92,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const onPressEdit = () => {
 		setStageModalOptions(false);
 		let thisStage = stages.find((item) => item.id === selectedStage);
-		navigation.navigate('StageScreen', { stage: thisStage });
+		navigation.navigate('StageScreen', { stage: thisStage, ruleId: rule?.id });
 	};
 
 	const onPressDelete = () => {
@@ -225,7 +225,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 					itemName="Stage"
 					onPressItem={handleModalOptions}
 					onPressButton={() => {
-						setStageModal(true);
+						navigation.navigate('StageScreen', { ruleId: rule?.id });
 					}}
 				/>
 				<View style={styles.section}>
