@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Switch } from 'react-native';
 import Colors from '../constants/Colors';
+import { store } from '../redux';
 
 interface IProps {
 	label?: string;
@@ -39,7 +40,10 @@ export const AppSwitcher = (props: IProps) => {
 		<View style={styles.line}>
 			<Text style={styles.label}>{label}</Text>
 			<Switch
-				trackColor={{ false: '#767577', true: Colors.themeColor }}
+				trackColor={{
+					false: '#767577',
+					true: store.getState().settings.themeColor,
+				}}
 				thumbColor={Colors.textColor}
 				onValueChange={onValueChange}
 				value={value}

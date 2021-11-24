@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import Colors from '../constants/Colors';
 import Settings from '../constants/Settings';
+import { store } from '../redux';
 
 interface IProps {
 	color?: string;
@@ -12,7 +13,7 @@ interface IProps {
 }
 
 const translator = (props: IProps) => ({
-	color: props.color ? props.color : Colors.themeColor,
+	color: props.color ? props.color : store.getState().settings.themeColor,
 	height: props.height ? props.height : 230,
 	disabled: props.disabled ? props.disabled : false,
 	style: props.style && props.style,

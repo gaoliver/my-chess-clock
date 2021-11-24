@@ -10,6 +10,7 @@ export type NavigationParamsProp = NativeStackScreenProps<
 export type StackParamList = {
 	Home: undefined;
 	Settings: undefined;
+	ColorPicker: undefined;
 	Rule: { rule?: IRule };
 };
 

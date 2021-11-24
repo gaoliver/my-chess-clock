@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { CheckBox } from 'native-base';
 import Colors from '../constants/Colors';
+import { store } from '../redux';
 
 interface IProps {
 	label?: string;
@@ -42,7 +43,7 @@ export const AppCheckbox = (props: IProps) => {
 			<CheckBox
 				checked={value}
 				onPress={onValueChange}
-				color={Colors.themeColor}
+				color={store.getState().settings.themeColor}
 			/>
 		</View>
 	);

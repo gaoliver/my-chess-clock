@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import Colors from '../constants/Colors';
 import Settings from '../constants/Settings';
+import { store } from '../redux';
 
 interface IProps {
 	color?: string;
@@ -14,7 +15,7 @@ interface IProps {
 }
 
 const translator = (props: IProps) => ({
-	color: props.color ? props.color : Colors.themeColor,
+	color: props.color ? props.color : store.getState().settings.themeColor,
 	size: props.size ? props.size : 40,
 	icon: props.icon ? props.icon : null,
 	disabled: props.disabled ? props.disabled : false,

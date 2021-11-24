@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../constants/Colors';
+import { store } from '../redux';
 
 interface IProps {
 	name?: string;
@@ -19,7 +20,8 @@ const translator = (props: IProps) => ({
 export const MainList = (props: IProps) => {
 	const { name, id, onPress, selected } = translator(props);
 
-	const backgroundColor = Colors.themeColor + (selected === id ? 'FF' : '40');
+	const backgroundColor =
+		store.getState().settings.themeColor + (selected === id ? 'FF' : '40');
 
 	const styles = StyleSheet.create({
 		container: {

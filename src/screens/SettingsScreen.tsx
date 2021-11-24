@@ -4,8 +4,14 @@ import { Container, Content } from 'native-base';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as gameActions from '../redux/actions';
-import { AlertModal, AppHeader, AppSwitcher, ListCreator } from '../components';
-import { ApplicationState } from '../redux';
+import {
+	AlertModal,
+	AppHeader,
+	AppSwitcher,
+	ListCreator,
+	MainButton,
+} from '../components';
+import { ApplicationState, store } from '../redux';
 import Colors from '../constants/Colors';
 import { NavigationProp } from '../utils/types';
 import { useIsFocused } from '@react-navigation/native';
@@ -85,7 +91,7 @@ const SettingsScreen = ({ navigation }: IProps) => {
 		divisor: {
 			width: '100%',
 			height: 2,
-			backgroundColor: Colors.themeColor,
+			backgroundColor: store.getState().settings.themeColor,
 			marginVertical: 20,
 		},
 	});
@@ -112,6 +118,12 @@ const SettingsScreen = ({ navigation }: IProps) => {
 					label="Sound"
 					value={translator.playSound}
 					onValueChange={toggleSound}
+				/>
+				<MainButton
+					label="Set new theme color"
+					onPress={() => navigation.navigate('ColorPicker')}
+					center
+					fullWidth
 				/>
 				<AlertModal
 					visible={modal}

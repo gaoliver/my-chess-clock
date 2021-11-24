@@ -1,9 +1,10 @@
 import { Body, Header, Left, Right, Title } from 'native-base';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { useNavigation } from '@react-navigation/core';
+import { store } from '../redux';
 
 interface IProps {
 	title?: string;
@@ -24,6 +25,7 @@ const translator = (props: IProps) => ({
 export const AppHeader = (props: IProps) => {
 	const { title, hasGoBack, hasSave, onSave, onGoBack } = translator(props);
 	const navigation = useNavigation();
+	const themeColor = store.getState().settings.themeColor;
 
 	const handleGoBack = () => {
 		if (onGoBack) {
@@ -34,7 +36,7 @@ export const AppHeader = (props: IProps) => {
 
 	const styles = StyleSheet.create({
 		headerContainer: {
-			backgroundColor: Colors.themeColor,
+			backgroundColor: themeColor,
 		},
 		title: {
 			color: Colors.textColor,
@@ -42,10 +44,7 @@ export const AppHeader = (props: IProps) => {
 	});
 
 	return (
-		<Header
-			style={styles.headerContainer}
-			androidStatusBarColor={Colors.themeColor}
-		>
+		<Header style={styles.headerContainer} androidStatusBarColor={themeColor}>
 			<Left>
 				{hasGoBack && (
 					<Pressable onPress={handleGoBack}>

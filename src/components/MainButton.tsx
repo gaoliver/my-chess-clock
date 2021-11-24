@@ -7,6 +7,7 @@ import {
 	ViewStyle,
 } from 'react-native';
 import Colors from '../constants/Colors';
+import { store } from '../redux';
 
 interface IProps {
 	label?: string;
@@ -23,7 +24,7 @@ const translator = (props: IProps) => ({
 	onPress: props.onPress ? props.onPress : () => {},
 	fullWidth: props.fullWidth ? props.fullWidth : false,
 	center: props.center ? props.center : false,
-	color: props.color ? props.color : Colors.themeColor,
+	color: props.color ? props.color : store.getState().settings.themeColor,
 	fontSize: props.fontSize ? props.fontSize : 14,
 	style: props.style && props.style,
 });

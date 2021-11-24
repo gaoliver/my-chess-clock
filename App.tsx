@@ -11,6 +11,7 @@ import { StackParamList } from './src/utils/types';
 import ClockScreen from './src/screens/ClockScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import RuleScreen from './src/screens/RuleScreen';
+import AppColorPicker from './src/screens/AppColorPicker';
 
 export default function App() {
 	const Stack = createNativeStackNavigator<StackParamList>();
@@ -35,6 +36,7 @@ export default function App() {
 						<Stack.Screen name="Home" component={ClockScreen} />
 						<Stack.Screen name="Settings" component={SettingsScreen} />
 						<Stack.Screen name="Rule" component={RuleScreen} />
+						<Stack.Screen name="ColorPicker" component={AppColorPicker} />
 					</Stack.Navigator>
 				</NavigationContainer>
 			</PersistGate>

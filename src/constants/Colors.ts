@@ -1,9 +1,10 @@
+import React from 'react';
 import { store } from '../redux';
 
-const primaryColor = store.getState().settings.themeColor;
+// var primaryColor = store.getState().settings.themeColor;
 
 export default {
-	themeColor: primaryColor,
+	themeColor: store.getState().settings.themeColor,
 	textColor: '#FFF',
 	screenTextColor: '#333',
 	totalTimerColor: '#FFF8',
