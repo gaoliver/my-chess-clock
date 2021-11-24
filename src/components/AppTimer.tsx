@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
 import { AppBox } from '../components/AppBox';
 import Colors from '../constants/Colors';
 import Timer from '../utils/timer';
 import { fontFamily } from '../utils/types';
+import { Audio } from 'expo-av';
 
 interface IProps {
 	playerTime?: number;
@@ -42,6 +44,8 @@ export const AppTimer = (props: IProps) => {
 		moviments,
 	} = translator(props);
 
+	const [tapSound, setTapSound] = useState<any>();
+
 	const directionTranslator: directionTranslator = {
 		height: direction === 'landscape' ? '45%' : '40%',
 		width: direction === 'landscape' ? '70%' : '90%',
@@ -52,6 +56,22 @@ export const AppTimer = (props: IProps) => {
 				? [{ rotateZ: '180deg' }]
 				: [],
 	};
+
+	const loadSound = async () => {
+		const { sound } = await Audio.Sound.createAsync(
+			require('../../assets/sound/tap-sound-fx.wav')
+		);
+		setTapSound(sound);
+	};
+
+	const playSound = async () => {
+		await tapSound.replayAsync();
+		onPress();
+	};
+
+	useEffect(() => {
+		loadSound();
+	}, []);
 
 	const styles = StyleSheet.create({
 		container: {
@@ -89,7 +109,7 @@ export const AppTimer = (props: IProps) => {
 		<AppBox
 			style={[direction && styles.container]}
 			disabled={disabled}
-			onPress={onPress}
+			onPress={playSound}
 		>
 			<View style={styles.topBottomView}>
 				<Text style={styles.total}>{`total time - ${Timer(totalTime)}`}</Text>
