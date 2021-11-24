@@ -6,6 +6,7 @@ import Colors from '../constants/Colors';
 import Timer from '../utils/timer';
 import { fontFamily } from '../utils/types';
 import { Audio } from 'expo-av';
+import { store } from '../redux';
 
 interface IProps {
 	playerTime?: number;
@@ -65,7 +66,9 @@ export const AppTimer = (props: IProps) => {
 	};
 
 	const playSound = async () => {
-		await tapSound.replayAsync();
+		if (store.getState().settings.playSound) {
+			await tapSound.replayAsync();
+		}
 		onPress();
 	};
 
