@@ -37,6 +37,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const [thisPlay, setThisPlay] = useState(play);
+	const [turn, setTurn] = useState(0);
 	const [thisPlayer1, setThisPlayer1] = useState(player1);
 	const [thisPlayer2, setThisPlayer2] = useState(player2);
 	const [thisTotalTime, setThisTotalTime] = useState(totalTime);
@@ -82,9 +83,11 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		if (thisPlayer1) {
 			setThisPlayer1(false);
 			setThisPlayer2(true);
+			setTurn(1);
 		} else {
 			setThisPlayer1(true);
 			setThisPlayer2(false);
+			setTurn(0);
 		}
 		dispatch(gameActions.setTimerPlayer1(thisPlayer1));
 		dispatch(gameActions.setTimerPlayer2(thisPlayer2));
@@ -122,7 +125,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const startCounter = () => {
-		const timerId = setInterval(() => {
+		let timerId = setInterval(() => {
 			if (thisPlayer1) {
 				setCounterPlayer1((value) => value && value - 1);
 			} else if (thisPlayer2) {
@@ -156,10 +159,12 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const useDelay = () => {
+		console.log(mainRule.delayPlayer1);
 		if (mainRule.delay && thisPlayer1) {
 			setShowCountDown1(true);
 			handleCountDown1();
 			setTimeout(() => {
+				clearInterval(countDown);
 				setShowCountDown1(false);
 				startCounter();
 			}, mainRule.delayPlayer1 * 1000);
@@ -167,6 +172,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			setShowCountDown2(true);
 			handleCountDown2();
 			setTimeout(() => {
+				clearInterval(countDown);
 				setShowCountDown2(false);
 				startCounter();
 			}, mainRule.delayPlayer2 * 1000);
@@ -224,8 +230,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				(movementsPlayer1 > 0 && movementsPlayer2 > 0)) &&
 			counterPlayer1 > 0 &&
 			counterPlayer2 > 0 &&
-			thisStage.maxTime !== 0 &&
-			stageTimeCounter < thisStage.maxTime
+			(thisStage.maxTime === 0 || stageTimeCounter < thisStage.maxTime)
 		) {
 			return;
 		} else if (currentStage < mainRule.stages.length - 1) {
@@ -270,9 +275,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	}, [delayCounter1, delayCounter2]);
 
 	useEffect(() => {
-		clearInterval(timer);
 		if (thisPlay) {
 			if (mainRule.delay) {
+				stopInterval();
 				useDelay();
 			}
 			if (mainRule.increment === 'fischer') {
@@ -281,13 +286,13 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			} else if (mainRule.increment === 'bronstein') {
 				useBronstein();
 				startCounter();
-			} else {
+			} else if (!mainRule.delay) {
 				startCounter();
 			}
 		} else {
 			stopInterval();
 		}
-	}, [thisPlay, thisPlayer1, thisPlayer2]);
+	}, [thisPlay, turn]);
 
 	useEffect(() => {
 		if (thisPlay) {

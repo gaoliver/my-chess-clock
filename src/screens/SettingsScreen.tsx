@@ -70,7 +70,10 @@ const SettingsScreen = ({ navigation }: IProps) => {
 
 	const onPressDelete = () => {
 		let newSettings = settings;
-		newSettings.ruleset.splice(modalRuleId - 1, 1);
+		let ruleIndex = newSettings.ruleset.findIndex(
+			(item) => item.id === modalRuleId
+		);
+		newSettings.ruleset.splice(ruleIndex, 1);
 		dispatch(gameActions.setSettings(newSettings));
 		setModal(false);
 	};
