@@ -8,8 +8,9 @@ import { HsvColor } from 'react-native-color-picker/dist/typeHelpers';
 import { AppHeader } from '../components';
 import { ApplicationState } from '../redux';
 import * as gameActions from '../redux/actions';
+import { NavigationParamsProp } from '../utils/types';
 
-const AppColorPicker = () => {
+const AppColorPicker = ({ navigation }: NavigationParamsProp) => {
 	const { settings } = useSelector((state: ApplicationState) => state);
 	const dispatch = useDispatch();
 	const oldColor = settings.themeColor;
@@ -23,6 +24,7 @@ const AppColorPicker = () => {
 		let newSettings = settings;
 		newSettings.themeColor = color;
 		dispatch(gameActions.setSettings(newSettings));
+		navigation.goBack();
 	};
 
 	return (
