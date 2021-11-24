@@ -111,6 +111,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		dispatch(gameActions.setTotalTime(0));
 
 		setThisPlay(false);
+		setTurn(0);
 		setCurrentStage(0);
 		setCounterPlayer1(settings.mainRule?.stages[currentStage].timePlayer1);
 		setCounterPlayer2(settings.mainRule?.stages[currentStage].timePlayer2);
