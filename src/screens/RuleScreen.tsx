@@ -291,6 +291,10 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			marginBottom: 30,
 			borderRadius: 10,
 		},
+		stageInnerFieldView: {
+			backgroundColor: Colors.sectionBackground,
+			padding: 10,
+		},
 	});
 
 	return (
@@ -424,12 +428,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 								setCounterSameForBoth((value) => (value ? false : true))
 							}
 						/>
-						<View
-							style={{
-								backgroundColor: Colors.sectionBackground,
-								padding: 10,
-							}}
-						>
+						<View style={styles.stageInnerFieldView}>
 							<TimeInput
 								label={counterSameForBoth ? '' : 'Player 1'}
 								interval={counterPlayer1}
@@ -472,12 +471,13 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							}
 						/>
 						{hasTotalTime && (
-							<TextInput
-								style={[styles.input, { marginTop: 10 }]}
-								value={totalTime.toFixed()}
-								onChangeText={(value) => setTotalTime(Number(value))}
-								keyboardType="numeric"
-							/>
+							<View style={styles.stageInnerFieldView}>
+								<TimeInput
+									interval={totalTime}
+									onChangeTime={(value) => setTotalTime(value)}
+									padding
+								/>
+							</View>
 						)}
 					</View>
 					<MainButton
