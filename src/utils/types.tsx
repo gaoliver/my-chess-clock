@@ -11,7 +11,7 @@ export type StackParamList = {
 	Home: undefined;
 	Settings: undefined;
 	ColorPicker: undefined;
-	StageScreen: undefined;
+	StageScreen: { stage?: IStage };
 	Rule: { rule?: IRule };
 };
 
