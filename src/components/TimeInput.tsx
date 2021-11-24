@@ -37,11 +37,13 @@ export const TimeInput = (props: IProps) => {
 		let minutesToSeconds = moment.duration(minutes, 'minutes').asSeconds();
 		let sum = hoursToSeconds + minutesToSeconds + seconds;
 		onChangeTime(sum);
+	};
 
+	React.useEffect(() => {
 		setHours(hoursConvert);
 		setMinutes(minutesConvert);
 		setSeconds(secondsConvert);
-	};
+	}, [interval]);
 
 	const styles = StyleSheet.create({
 		container: {
@@ -77,7 +79,6 @@ export const TimeInput = (props: IProps) => {
 					setHours(Number(value));
 				}}
 				keyboardType="number-pad"
-				returnKeyType="next"
 				onBlur={handleConvertTime}
 				onSubmitEditing={handleConvertTime}
 			/>
@@ -91,7 +92,6 @@ export const TimeInput = (props: IProps) => {
 					setMinutes(Number(value));
 				}}
 				keyboardType="number-pad"
-				returnKeyType="next"
 				onBlur={handleConvertTime}
 				onSubmitEditing={handleConvertTime}
 			/>
@@ -105,7 +105,6 @@ export const TimeInput = (props: IProps) => {
 					setSeconds(Number(value));
 				}}
 				keyboardType="number-pad"
-				returnKeyType="done"
 				onBlur={handleConvertTime}
 				onSubmitEditing={handleConvertTime}
 			/>

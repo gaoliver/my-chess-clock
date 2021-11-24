@@ -61,10 +61,9 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 
 	useEffect(() => {
 		setCounterPlayer1(counterPlayer1);
+		setCounterPlayer2(counterPlayer2);
 		if (counterSameForBoth) {
 			setCounterPlayer2(counterPlayer1);
-		} else {
-			setCounterPlayer2(counterPlayer2);
 		}
 	}, [counterSameForBoth, counterPlayer1, counterPlayer2]);
 
