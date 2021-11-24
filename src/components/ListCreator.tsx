@@ -44,7 +44,7 @@ export const ListCreator = (props: IProps) => {
 			{listData.map((item) => {
 				return (
 					<MainList
-						key={Math.random()}
+						key={Math.random() * 135}
 						name={itemName ? `${itemName} ${item?.id + 1}` : item.name}
 						id={item.id}
 						selected={selected}

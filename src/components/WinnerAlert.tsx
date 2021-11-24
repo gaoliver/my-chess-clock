@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { store } from '../redux';
 import Timer from '../utils/timer';
 import { AppModal } from './AppModal';
+import { Audio } from 'expo-av';
 
 interface IProps {
 	visible?: boolean;
@@ -20,6 +21,28 @@ const translator = (props: IProps) => ({
 
 export const WinnerAlert = (props: IProps) => {
 	const { name, onDismiss, time, visible } = translator(props);
+	const [winSound, setWinSound] = useState<any>();
+
+	const loadSound = async () => {
+		const { sound } = await Audio.Sound.createAsync(
+			require('../../assets/sound/bell-sound-fx.wav')
+		);
+		setWinSound(sound);
+	};
+
+	const playSound = async () => {
+		await winSound.replayAsync();
+	};
+
+	React.useLayoutEffect(() => {
+		loadSound();
+	}, []);
+
+	useEffect(() => {
+		if (visible && store.getState().settings.playSound) {
+			playSound();
+		}
+	}, [visible]);
 
 	const styles = StyleSheet.create({
 		alert: {

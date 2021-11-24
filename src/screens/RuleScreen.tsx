@@ -123,9 +123,11 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	const handleSaveStage = () => {
-		if (selectedStage) {
-			stages[selectedStage] = {
-				id: selectedStage,
+		console.log(selectedStage);
+		if (selectedStage !== undefined) {
+			let stageIndex = stages.findIndex((item) => item.id === selectedStage);
+			stages[stageIndex] = {
+				...stages[stageIndex],
 				maxTime: totalTime,
 				movements: stageMovements,
 				timePlayer1: counterPlayer1,
@@ -147,7 +149,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const handleSave = () => {
 		let newSettings = settings;
 		let saveData: IRule = {
-			id: ruleset.length + 1,
+			id: rule ? rule.id : Math.random() * 135,
 			name: name,
 			delay: hasDelay,
 			delayPlayer1: delayPlayer1,

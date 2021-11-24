@@ -43,13 +43,17 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const [totalTimer, setTotalTimer] = useState<any>();
 	const [timer, setTimer] = useState<any>();
 	const [countDown, setCountDown] = useState<any>();
-	const [movementsPlayer1, setMovementsPlayer1] = useState(0);
-	const [movementsPlayer2, setMovementsPlayer2] = useState(0);
+	const [currentStage, setCurrentStage] = useState(0);
+	const [movementsPlayer1, setMovementsPlayer1] = useState(
+		mainRule.stages[currentStage].movements
+	);
+	const [movementsPlayer2, setMovementsPlayer2] = useState(
+		mainRule.stages[currentStage].movements
+	);
 	const [showCountDown1, setShowCountDown1] = useState(false);
 	const [showCountDown2, setShowCountDown2] = useState(false);
 	const [delayCounter1, setDelayCounter1] = useState(mainRule.delayPlayer1);
 	const [delayCounter2, setDelayCounter2] = useState(mainRule.delayPlayer2);
-	const [currentStage, setCurrentStage] = useState(0);
 	const [stageTimeCounter, setStageTimeCounter] = useState(0);
 	const [winnderModal, setwinnderModal] = useState(false);
 	const [counterPlayer1, setCounterPlayer1] = useState(
@@ -107,8 +111,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		setCurrentStage(0);
 		setCounterPlayer1(settings.mainRule?.stages[currentStage].timePlayer1);
 		setCounterPlayer2(settings.mainRule?.stages[currentStage].timePlayer2);
-		setMovementsPlayer1(0);
-		setMovementsPlayer2(0);
+		setMovementsPlayer1(mainRule.stages[currentStage].movements);
+		setMovementsPlayer2(mainRule.stages[currentStage].movements);
 		setThisTotalTime(0);
 		setStageTimeCounter(0);
 	};
@@ -170,39 +174,54 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const useFisher = () => {
-		if (thisPlayer1 && movementsPlayer1 > 0) {
+		if (
+			thisPlayer1 &&
+			movementsPlayer1 < mainRule.stages[currentStage].movements
+		) {
 			setCounterPlayer1((value) => value + mainRule.fischerPlayer1);
-		} else if (thisPlayer2 && movementsPlayer2 > 0) {
+		} else if (
+			thisPlayer2 &&
+			movementsPlayer2 < mainRule.stages[currentStage].movements
+		) {
 			setCounterPlayer2((value) => value + mainRule.fischerPlayer2);
 		}
 	};
 
 	const useBronstein = () => {
-		if (thisPlayer1 && movementsPlayer1 > 0) {
+		if (
+			thisPlayer1 &&
+			movementsPlayer1 < mainRule.stages[currentStage].movements
+		) {
 			setCounterPlayer1((value) =>
 				Math.min(
 					value + mainRule.bronsteinPlayer1,
-					mainRule.stages[0].timePlayer1
+					mainRule.stages[currentStage].timePlayer1
 				)
 			);
-		} else if (thisPlayer2 && movementsPlayer2 > 0) {
+		} else if (
+			thisPlayer2 &&
+			movementsPlayer2 < mainRule.stages[currentStage].movements
+		) {
 			setCounterPlayer2((value) =>
 				Math.min(
 					value + mainRule.bronsteinPlayer2,
-					mainRule.stages[0].timePlayer2
+					mainRule.stages[currentStage].timePlayer2
 				)
 			);
 		}
 	};
 
-	useEffect(() => onReset(), [isFocused]);
+	useEffect(() => {
+		let update = settings;
+		dispatch(gameActions.setSettings(update));
+		onReset();
+	}, [isFocused]);
 
 	useEffect(() => {
 		let thisStage = mainRule.stages[currentStage];
 		if (
 			(thisStage.movements === 0 ||
-				(movementsPlayer1 < thisStage.movements &&
-					movementsPlayer2 < thisStage.movements)) &&
+				(movementsPlayer1 > 0 && movementsPlayer2 > 0)) &&
 			counterPlayer1 > 0 &&
 			counterPlayer2 > 0 &&
 			thisStage.maxTime !== 0 &&
@@ -213,13 +232,13 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			setCurrentStage((value) => value + 1);
 			setCounterPlayer1(thisStage.timePlayer1);
 			setCounterPlayer2(thisStage.timePlayer2);
-			setMovementsPlayer1(0);
-			setMovementsPlayer2(0);
+			setMovementsPlayer1(mainRule.stages[currentStage].movements);
+			setMovementsPlayer2(mainRule.stages[currentStage].movements);
 			setStageTimeCounter(0);
 		} else if (currentStage >= mainRule.stages.length - 1) {
-			setwinnderModal(true);
 			stopInterval();
 			handlePlayPause();
+			setwinnderModal(true);
 		}
 	}, [
 		movementsPlayer1,
@@ -233,9 +252,10 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		if (!thisPlay) return;
 		if (mainRule.stages[currentStage].movements === 0) return;
 		if (thisPlayer1) {
-			setMovementsPlayer1((value) => value + 1);
-		} else if (thisPlayer2) {
-			setMovementsPlayer2((value) => value + 1);
+			return setMovementsPlayer1((value) => value - 0.5);
+		}
+		if (thisPlayer2) {
+			return setMovementsPlayer2((value) => value - 1);
 		}
 	}, [thisPlayer1, thisPlayer2]);
 
@@ -250,6 +270,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	}, [delayCounter1, delayCounter2]);
 
 	useEffect(() => {
+		clearInterval(timer);
 		if (thisPlay) {
 			if (mainRule.delay) {
 				useDelay();
@@ -302,7 +323,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				playerTime={translator.showPlayer2}
 				totalTime={thisTotalTime}
 				stage={currentStage + 1}
-				moviments={mainRule.stages[currentStage].movements - movementsPlayer1}
+				moviments={movementsPlayer1}
 				disabled={!thisPlayer2}
 				onPress={handleTapPlayer}
 			/>
@@ -333,13 +354,13 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				playerTime={translator.showPlayer1}
 				totalTime={thisTotalTime}
 				stage={currentStage + 1}
-				moviments={mainRule.stages[currentStage].movements - movementsPlayer2}
+				moviments={movementsPlayer2}
 				onPress={handleTapPlayer}
 			/>
 			<WinnerAlert
 				visible={winnderModal}
 				onDismiss={() => setwinnderModal(false)}
-				name={thisPlayer1 ? 'Player 1' : 'Player 2'}
+				name={thisPlayer1 ? 'Player 2' : 'Player 1'}
 				time={thisTotalTime}
 			/>
 		</SafeAreaView>

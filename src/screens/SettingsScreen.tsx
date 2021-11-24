@@ -15,6 +15,7 @@ import { ApplicationState, store } from '../redux';
 import Colors from '../constants/Colors';
 import { NavigationProp } from '../utils/types';
 import { useIsFocused } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface IProps {
 	navigation: NavigationProp;
@@ -95,6 +96,10 @@ const SettingsScreen = ({ navigation }: IProps) => {
 			marginVertical: 20,
 		},
 	});
+
+	// useEffect(() => {
+	// 	AsyncStorage.clear();
+	// }, []);
 
 	return (
 		<Container>
