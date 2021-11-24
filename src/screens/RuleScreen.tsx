@@ -96,8 +96,9 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	const onPressDelete = () => {
+		let stageIndex = stages.findIndex((item) => item.id === selectedStage);
 		if (selectedStage) {
-			stages.splice(selectedStage - 1, 1);
+			stages.splice(stageIndex - 1, 1);
 		}
 		setStageModalOptions(false);
 	};

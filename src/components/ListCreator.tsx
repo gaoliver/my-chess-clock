@@ -41,11 +41,11 @@ export const ListCreator = (props: IProps) => {
 				<SectionTitle text={title} />
 				<MainButton label={buttonTitle} onPress={onPressButton} />
 			</View>
-			{listData.map((item) => {
+			{listData.map((item, index) => {
 				return (
 					<MainList
 						key={Math.random() * 135}
-						name={itemName ? `${itemName} ${item?.id + 1}` : item.name}
+						name={itemName ? `${itemName} ${index + 1}` : item.name}
 						id={item.id}
 						selected={selected}
 						onPress={() => onPressItem(item?.id)}
