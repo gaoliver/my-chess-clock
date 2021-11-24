@@ -41,8 +41,6 @@ export const TimeInput = (props: IProps) => {
 		setHours(hoursConvert);
 		setMinutes(minutesConvert);
 		setSeconds(secondsConvert);
-
-		console.log(sum);
 	};
 
 	const hoursRef = useRef<any>(null);
