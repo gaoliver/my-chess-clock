@@ -7,8 +7,8 @@ import * as gameActions from '../redux/actions';
 import { AlertModal, AppHeader, AppSwitcher, ListCreator } from '../components';
 import { ApplicationState } from '../redux';
 import Colors from '../constants/Colors';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp } from '../utils/types';
+import { useIsFocused } from '@react-navigation/native';
 
 interface IProps {
 	navigation: NavigationProp;
@@ -17,6 +17,7 @@ interface IProps {
 const SettingsScreen = ({ navigation }: IProps) => {
 	const dispatch = useDispatch();
 	const settings = useSelector((state: ApplicationState) => state.settings);
+	const isFocused = useIsFocused();
 	const [translator, setTranslator] = useState(settings);
 	const [modal, setModal] = useState(false);
 	const [modalRuleId, setModalRuleId] = useState(0);
@@ -60,13 +61,21 @@ const SettingsScreen = ({ navigation }: IProps) => {
 		}
 	};
 
+	const onPressDelete = () => {
+		let newSettings = settings;
+		newSettings.ruleset.splice(modalRuleId - 1, 1);
+		dispatch(gameActions.setSettings(newSettings));
+		setModal(false);
+	};
+
 	useEffect(() => {
 		dispatch(gameActions.setSettings(translator));
 	}, [translator]);
 
 	useEffect(() => {
-		// AsyncStorage.clear();
-	}, []);
+		let update = settings;
+		dispatch(gameActions.setSettings(update));
+	}, [isFocused]);
 
 	const styles = StyleSheet.create({
 		screenContent: {
@@ -91,6 +100,7 @@ const SettingsScreen = ({ navigation }: IProps) => {
 					listData={translator.ruleset}
 					onPressItem={handleOpenModal}
 					selected={translator.mainRule?.id}
+					onPressButton={() => navigation.navigate('Rule', { rule: undefined })}
 				/>
 				<View style={styles.divisor} />
 				<AppSwitcher
@@ -108,6 +118,7 @@ const SettingsScreen = ({ navigation }: IProps) => {
 					onDismiss={() => setModal(false)}
 					onPressSet={() => onSetRule(modalRuleId)}
 					onPressEdit={onEditRule}
+					onPressRemove={onPressDelete}
 				/>
 			</Content>
 		</Container>

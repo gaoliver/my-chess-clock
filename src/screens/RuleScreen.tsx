@@ -1,7 +1,7 @@
 import { Container, Content } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
 	AlertModal,
@@ -17,10 +17,13 @@ import {
 import Colors from '../constants/Colors';
 import { ApplicationState } from '../redux';
 import { IRule, IStage, NavigationParamsProp } from '../utils/types';
+import * as gameActions from '../redux/actions';
 
 const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const { rule } = route.params;
-	const { ruleset } = useSelector((state: ApplicationState) => state.settings);
+	const { settings } = useSelector((state: ApplicationState) => state);
+	const ruleset = settings.ruleset;
+	const dispatch = useDispatch();
 	const [stages, setStages] = useState<Array<IStage>>([]);
 	const [hasDelay, setHasDelay] = useState<boolean>(false);
 	const [hasIncrement, setHasIncrement] = useState<boolean>(false);
@@ -153,9 +156,15 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			bronsteinPlayer2: incrementType === 'bronstein' ? incrementPlayer2 : 0,
 			stages: stages,
 		};
-
-		console.log(saveData);
-		// navigation.goBack();
+		if (rule) {
+			let ruleIndex = ruleset.findIndex((thisRule) => thisRule.id === rule.id);
+			ruleset[ruleIndex] = saveData;
+			settings.ruleset = ruleset;
+		} else {
+			settings.ruleset.push(saveData);
+		}
+		dispatch(gameActions.setSettings(settings));
+		navigation.goBack();
 	};
 
 	useEffect(() => {

@@ -10,7 +10,7 @@ export type NavigationParamsProp = NativeStackScreenProps<
 export type StackParamList = {
 	Home: undefined;
 	Settings: undefined;
-	Rule: { rule: IRule };
+	Rule: { rule?: IRule };
 };
 
 export enum fontFamily {
