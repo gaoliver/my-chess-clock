@@ -12,7 +12,7 @@ import PauseIcon from '../../assets/icons/pause.svg';
 import SettingsIcon from '../../assets/icons/settings.svg';
 import RefreshIcon from '../../assets/icons/refresh.svg';
 import { ApplicationState } from '../redux';
-import { NavigationParamsProp } from '../utils/types';
+import { IStage, NavigationParamsProp } from '../utils/types';
 import Colors from '../constants/Colors';
 
 const ClockScreen = ({ navigation }: NavigationParamsProp) => {
@@ -70,7 +70,10 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const getWinner =
-		counterPlayer1 === 0 || movementsPlayer1 === 0 ? 'Player 2' : 'Player 2';
+		counterPlayer1 === 0 ||
+		(mainRule.stages[currentStage].movements > 0 && movementsPlayer1 === 1)
+			? 'Player 2'
+			: 'Player 1';
 
 	const landscape = (direction: string) => {
 		let landscape = settings.landscape;
@@ -215,6 +218,15 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		}
 	};
 
+	const goToNextStage = (thisStage: IStage) => {
+		setCurrentStage((value) => value + 1);
+		setCounterPlayer1(thisStage.timePlayer1);
+		setCounterPlayer2(thisStage.timePlayer2);
+		setMovementsPlayer1(mainRule.stages[currentStage].movements);
+		setMovementsPlayer2(mainRule.stages[currentStage].movements);
+		setStageTimeCounter(0);
+	};
+
 	useEffect(() => {
 		setMainRule({ ...settings.mainRule });
 		onReset();
@@ -222,6 +234,11 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	useEffect(() => {
 		let thisStage = mainRule.stages[currentStage];
+
+		if (thisStage.maxTime > 0 && stageTimeCounter === thisStage.maxTime) {
+			return goToNextStage(thisStage);
+		}
+
 		if (
 			(thisStage.movements > 0 &&
 				movementsPlayer1 <= thisStage.movements &&
@@ -229,19 +246,12 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				movementsPlayer2 <= thisStage.movements &&
 				movementsPlayer2 > 0 &&
 				counterPlayer1 > 0 &&
-				counterPlayer2 > 0 &&
-				thisStage.maxTime > 0 &&
-				stageTimeCounter < thisStage.maxTime) ||
+				counterPlayer2 > 0) ||
 			(thisStage.movements === 0 && counterPlayer1 > 0 && counterPlayer2 > 0)
 		) {
 			return;
 		} else if (currentStage < mainRule.stages.length - 1) {
-			setCurrentStage((value) => value + 1);
-			setCounterPlayer1(thisStage.timePlayer1);
-			setCounterPlayer2(thisStage.timePlayer2);
-			setMovementsPlayer1(mainRule.stages[currentStage].movements);
-			setMovementsPlayer2(mainRule.stages[currentStage].movements);
-			setStageTimeCounter(0);
+			goToNextStage(thisStage);
 		} else if (currentStage >= mainRule.stages.length - 1) {
 			stopInterval();
 			handlePlayPause();
