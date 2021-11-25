@@ -118,6 +118,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		setCounterPlayer2(settings.mainRule?.stages[currentStage].timePlayer2);
 		setMovementsPlayer1(settings.mainRule.stages[currentStage].movements);
 		setMovementsPlayer2(settings.mainRule.stages[currentStage].movements);
+		setDelayCounter1(settings.mainRule.delayPlayer1);
+		setDelayCounter2(settings.mainRule.delayPlayer2);
 		setThisTotalTime(0);
 		setStageTimeCounter(0);
 	};
