@@ -231,7 +231,6 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		setMovementsPlayer1(settings.mainRule.stages[currentStage].movements);
 		setMovementsPlayer2(settings.mainRule.stages[currentStage].movements);
 		setStageTimeCounter(0);
-		console.log(currentStage, mainRule.stages[currentStage]);
 	}, [currentStage]);
 
 	useEffect(() => {
