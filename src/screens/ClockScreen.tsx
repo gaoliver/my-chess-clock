@@ -22,7 +22,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		(state: ApplicationState) => state
 	);
 
-	const mainRule = {
+	const [mainRule, setMainRule] = useState({
 		id: settings.mainRule.id,
 		name: settings.mainRule.name,
 		stages: settings.mainRule.stages,
@@ -34,7 +34,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		fischerPlayer2: settings.mainRule.fischerPlayer2,
 		bronsteinPlayer1: settings.mainRule.bronsteinPlayer1,
 		bronsteinPlayer2: settings.mainRule.bronsteinPlayer2,
-	};
+	});
 
 	const [thisPlay, setThisPlay] = useState(play);
 	const [turn, setTurn] = useState(0);
@@ -69,6 +69,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		showPlayer2: showCountDown2 ? delayCounter2 : counterPlayer2,
 	};
 
+	const getWinner =
+		counterPlayer1 === 0 || movementsPlayer1 === 0 ? 'Player 2' : 'Player 2';
+
 	const landscape = (direction: string) => {
 		let landscape = settings.landscape;
 		if (landscape) {
@@ -83,11 +86,11 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		if (thisPlayer1) {
 			setThisPlayer1(false);
 			setThisPlayer2(true);
-			setTurn(1);
+			setTurn(2);
 		} else {
 			setThisPlayer1(true);
 			setThisPlayer2(false);
-			setTurn(0);
+			setTurn(1);
 		}
 		dispatch(gameActions.setTimerPlayer1(thisPlayer1));
 		dispatch(gameActions.setTimerPlayer2(thisPlayer2));
@@ -105,18 +108,13 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const onReset = () => {
-		dispatch(gameActions.setPlayPause(false));
-		dispatch(gameActions.setTimerPlayer1(0));
-		dispatch(gameActions.setTimerPlayer2(0));
-		dispatch(gameActions.setTotalTime(0));
-
 		setThisPlay(false);
 		setTurn(0);
 		setCurrentStage(0);
 		setCounterPlayer1(settings.mainRule?.stages[currentStage].timePlayer1);
 		setCounterPlayer2(settings.mainRule?.stages[currentStage].timePlayer2);
-		setMovementsPlayer1(mainRule.stages[currentStage].movements);
-		setMovementsPlayer2(mainRule.stages[currentStage].movements);
+		setMovementsPlayer1(settings.mainRule.stages[currentStage].movements);
+		setMovementsPlayer2(settings.mainRule.stages[currentStage].movements);
 		setThisTotalTime(0);
 		setStageTimeCounter(0);
 	};
@@ -218,19 +216,23 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	useEffect(() => {
-		let update = settings;
-		dispatch(gameActions.setSettings(update));
+		setMainRule({ ...settings.mainRule });
 		onReset();
 	}, [isFocused]);
 
 	useEffect(() => {
 		let thisStage = mainRule.stages[currentStage];
 		if (
-			(thisStage.movements === 0 ||
-				(movementsPlayer1 > 0 && movementsPlayer2 > 0)) &&
-			counterPlayer1 > 0 &&
-			counterPlayer2 > 0 &&
-			(thisStage.maxTime === 0 || stageTimeCounter < thisStage.maxTime)
+			(thisStage.movements > 0 &&
+				movementsPlayer1 <= thisStage.movements &&
+				movementsPlayer1 > 0 &&
+				movementsPlayer2 <= thisStage.movements &&
+				movementsPlayer2 > 0 &&
+				counterPlayer1 > 0 &&
+				counterPlayer2 > 0 &&
+				thisStage.maxTime > 0 &&
+				stageTimeCounter < thisStage.maxTime) ||
+			(thisStage.movements === 0 && counterPlayer1 > 0 && counterPlayer2 > 0)
 		) {
 			return;
 		} else if (currentStage < mainRule.stages.length - 1) {
@@ -365,7 +367,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			<WinnerAlert
 				visible={winnderModal}
 				onDismiss={() => setwinnderModal(false)}
-				name={thisPlayer1 ? 'Player 2' : 'Player 1'}
+				name={getWinner}
 				time={thisTotalTime}
 			/>
 		</SafeAreaView>
