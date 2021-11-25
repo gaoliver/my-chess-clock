@@ -1,6 +1,6 @@
 import { ISettings } from '../utils/types';
 import { AppActions } from './actions';
-import PatternRule from '../json/PatternRule.json';
+import PatternRule from '../json/PatternRule';
 
 type initialStateModel = {
 	player1: boolean;
