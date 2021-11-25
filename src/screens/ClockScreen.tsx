@@ -120,6 +120,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		setMovementsPlayer2(settings.mainRule.stages[currentStage].movements);
 		setDelayCounter1(settings.mainRule.delayPlayer1);
 		setDelayCounter2(settings.mainRule.delayPlayer2);
+		setMainRule(settings.mainRule);
 		setThisTotalTime(0);
 		setStageTimeCounter(0);
 	};
@@ -220,14 +221,18 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		}
 	};
 
-	const goToNextStage = (thisStage: IStage) => {
+	const goToNextStage = () => {
 		setCurrentStage((value) => value + 1);
-		setCounterPlayer1(thisStage.timePlayer1);
-		setCounterPlayer2(thisStage.timePlayer2);
-		setMovementsPlayer1(mainRule.stages[currentStage].movements);
-		setMovementsPlayer2(mainRule.stages[currentStage].movements);
-		setStageTimeCounter(0);
 	};
+
+	useEffect(() => {
+		setCounterPlayer1(settings.mainRule.stages[currentStage].timePlayer1);
+		setCounterPlayer2(settings.mainRule.stages[currentStage].timePlayer2);
+		setMovementsPlayer1(settings.mainRule.stages[currentStage].movements);
+		setMovementsPlayer2(settings.mainRule.stages[currentStage].movements);
+		setStageTimeCounter(0);
+		console.log(currentStage, mainRule.stages[currentStage]);
+	}, [currentStage]);
 
 	useEffect(() => {
 		setMainRule({ ...settings.mainRule });
@@ -238,7 +243,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		let thisStage = mainRule.stages[currentStage];
 
 		if (thisStage.maxTime > 0 && stageTimeCounter === thisStage.maxTime) {
-			return goToNextStage(thisStage);
+			return goToNextStage();
 		}
 
 		if (
@@ -253,7 +258,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		) {
 			return;
 		} else if (currentStage < mainRule.stages.length - 1) {
-			goToNextStage(thisStage);
+			goToNextStage();
 		} else if (currentStage >= mainRule.stages.length - 1) {
 			stopInterval();
 			handlePlayPause();
