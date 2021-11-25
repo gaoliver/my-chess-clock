@@ -199,7 +199,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const useBronstein = () => {
 		if (
 			thisPlayer1 &&
-			movementsPlayer1 < mainRule.stages[currentStage].movements
+			movementsPlayer1 <= mainRule.stages[currentStage].movements
 		) {
 			setCounterPlayer1((value) =>
 				Math.min(
@@ -209,7 +209,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			);
 		} else if (
 			thisPlayer2 &&
-			movementsPlayer2 < mainRule.stages[currentStage].movements
+			movementsPlayer2 <= mainRule.stages[currentStage].movements
 		) {
 			setCounterPlayer2((value) =>
 				Math.min(
