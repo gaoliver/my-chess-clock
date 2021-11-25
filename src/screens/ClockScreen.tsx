@@ -185,12 +185,12 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const useFisher = () => {
 		if (
 			thisPlayer1 &&
-			movementsPlayer1 < mainRule.stages[currentStage].movements
+			movementsPlayer1 <= mainRule.stages[currentStage].movements
 		) {
 			setCounterPlayer1((value) => value + mainRule.fischerPlayer1);
 		} else if (
 			thisPlayer2 &&
-			movementsPlayer2 < mainRule.stages[currentStage].movements
+			movementsPlayer2 <= mainRule.stages[currentStage].movements
 		) {
 			setCounterPlayer2((value) => value + mainRule.fischerPlayer2);
 		}
