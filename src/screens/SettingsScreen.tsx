@@ -122,11 +122,19 @@ const SettingsScreen = ({ navigation }: IProps) => {
 					value={translator.playSound}
 					onValueChange={toggleSound}
 				/>
+				<View style={styles.divisor} />
 				<MainButton
 					label="Set new theme color"
 					onPress={() => navigation.navigate('ColorPicker')}
 					center
 					fullWidth
+				/>
+				<MainButton
+					label="Reset settings"
+					onPress={() => dispatch(gameActions.setRestore())}
+					center
+					fullWidth
+					style={{ marginTop: 10 }}
 				/>
 				<AlertModal
 					visible={modal}

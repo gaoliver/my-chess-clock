@@ -60,6 +60,8 @@ export const settingsReducer = (
 				...state,
 				play: action.payload,
 			};
+		case 'SET_RESTORE':
+			return (state = initialState);
 		default:
 			return state;
 	}
