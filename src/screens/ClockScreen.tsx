@@ -15,6 +15,24 @@ import { ApplicationState } from '../redux';
 import { IStage, NavigationParamsProp } from '../utils/types';
 import Colors from '../constants/Colors';
 
+interface IState {
+	thisPlay: boolean;
+	thisPlayer1: boolean;
+	thisPlayer2: boolean;
+	thisTotalTime: number;
+	turn: number;
+	stageTimeCounter: number;
+	winnderModal: boolean;
+	showCountDown1: boolean;
+	showCountDown2: boolean;
+	movementsPlayer1: number;
+	movementsPlayer2: number;
+	counterPlayer1: number;
+	counterPlayer2: number;
+	delayCounter1: number;
+	delayCounter2: number;
+}
+
 const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const isFocused = useIsFocused();
 	const dispatch = useDispatch();
@@ -22,6 +40,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		(state: ApplicationState) => state
 	);
 
+	const [currentStage, setCurrentStage] = useState(0);
 	const [mainRule, setMainRule] = useState({
 		id: settings.mainRule.id,
 		name: settings.mainRule.name,
@@ -35,43 +54,42 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		bronsteinPlayer1: settings.mainRule.bronsteinPlayer1,
 		bronsteinPlayer2: settings.mainRule.bronsteinPlayer2,
 	});
-
-	const [thisPlay, setThisPlay] = useState(play);
-	const [turn, setTurn] = useState(0);
-	const [thisPlayer1, setThisPlayer1] = useState(player1);
-	const [thisPlayer2, setThisPlayer2] = useState(player2);
-	const [thisTotalTime, setThisTotalTime] = useState(totalTime);
-	const [totalTimer, setTotalTimer] = useState<any>();
-	const [timer, setTimer] = useState<any>();
-	const [countDown, setCountDown] = useState<any>();
-	const [currentStage, setCurrentStage] = useState(0);
-	const [movementsPlayer1, setMovementsPlayer1] = useState(
-		mainRule.stages[currentStage].movements
-	);
-	const [movementsPlayer2, setMovementsPlayer2] = useState(
-		mainRule.stages[currentStage].movements
-	);
-	const [showCountDown1, setShowCountDown1] = useState(false);
-	const [showCountDown2, setShowCountDown2] = useState(false);
-	const [delayCounter1, setDelayCounter1] = useState(mainRule.delayPlayer1);
-	const [delayCounter2, setDelayCounter2] = useState(mainRule.delayPlayer2);
-	const [stageTimeCounter, setStageTimeCounter] = useState(0);
-	const [winnderModal, setwinnderModal] = useState(false);
-	const [counterPlayer1, setCounterPlayer1] = useState(
-		settings.mainRule?.stages[currentStage].timePlayer1
-	);
-	const [counterPlayer2, setCounterPlayer2] = useState(
-		settings.mainRule?.stages[currentStage].timePlayer2
-	);
+	const [timers, setTimers] = useState<any>({
+		totalTimer: undefined,
+		timer: undefined,
+		countDown: undefined,
+	});
+	const [state, setState] = useState<IState>({
+		thisPlay: play,
+		thisPlayer1: player1,
+		thisPlayer2: player2,
+		thisTotalTime: totalTime,
+		turn: 0,
+		stageTimeCounter: 0,
+		winnderModal: false,
+		showCountDown1: false,
+		showCountDown2: false,
+		movementsPlayer1: mainRule.stages[currentStage].movements,
+		movementsPlayer2: mainRule.stages[currentStage].movements,
+		counterPlayer1: mainRule.stages[currentStage].timePlayer1,
+		counterPlayer2: mainRule.stages[currentStage].timePlayer2,
+		delayCounter1: mainRule.delayPlayer1,
+		delayCounter2: mainRule.delayPlayer2,
+	});
 
 	const translator = {
-		showPlayer1: showCountDown1 ? delayCounter1 : counterPlayer1,
-		showPlayer2: showCountDown2 ? delayCounter2 : counterPlayer2,
+		showPlayer1: state.showCountDown1
+			? state.delayCounter1
+			: state.counterPlayer1,
+		showPlayer2: state.showCountDown2
+			? state.delayCounter2
+			: state.counterPlayer2,
 	};
 
 	const getWinner =
-		counterPlayer1 === 0 ||
-		(mainRule.stages[currentStage].movements > 0 && movementsPlayer1 === 1)
+		state.counterPlayer1 === 0 ||
+		(mainRule.stages[currentStage].movements > 0 &&
+			state.movementsPlayer1 === 1)
 			? 'Player 2'
 			: 'Player 1';
 
@@ -85,44 +103,61 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const handleTapPlayer = () => {
-		clearInterval(timer);
-		if (thisPlayer1) {
-			setThisPlayer1(false);
-			setThisPlayer2(true);
-			setTurn(2);
+		clearInterval(timers.timer);
+		if (state.thisPlayer1) {
+			setState({
+				...state,
+				turn: 2,
+				thisPlayer1: false,
+				thisPlayer2: true,
+			});
 		} else {
-			setThisPlayer1(true);
-			setThisPlayer2(false);
-			setTurn(1);
+			setState({
+				...state,
+				turn: 1,
+				thisPlayer1: true,
+				thisPlayer2: false,
+			});
 		}
-		dispatch(gameActions.setTimerPlayer1(thisPlayer1));
-		dispatch(gameActions.setTimerPlayer2(thisPlayer2));
+		dispatch(gameActions.setTimerPlayer1(state.thisPlayer1));
+		dispatch(gameActions.setTimerPlayer2(state.thisPlayer2));
 	};
 
 	const handlePlayPause = () => {
-		if (thisPlay) {
-			setThisPlay(false);
-			dispatch(gameActions.setTimerPlayer1(counterPlayer1));
-			dispatch(gameActions.setTimerPlayer2(counterPlayer2));
+		if (state.thisPlay) {
+			setState({
+				...state,
+				thisPlay: false,
+			});
+			dispatch(gameActions.setTimerPlayer1(state.counterPlayer1));
+			dispatch(gameActions.setTimerPlayer2(state.counterPlayer2));
 		} else {
-			setThisPlay(true);
+			setState({
+				...state,
+				thisPlay: true,
+			});
 		}
-		dispatch(gameActions.setPlayPause(thisPlay));
+		dispatch(gameActions.setPlayPause(state.thisPlay));
 	};
 
 	const onReset = () => {
-		setThisPlay(false);
-		setTurn(0);
-		setCurrentStage(0);
-		setCounterPlayer1(settings.mainRule?.stages[currentStage].timePlayer1);
-		setCounterPlayer2(settings.mainRule?.stages[currentStage].timePlayer2);
-		setMovementsPlayer1(settings.mainRule.stages[currentStage].movements);
-		setMovementsPlayer2(settings.mainRule.stages[currentStage].movements);
-		setDelayCounter1(settings.mainRule.delayPlayer1);
-		setDelayCounter2(settings.mainRule.delayPlayer2);
-		setMainRule(settings.mainRule);
-		setThisTotalTime(0);
-		setStageTimeCounter(0);
+		setState({
+			thisPlay: false,
+			thisPlayer1: player1,
+			thisPlayer2: player2,
+			thisTotalTime: totalTime,
+			turn: 0,
+			stageTimeCounter: 0,
+			winnderModal: false,
+			showCountDown1: false,
+			showCountDown2: false,
+			movementsPlayer1: mainRule.stages[currentStage].movements,
+			movementsPlayer2: mainRule.stages[currentStage].movements,
+			counterPlayer1: mainRule.stages[currentStage].timePlayer1,
+			counterPlayer2: mainRule.stages[currentStage].timePlayer2,
+			delayCounter1: mainRule.delayPlayer1,
+			delayCounter2: mainRule.delayPlayer2,
+		});
 	};
 
 	const onSettings = () => {
@@ -131,53 +166,87 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	const startCounter = () => {
 		let timerId = setInterval(() => {
-			if (thisPlayer1) {
-				setCounterPlayer1((value) => value && value - 1);
-			} else if (thisPlayer2) {
-				setCounterPlayer2((value) => value && value - 1);
+			if (state.thisPlayer1) {
+				setState((prevState) => {
+					return {
+						...prevState,
+						counterPlayer1: prevState.counterPlayer1 - 1,
+					};
+				});
+			} else if (state.thisPlayer2) {
+				setState((prevState) => {
+					return {
+						...prevState,
+						counterPlayer2: prevState.counterPlayer2 - 1,
+					};
+				});
 			}
 		}, 1000);
-		setTimer(timerId);
+		timers.timer = timerId;
 	};
 
 	const handleCountDown1 = () => {
 		const delayShow = setInterval(() => {
-			if (delayCounter1 > 0) {
-				setDelayCounter1((value) => value - 1);
+			if (state.delayCounter1 > 0) {
+				setState({
+					...state,
+					delayCounter1: state.delayCounter1 - 1,
+				});
 			}
 		}, 1000);
-		setCountDown(delayShow);
+		setTimers({
+			...timers,
+			countDown: delayShow,
+		});
 	};
 
 	const handleCountDown2 = () => {
 		const delayShow = setInterval(() => {
-			if (delayCounter2 > 0) {
-				setDelayCounter2((value) => value - 1);
+			if (state.delayCounter2 > 0) {
+				setState({
+					...state,
+					counterPlayer2: state.counterPlayer2 - 1,
+				});
 			}
 		}, 1000);
-		setCountDown(delayShow);
+		setTimers({
+			...timers,
+			countDown: delayShow,
+		});
 	};
 
 	const stopInterval = () => {
-		clearInterval(countDown);
-		clearInterval(timer);
+		clearInterval(timers.countDown);
+		clearInterval(timers.timer);
 	};
 
 	const useDelay = () => {
-		if (mainRule.delay && thisPlayer1) {
-			setShowCountDown1(true);
+		if (mainRule.delay && state.thisPlayer1) {
+			setState({
+				...state,
+				showCountDown1: true,
+			});
 			handleCountDown1();
 			setTimeout(() => {
-				clearInterval(countDown);
-				setShowCountDown1(false);
+				setState({
+					...state,
+					showCountDown1: false,
+				});
+				clearInterval(timers.countDown);
 				startCounter();
 			}, mainRule.delayPlayer1 * 1000);
-		} else if (mainRule.delay && thisPlayer2) {
-			setShowCountDown2(true);
+		} else if (mainRule.delay && state.thisPlayer2) {
+			setState({
+				...state,
+				showCountDown2: true,
+			});
 			handleCountDown2();
 			setTimeout(() => {
-				clearInterval(countDown);
-				setShowCountDown2(false);
+				setState({
+					...state,
+					showCountDown2: false,
+				});
+				clearInterval(timers.countDown);
 				startCounter();
 			}, mainRule.delayPlayer2 * 1000);
 		}
@@ -185,39 +254,47 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	const useFisher = () => {
 		if (
-			thisPlayer1 &&
-			movementsPlayer1 <= mainRule.stages[currentStage].movements
+			state.thisPlayer1 &&
+			state.movementsPlayer1 <= mainRule.stages[currentStage].movements
 		) {
-			setCounterPlayer1((value) => value + mainRule.fischerPlayer1);
+			setState({
+				...state,
+				counterPlayer1: state.counterPlayer1 + mainRule.fischerPlayer1,
+			});
 		} else if (
-			thisPlayer2 &&
-			movementsPlayer2 <= mainRule.stages[currentStage].movements
+			state.thisPlayer2 &&
+			state.movementsPlayer2 <= mainRule.stages[currentStage].movements
 		) {
-			setCounterPlayer2((value) => value + mainRule.fischerPlayer2);
+			setState({
+				...state,
+				counterPlayer2: state.counterPlayer1 + mainRule.fischerPlayer2,
+			});
 		}
 	};
 
 	const useBronstein = () => {
 		if (
-			thisPlayer1 &&
-			movementsPlayer1 <= mainRule.stages[currentStage].movements
+			state.thisPlayer1 &&
+			state.movementsPlayer1 <= mainRule.stages[currentStage].movements
 		) {
-			setCounterPlayer1((value) =>
-				Math.min(
-					value + mainRule.bronsteinPlayer1,
+			setState({
+				...state,
+				counterPlayer1: Math.min(
+					state.counterPlayer1 + mainRule.bronsteinPlayer1,
 					mainRule.stages[currentStage].timePlayer1
-				)
-			);
+				),
+			});
 		} else if (
-			thisPlayer2 &&
-			movementsPlayer2 <= mainRule.stages[currentStage].movements
+			state.thisPlayer2 &&
+			state.movementsPlayer2 <= mainRule.stages[currentStage].movements
 		) {
-			setCounterPlayer2((value) =>
-				Math.min(
-					value + mainRule.bronsteinPlayer2,
+			setState({
+				...state,
+				counterPlayer2: Math.min(
+					state.counterPlayer2 + mainRule.bronsteinPlayer2,
 					mainRule.stages[currentStage].timePlayer2
-				)
-			);
+				),
+			});
 		}
 	};
 
@@ -226,11 +303,14 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	useEffect(() => {
-		setCounterPlayer1(settings.mainRule.stages[currentStage].timePlayer1);
-		setCounterPlayer2(settings.mainRule.stages[currentStage].timePlayer2);
-		setMovementsPlayer1(settings.mainRule.stages[currentStage].movements);
-		setMovementsPlayer2(settings.mainRule.stages[currentStage].movements);
-		setStageTimeCounter(0);
+		setState({
+			...state,
+			counterPlayer1: settings.mainRule.stages[currentStage].timePlayer1,
+			counterPlayer2: settings.mainRule.stages[currentStage].timePlayer2,
+			movementsPlayer1: settings.mainRule.stages[currentStage].movements,
+			movementsPlayer2: settings.mainRule.stages[currentStage].movements,
+			stageTimeCounter: 0,
+		});
 	}, [currentStage]);
 
 	useEffect(() => {
@@ -241,59 +321,77 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	useEffect(() => {
 		let thisStage = mainRule.stages[currentStage];
 
-		if (thisStage.maxTime > 0 && stageTimeCounter === thisStage.maxTime) {
+		if (thisStage.maxTime > 0 && state.stageTimeCounter === thisStage.maxTime) {
 			return goToNextStage();
 		}
 
 		if (
 			(thisStage.movements > 0 &&
-				movementsPlayer1 <= thisStage.movements &&
-				movementsPlayer1 > 0 &&
-				movementsPlayer2 <= thisStage.movements &&
-				movementsPlayer2 > 0 &&
-				counterPlayer1 > 0 &&
-				counterPlayer2 > 0) ||
-			(thisStage.movements === 0 && counterPlayer1 > 0 && counterPlayer2 > 0)
+				state.movementsPlayer1 <= thisStage.movements &&
+				state.movementsPlayer1 > 0 &&
+				state.movementsPlayer2 <= thisStage.movements &&
+				state.movementsPlayer2 > 0 &&
+				state.counterPlayer1 > 0 &&
+				state.counterPlayer2 > 0) ||
+			(thisStage.movements === 0 &&
+				state.counterPlayer1 > 0 &&
+				state.counterPlayer2 > 0)
 		) {
 			return;
 		} else if (currentStage < mainRule.stages.length - 1) {
 			goToNextStage();
 		} else if (currentStage >= mainRule.stages.length - 1) {
 			stopInterval();
-			handlePlayPause();
-			setwinnderModal(true);
+			timers.timer = undefined;
+			setState({
+				...state,
+				thisPlay: false,
+				winnderModal: true,
+			});
 		}
 	}, [
-		movementsPlayer1,
-		movementsPlayer2,
-		counterPlayer1,
-		counterPlayer2,
-		stageTimeCounter,
+		state.movementsPlayer1,
+		state.movementsPlayer2,
+		state.counterPlayer1,
+		state.counterPlayer2,
+		state.stageTimeCounter,
 	]);
 
 	useEffect(() => {
-		if (!thisPlay) return;
+		if (!state.thisPlay) return;
 		if (mainRule.stages[currentStage].movements === 0) return;
-		if (thisPlayer1) {
-			return setMovementsPlayer1((value) => value - 0.5);
+		if (state.thisPlayer1) {
+			return setState({
+				...state,
+				movementsPlayer1: state.movementsPlayer1 - 1,
+			});
 		}
-		if (thisPlayer2) {
-			return setMovementsPlayer2((value) => value - 1);
+		if (state.thisPlayer2) {
+			return setState({
+				...state,
+				movementsPlayer2: state.movementsPlayer1 - 1,
+			});
 		}
-	}, [thisPlayer1, thisPlayer2]);
+	}, [state.thisPlayer1, state.thisPlayer2]);
 
 	useEffect(() => {
-		if (delayCounter1 === 0) {
-			clearInterval(countDown);
-			setDelayCounter1((value) => value + mainRule.delayPlayer1);
-		} else if (delayCounter2 === 0) {
-			clearInterval(countDown);
-			setDelayCounter2((value) => value + mainRule.delayPlayer2);
+		if (state.delayCounter1 === 0) {
+			clearInterval(timers.countDown);
+			setState({
+				...state,
+				delayCounter1: state.delayCounter1 + mainRule.delayPlayer1,
+			});
+		} else if (state.delayCounter2 === 0) {
+			clearInterval(timers.countDown);
+			setState({
+				...state,
+				delayCounter2: state.delayCounter2 + mainRule.delayPlayer2,
+			});
 		}
-	}, [delayCounter1, delayCounter2]);
+	}, [state.delayCounter1, state.delayCounter2]);
 
 	useEffect(() => {
-		if (thisPlay) {
+		if (state.thisPlay) {
 			if (mainRule.delay) {
 				stopInterval();
 				useDelay();
@@ -310,19 +408,26 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		} else {
 			stopInterval();
 		}
-	}, [thisPlay, turn]);
+	}, [state.thisPlay, state.turn]);
 
 	useEffect(() => {
-		if (thisPlay) {
+		if (state.thisPlay) {
 			const totalTimerId = setInterval(() => {
-				setThisTotalTime((value) => value + 1);
-				setStageTimeCounter((value) => value + 1);
+				setState((prevState) => {
+					return {
+						...prevState,
+						thisTotalTime: prevState.thisTotalTime + 1,
+						stageTimeCounter: prevState.stageTimeCounter + 1,
+					};
+				});
+				// state.thisTotalTime += 1;
+				// state.stageTimeCounter += 1;
 			}, 1000);
-			setTotalTimer(totalTimerId);
+			timers.totalTimer = totalTimerId;
 		} else {
-			clearInterval(totalTimer);
+			clearInterval(timers.totalTimer);
 		}
-	}, [thisPlay]);
+	}, [state.thisPlay]);
 
 	const styles = StyleSheet.create({
 		container: {
@@ -344,10 +449,10 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			<AppTimer
 				direction={landscape('down')}
 				playerTime={translator.showPlayer2}
-				totalTime={thisTotalTime}
+				totalTime={state.thisTotalTime}
 				stage={currentStage + 1}
-				moviments={movementsPlayer1}
-				disabled={!thisPlayer2}
+				moviments={state.movementsPlayer1}
+				disabled={!state.thisPlayer2}
 				onPress={handleTapPlayer}
 			/>
 			<View style={styles.buttons}>
@@ -360,7 +465,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				<RoundedButton
 					landscape={settings.landscape}
 					onPress={handlePlayPause}
-					icon={thisPlay ? <PauseIcon /> : <PlayIcon />}
+					icon={state.thisPlay ? <PauseIcon /> : <PlayIcon />}
 					size={65}
 				/>
 				<RoundedButton
@@ -368,23 +473,23 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 					icon={<RefreshIcon />}
 					size={55}
 					onPress={onReset}
-					disabled={thisTotalTime === 0}
+					disabled={state.thisTotalTime === 0}
 				/>
 			</View>
 			<AppTimer
-				disabled={!thisPlayer1}
+				disabled={!state.thisPlayer1}
 				direction={landscape('up')}
 				playerTime={translator.showPlayer1}
-				totalTime={thisTotalTime}
+				totalTime={state.thisTotalTime}
 				stage={currentStage + 1}
-				moviments={movementsPlayer2}
+				moviments={state.movementsPlayer2}
 				onPress={handleTapPlayer}
 			/>
 			<WinnerAlert
-				visible={winnderModal}
-				onDismiss={() => setwinnderModal(false)}
+				visible={state.winnderModal}
+				onDismiss={() => setState({ ...state, winnderModal: false })}
 				name={getWinner}
-				time={thisTotalTime}
+				time={state.thisTotalTime}
 			/>
 		</SafeAreaView>
 	);
