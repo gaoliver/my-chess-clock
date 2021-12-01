@@ -141,6 +141,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const onReset = () => {
+		setCurrentStage(0);
 		setState({
 			thisPlay: false,
 			thisPlayer1: player1,
@@ -151,13 +152,14 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			winnderModal: false,
 			showCountDown1: false,
 			showCountDown2: false,
-			movementsPlayer1: mainRule.stages[currentStage].movements,
-			movementsPlayer2: mainRule.stages[currentStage].movements,
-			counterPlayer1: mainRule.stages[currentStage].timePlayer1,
-			counterPlayer2: mainRule.stages[currentStage].timePlayer2,
+			movementsPlayer1: mainRule.stages[0].movements,
+			movementsPlayer2: mainRule.stages[0].movements,
+			counterPlayer1: mainRule.stages[0].timePlayer1,
+			counterPlayer2: mainRule.stages[0].timePlayer2,
 			delayCounter1: mainRule.delayPlayer1,
 			delayCounter2: mainRule.delayPlayer2,
 		});
+		console.log(currentStage);
 	};
 
 	const onSettings = () => {
@@ -420,8 +422,6 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 						stageTimeCounter: prevState.stageTimeCounter + 1,
 					};
 				});
-				// state.thisTotalTime += 1;
-				// state.stageTimeCounter += 1;
 			}, 1000);
 			timers.totalTimer = totalTimerId;
 		} else {
