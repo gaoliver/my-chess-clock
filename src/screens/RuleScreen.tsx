@@ -24,13 +24,13 @@ interface IRuleState {
 	delayPlayer1: number;
 	delayPlayer2: number;
 	hasIncrement: boolean;
-	incrementType: IncrementTypeModels;
+	incrementType: IncrementTypeModels | null;
 	incrementPlayer1: number;
 	incrementPlayer2: number;
 }
 enum IncrementTypeModels {
-	'fischer',
-	'bronstein',
+	fischer = 'fischer',
+	bronstein = 'bronstein',
 }
 enum RuleActions {
 	'SetName',
@@ -58,17 +58,16 @@ function reducer(state: IRuleState, action: { type: any; payload?: any }) {
 	switch (action.type) {
 		case RuleActions.SetValues:
 			return {
+				...state,
 				name: action.payload.name,
 				stages: action.payload.stages,
 				hasDelay: action.payload.delay ? true : false,
 				delayPlayer1: action.payload.delayPlayer1,
 				delayPlayer2: action.payload.delayPlayer2,
 				hasIncrement: action.payload.increment ? true : false,
-				incrementType: action.payload.increment
-					? action.payload.increment
-					: IncrementTypeModels.fischer,
-				incrementPlayer1: action.payload.incrementPlayer1,
-				incrementPlayer2: action.payload.incrementPlayer2,
+				incrementType: action.payload.increment,
+				// incrementPlayer1: action.payload.incrementPlayer1,
+				// incrementPlayer2: action.payload.incrementPlayer2,
 			};
 		case RuleActions.SetName:
 			return {
@@ -142,7 +141,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		delayPlayer1: 0,
 		delayPlayer2: 0,
 		hasIncrement: false,
-		incrementType: IncrementTypeModels.fischer,
+		incrementType: null,
 		incrementPlayer1: 0,
 		incrementPlayer2: 0,
 	};
@@ -271,17 +270,24 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	useEffect(() => {
+		if (rule) {
+			ruleDispatch({ type: RuleActions.SetValues, payload: rule });
+			setDelaySameForBoth(rule.delay ? false : true);
+			if (rule.increment === 'bronstein') {
+				handleInput(FieldOptions.INCREMENT1, rule.bronsteinPlayer1);
+				handleInput(FieldOptions.INCREMENT2, rule.bronsteinPlayer2);
+			} else if (rule.increment === 'fischer') {
+				handleInput(FieldOptions.INCREMENT1, rule.fischerPlayer1);
+				handleInput(FieldOptions.INCREMENT2, rule.fischerPlayer2);
+			}
+		}
+	}, []);
+
+	useEffect(() => {
 		if (stage) {
 			ruleDispatch({ type: RuleActions.PushStage, payload: stage });
 		}
 	}, [stage]);
-
-	useEffect(() => {
-		if (rule) {
-			ruleDispatch({ type: RuleActions.SetValues, payload: rule });
-			setDelaySameForBoth(rule.delay ? false : true);
-		}
-	}, []);
 
 	useEffect(() => {
 		if (delaySameForBoth) {
@@ -304,15 +310,6 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		ruleState.incrementPlayer1,
 		ruleState.incrementPlayer2,
 	]);
-
-	useEffect(() => {
-		if (!ruleState.hasIncrement) {
-			ruleDispatch({
-				type: RuleActions.IncrementType,
-				payload: IncrementTypeModels.fischer,
-			});
-		}
-	}, [ruleState.hasIncrement]);
 
 	const styles = StyleSheet.create({
 		content: {
