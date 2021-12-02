@@ -160,6 +160,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		(state: ApplicationState) => state
 	);
 
+	const [disabledPlay, setDisabledPlay] = useState(false);
 	const [mainRule, setMainRule] = useState({
 		id: settings.mainRule.id,
 		name: settings.mainRule.name,
@@ -222,6 +223,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const handleTapPlayer = () => {
+		if (disabledPlay) return;
 		clearInterval(state.countDown);
 		if (state.thisPlayer1) {
 			stateDispatch({ type: StateActions.TapPlayer1 });
@@ -268,18 +270,19 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const stopInterval = () => {
-		clearInterval(state.countDown);
-		clearInterval(state.totalTime);
 		clearInterval(state.delaying);
+		clearInterval(state.countDown);
 	};
 
 	const useDelay = () => {
+		setDisabledPlay(true);
 		if (mainRule.delay && state.thisPlayer1) {
 			stateDispatch({ type: StateActions.ShowDelay1, payload: true });
 			handleCountDown1();
 			setTimeout(() => {
 				stateDispatch({ type: StateActions.ShowDelay1, payload: false });
 				clearInterval(state.delaying);
+				setDisabledPlay(false);
 				startCounter();
 			}, mainRule.delayPlayer1 * 1000);
 		} else if (mainRule.delay && state.thisPlayer2) {
@@ -288,6 +291,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			setTimeout(() => {
 				stateDispatch({ type: StateActions.ShowDelay2, payload: false });
 				clearInterval(state.delaying);
+				setDisabledPlay(false);
 				startCounter();
 			}, mainRule.delayPlayer2 * 1000);
 		}
@@ -348,7 +352,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	useEffect(() => {
 		setMainRule({ ...settings.mainRule });
-		onReset();
+		setTimeout(() => {
+			onReset();
+		}, 500);
 	}, [isFocused]);
 
 	useEffect(() => {
@@ -389,7 +395,6 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		if (!state.thisPlay) return;
 		if (mainRule.stages[state.currentStage].movements === 0) return;
 		if (state.thisPlayer1) {
-			console.log(state.movementsPlayer1, state.movementsPlayer2);
 			return stateDispatch({ type: StateActions.MovementPlayer1 });
 		}
 		if (state.thisPlayer2) {
@@ -482,6 +487,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 					onPress={() => stateDispatch({ type: StateActions.PlayPause })}
 					icon={state.thisPlay ? <PauseIcon /> : <PlayIcon />}
 					size={65}
+					disabled={disabledPlay}
 				/>
 				<RoundedButton
 					landscape={settings.landscape}
