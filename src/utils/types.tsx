@@ -48,3 +48,51 @@ export interface IStage {
 	timePlayer2: number;
 	movements: number;
 }
+
+export interface IState {
+	currentStage: number;
+	thisPlay: boolean;
+	thisPlayer1: boolean;
+	thisPlayer2: boolean;
+	thisTotalTime: number;
+	turn: number;
+	stageTimeCounter: number;
+	winnderModal: boolean;
+	showCountDown1: boolean;
+	showCountDown2: boolean;
+	movementsPlayer1: number;
+	movementsPlayer2: number;
+	counterPlayer1: number;
+	counterPlayer2: number;
+	delayCounter1: number;
+	delayCounter2: number;
+	countDown: any;
+	delaying: any;
+	totalTime: any;
+}
+
+export enum StateActions {
+	'TapPlayer1',
+	'TapPlayer2',
+	'PlayPause',
+	'CounterPlayer1',
+	'CounterPlayer2',
+	'MovementPlayer1',
+	'MovementPlayer2',
+	'SetCounterPlayer1',
+	'SetCounterPlayer2',
+	'DelayCounter1',
+	'DelayCounter2',
+	'TotalTime',
+	'SetDelay1',
+	'SetDelay2',
+	'ShowDelay1',
+	'ShowDelay2',
+	'SetCountDown',
+	'SetDelaying',
+	'SetTotalTime',
+	'NextStage',
+	'FinishGame',
+	'CloseModal',
+	'Reset',
+}
