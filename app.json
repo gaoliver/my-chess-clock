@@ -1,34 +1,33 @@
 {
-  "expo": {
-    "name": "My Chess Clock",
-    "slug": "my-chess-clock",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "description": "This is a Chess clock, made as assignment for a role in a Company.",
-    "githubUrl": "https://github.com/gaoliver/my-chess-clock.git"
-  }
+    "expo": {
+        "name": "My Chess Clock",
+        "slug": "my-chess-clock",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icons/logo_icon.png",
+        "splash": {
+            "image": "./assets/logo_transparent.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#3B1C95"
+        },
+        "updates": {
+            "fallbackToCacheTimeout": 0
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/icons/logo_icon_transparent.png",
+                "backgroundColor": "#3B1C95"
+            }
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "description": "This is a Chess clock, made as assignment for a role in a Company.",
+        "githubUrl": "https://github.com/gaoliver/my-chess-clock.git",
+        "primaryColor": "#3B1C95"
+    }
 }
