@@ -1,72 +1,18 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 import { useIsFocused } from '@react-navigation/core';
 
 import { AppTimer, RoundedButton, WinnerAlert } from '../components';
-import * as gameActions from '../redux';
 import PlayIcon from '../../assets/icons/play.svg';
 import PauseIcon from '../../assets/icons/pause.svg';
 import SettingsIcon from '../../assets/icons/settings.svg';
 import RefreshIcon from '../../assets/icons/refresh.svg';
 import { ApplicationState } from '../redux';
-import { NavigationParamsProp } from '../utils/types';
+import { IState, NavigationParamsProp, StateActions } from '../utils/types';
 import Colors from '../constants/Colors';
-
-interface IState {
-	currentStage: number;
-	thisPlay: boolean;
-	thisPlayer1: boolean;
-	thisPlayer2: boolean;
-	thisTotalTime: number;
-	turn: number;
-	stageTimeCounter: number;
-	winnderModal: boolean;
-	showCountDown1: boolean;
-	showCountDown2: boolean;
-	movementsPlayer1: number;
-	movementsPlayer2: number;
-	counterPlayer1: number;
-	counterPlayer2: number;
-	delayCounter1: number;
-	delayCounter2: number;
-	countDown: any;
-	delaying: any;
-	totalTime: any;
-}
-interface ITimers {
-	totalTimer: any;
-	timer: any;
-	countDown: any;
-}
-
-enum StateActions {
-	'TapPlayer1',
-	'TapPlayer2',
-	'PlayPause',
-	'CounterPlayer1',
-	'CounterPlayer2',
-	'MovementPlayer1',
-	'MovementPlayer2',
-	'SetCounterPlayer1',
-	'SetCounterPlayer2',
-	'DelayCounter1',
-	'DelayCounter2',
-	'TotalTime',
-	'SetDelay1',
-	'SetDelay2',
-	'ShowDelay1',
-	'ShowDelay2',
-	'SetCountDown',
-	'SetDelaying',
-	'SetTotalTime',
-	'NextStage',
-	'FinishGame',
-	'CloseModal',
-	'Reset',
-}
 
 function init(initialState: IState) {
 	return initialState;
@@ -210,7 +156,6 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 
 const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const isFocused = useIsFocused();
-	const dispatch = useDispatch();
 	const { settings, totalTime, play, player1, player2 } = useSelector(
 		(state: ApplicationState) => state
 	);
