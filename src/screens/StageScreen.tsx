@@ -4,7 +4,12 @@ import { Container, Content } from 'native-base';
 
 import { AppHeader, AppSwitcher, TimeInput } from '../components';
 import Colors from '../constants/Colors';
-import { StackParamList } from '../utils/types';
+import {
+	IStageState,
+	StackParamList,
+	StageActions,
+	StageFieldOptions,
+} from '../utils/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { ApplicationState } from '../redux';
@@ -14,34 +19,6 @@ export type NavigationParamsProp = NativeStackScreenProps<
 	StackParamList,
 	'StageScreen'
 >;
-
-interface IStageState {
-	counterSameForBoth: boolean;
-	counterPlayer1: number;
-	counterPlayer2: number;
-	stageHasMovements: boolean;
-	stageMovements: number;
-	hasTotalTime: boolean;
-	totalTime: number;
-}
-
-enum StageActions {
-	'SetCounterSameForBoth',
-	'SetCounterPlayer1',
-	'SetCounterPlayer2',
-	'SetHasMovements',
-	'SetMovements',
-	'SetHasTotalTime',
-	'SetTotalTime',
-	'SetStageValues',
-}
-
-enum StageFieldOptions {
-	'CounterPlayer1',
-	'CounterPlayer2',
-	'Movements',
-	'TotalTime',
-}
 
 function reducer(
 	state: IStageState,
@@ -142,39 +119,31 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 		}
 	};
 
-	// const handleSaveStage = () => {
-	// 	let ruleIndex = settings.ruleset.findIndex((rule) => rule.id === ruleId);
-	// 	let newStage;
-	// 	let newSettings = settings;
-	// 	if (stage) {
-	// 		let stageIndex = settings.ruleset[ruleIndex].stages.findIndex(
-	// 			(item) => item.id === stage.id
-	// 		);
-	// 		newStage = {
-	// 			...stage,
-	// 			maxTime: totalTime,
-	// 			movements: stageMovements,
-	// 			timePlayer1: counterPlayer1,
-	// 			timePlayer2: counterPlayer2,
-	// 		};
-	// 		newSettings.ruleset[ruleIndex].stages[stageIndex] = newStage;
-	// 	} else {
-	// 		newStage = {
-	// 			id: Math.random() * 135,
-	// 			maxTime: totalTime,
-	// 			movements: stageMovements,
-	// 			timePlayer1: counterPlayer1,
-	// 			timePlayer2: counterPlayer2,
-	// 		};
-	// 		if (ruleId !== undefined) {
-	// 			newSettings.ruleset[ruleIndex].stages.push(newStage);
-	// 		} else {
-	// 			return navigation.navigate('Rule', { stage: newStage });
-	// 		}
-	// 	}
-	// 	dispatch(gameActions.setSettings(newSettings));
-	// 	navigation.goBack();
-	// };
+	const handleSaveStage = () => {
+		let ruleIndex = settings.ruleset.findIndex((rule) => rule.id === ruleId);
+		let newSettings = settings;
+		let newStage = {
+			id: stage ? stage.id : Math.random() * 135,
+			maxTime: state.totalTime,
+			movements: state.stageMovements,
+			timePlayer1: state.counterPlayer1,
+			timePlayer2: state.counterPlayer2,
+		};
+		if (stage) {
+			let stageIndex = settings.ruleset[ruleIndex].stages.findIndex(
+				(item) => item.id === stage.id
+			);
+			newSettings.ruleset[ruleIndex].stages[stageIndex] = newStage;
+		} else {
+			if (ruleId !== undefined) {
+				newSettings.ruleset[ruleIndex].stages.push(newStage);
+			} else {
+				return navigation.navigate('Rule', { stage: newStage });
+			}
+		}
+		dispatch(gameActions.setSettings(newSettings));
+		navigation.goBack();
+	};
 
 	useEffect(() => {
 		if (state.counterSameForBoth) {
@@ -228,7 +197,7 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 				title={stage ? 'Edit Stage' : 'New Stage'}
 				hasGoBack
 				hasSave
-				// onSave={handleSaveStage}
+				onSave={handleSaveStage}
 			/>
 			<Content style={styles.content}>
 				<View>
@@ -271,9 +240,12 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 					{state.stageHasMovements && (
 						<TextInput
 							style={[styles.input, { marginTop: 10 }]}
-							value={state.stageMovements.toFixed()}
+							value={String(state.stageMovements ? state.stageMovements : 0)}
 							onChangeText={(value) =>
-								handleInput(StageFieldOptions.Movements, value)
+								handleInput(
+									StageFieldOptions.Movements,
+									value.replace(/[^0-9]/g, '')
+								)
 							}
 							keyboardType="numeric"
 						/>
