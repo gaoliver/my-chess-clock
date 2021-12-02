@@ -58,6 +58,7 @@ enum StateActions {
 	'SetCountDown',
 	'SetDelaying',
 	'NextStage',
+	'Reset',
 }
 
 function init(initialState: IState) {
@@ -160,6 +161,8 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 				movementsPlayer2: action.payload.movements,
 				stageTimeCounter: 0,
 			};
+		case StateActions.Reset:
+			return init(action.payload);
 		default:
 			return state;
 	}
@@ -249,7 +252,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const onReset = () => {
-		setCurrentStage(0);
+		stateDispatch({ type: StateActions.Reset, payload: initialState });
 	};
 
 	const onSettings = () => {
