@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,8 +29,45 @@ interface IState {
 	movementsPlayer2: number;
 	counterPlayer1: number;
 	counterPlayer2: number;
+}
+interface ITimers {
+	totalTimer: any;
+	timer: any;
+	countDown: any;
+}
+interface IDelay {
 	delayCounter1: number;
 	delayCounter2: number;
+}
+
+enum StateActions {
+	'TapPlayer1',
+	'TapPlayer2',
+}
+
+function init(initialState: IState) {
+	return initialState;
+}
+
+function reducer(state: IState, action: { type: StateActions; payload?: any }) {
+	switch (action.type) {
+		case StateActions.TapPlayer1:
+			return {
+				...state,
+				turn: 2,
+				thisPlayer1: false,
+				thisPlayer2: true,
+			};
+		case StateActions.TapPlayer2:
+			return {
+				...state,
+				turn: 1,
+				thisPlayer1: true,
+				thisPlayer2: false,
+			};
+		default:
+			return state;
+	}
 }
 
 const ClockScreen = ({ navigation }: NavigationParamsProp) => {
@@ -54,12 +91,16 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		bronsteinPlayer1: settings.mainRule.bronsteinPlayer1,
 		bronsteinPlayer2: settings.mainRule.bronsteinPlayer2,
 	});
-	const [timers, setTimers] = useState<any>({
+	const [timers, setTimers] = useState<ITimers>({
 		totalTimer: undefined,
 		timer: undefined,
 		countDown: undefined,
 	});
-	const [state, setState] = useState<IState>({
+	const [delay, setDelay] = useState<IDelay>({
+		delayCounter1: mainRule.delayPlayer1,
+		delayCounter2: mainRule.delayPlayer2,
+	});
+	const initialState: IState = {
 		thisPlay: play,
 		thisPlayer1: player1,
 		thisPlayer2: player2,
@@ -73,16 +114,16 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		movementsPlayer2: mainRule.stages[currentStage].movements,
 		counterPlayer1: mainRule.stages[currentStage].timePlayer1,
 		counterPlayer2: mainRule.stages[currentStage].timePlayer2,
-		delayCounter1: mainRule.delayPlayer1,
-		delayCounter2: mainRule.delayPlayer2,
-	});
+	};
+	const [state, stateDispatch] = useReducer(reducer, initialState, init);
+	const [states, setState] = useState(initialState);
 
 	const translator = {
 		showPlayer1: state.showCountDown1
-			? state.delayCounter1
+			? delay.delayCounter1
 			: state.counterPlayer1,
 		showPlayer2: state.showCountDown2
-			? state.delayCounter2
+			? delay.delayCounter2
 			: state.counterPlayer2,
 	};
 
@@ -103,24 +144,11 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const handleTapPlayer = () => {
-		clearInterval(timers.timer);
 		if (state.thisPlayer1) {
-			setState({
-				...state,
-				turn: 2,
-				thisPlayer1: false,
-				thisPlayer2: true,
-			});
+			stateDispatch({ type: StateActions.TapPlayer1 });
 		} else {
-			setState({
-				...state,
-				turn: 1,
-				thisPlayer1: true,
-				thisPlayer2: false,
-			});
+			stateDispatch({ type: StateActions.TapPlayer2 });
 		}
-		dispatch(gameActions.setTimerPlayer1(state.thisPlayer1));
-		dispatch(gameActions.setTimerPlayer2(state.thisPlayer2));
 	};
 
 	const handlePlayPause = () => {
@@ -156,10 +184,11 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			movementsPlayer2: mainRule.stages[0].movements,
 			counterPlayer1: mainRule.stages[0].timePlayer1,
 			counterPlayer2: mainRule.stages[0].timePlayer2,
+		});
+		setDelay({
 			delayCounter1: mainRule.delayPlayer1,
 			delayCounter2: mainRule.delayPlayer2,
 		});
-		console.log(currentStage);
 	};
 
 	const onSettings = () => {
@@ -189,32 +218,30 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	const handleCountDown1 = () => {
 		const delayShow = setInterval(() => {
-			if (state.delayCounter1 > 0) {
-				setState({
-					...state,
-					delayCounter1: state.delayCounter1 - 1,
+			if (delay.delayCounter1 > 0) {
+				setDelay((prevState) => {
+					return {
+						...delay,
+						delayCounter1: prevState.delayCounter1 - 1,
+					};
 				});
 			}
 		}, 1000);
-		setTimers({
-			...timers,
-			countDown: delayShow,
-		});
+		timers.countDown = delayShow;
 	};
 
 	const handleCountDown2 = () => {
 		const delayShow = setInterval(() => {
-			if (state.delayCounter2 > 0) {
-				setState({
-					...state,
-					counterPlayer2: state.counterPlayer2 - 1,
+			if (delay.delayCounter2 > 0) {
+				setDelay((prevState) => {
+					return {
+						...delay,
+						delayCounter2: prevState.delayCounter2 - 1,
+					};
 				});
 			}
 		}, 1000);
-		setTimers({
-			...timers,
-			countDown: delayShow,
-		});
+		timers.countDown = delayShow;
 	};
 
 	const stopInterval = () => {
@@ -224,16 +251,10 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	const useDelay = () => {
 		if (mainRule.delay && state.thisPlayer1) {
-			setState({
-				...state,
-				showCountDown1: true,
-			});
+			state.showCountDown1 = true;
 			handleCountDown1();
 			setTimeout(() => {
-				setState({
-					...state,
-					showCountDown1: false,
-				});
+				state.showCountDown1 = false;
 				clearInterval(timers.countDown);
 				startCounter();
 			}, mainRule.delayPlayer1 * 1000);
@@ -377,20 +398,24 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	}, [state.thisPlayer1, state.thisPlayer2]);
 
 	useEffect(() => {
-		if (state.delayCounter1 === 0) {
+		if (delay.delayCounter1 === 0) {
 			clearInterval(timers.countDown);
-			setState({
-				...state,
-				delayCounter1: state.delayCounter1 + mainRule.delayPlayer1,
+			setDelay((prevState) => {
+				return {
+					...delay,
+					delayCounter1: prevState.delayCounter1 + mainRule.delayPlayer1,
+				};
 			});
-		} else if (state.delayCounter2 === 0) {
+		} else if (delay.delayCounter2 === 0) {
 			clearInterval(timers.countDown);
-			setState({
-				...state,
-				delayCounter2: state.delayCounter2 + mainRule.delayPlayer2,
+			setDelay((prevState) => {
+				return {
+					...delay,
+					delayCounter2: prevState.delayCounter2 + mainRule.delayPlayer2,
+				};
 			});
 		}
-	}, [state.delayCounter1, state.delayCounter2]);
+	}, [delay.delayCounter1, delay.delayCounter2]);
 
 	useEffect(() => {
 		if (state.thisPlay) {
