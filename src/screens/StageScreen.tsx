@@ -240,7 +240,6 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 					{state.stageHasMovements && (
 						<TextInput
 							style={[styles.input, { marginTop: 10 }]}
-							// value={String(state.stageMovements ? state.stageMovements : 0)}
 							value={state.stageMovements}
 							onChangeText={(value) =>
 								handleInput(
