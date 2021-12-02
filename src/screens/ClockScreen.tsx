@@ -48,6 +48,8 @@ enum StateActions {
 	'CounterPlayer2',
 	'DelayCounter1',
 	'DelayCounter2',
+	'ShowDelay1',
+	'ShowDelay2',
 	'SetCountDown',
 	'SetDelaying',
 }
@@ -91,6 +93,16 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 			return {
 				...state,
 				countDown: action.payload,
+			};
+		case StateActions.ShowDelay1:
+			return {
+				...state,
+				showCountDown1: action.payload,
+			};
+		case StateActions.ShowDelay2:
+			return {
+				...state,
+				showCountDown2: action.payload,
 			};
 		case StateActions.DelayCounter1:
 			return {
@@ -252,25 +264,19 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	const useDelay = () => {
 		if (mainRule.delay && state.thisPlayer1) {
-			state.showCountDown1 = true;
+			stateDispatch({ type: StateActions.ShowDelay1, payload: true });
 			handleCountDown1();
 			setTimeout(() => {
-				state.showCountDown1 = false;
-				clearInterval(timers.countDown);
+				stateDispatch({ type: StateActions.ShowDelay1, payload: false });
+				clearInterval(state.countDown);
 				startCounter();
 			}, mainRule.delayPlayer1 * 1000);
 		} else if (mainRule.delay && state.thisPlayer2) {
-			setState({
-				...state,
-				showCountDown2: true,
-			});
+			stateDispatch({ type: StateActions.ShowDelay2, payload: true });
 			handleCountDown2();
 			setTimeout(() => {
-				setState({
-					...state,
-					showCountDown2: false,
-				});
-				clearInterval(timers.countDown);
+				stateDispatch({ type: StateActions.ShowDelay2, payload: false });
+				clearInterval(state.countDown);
 				startCounter();
 			}, mainRule.delayPlayer2 * 1000);
 		}
