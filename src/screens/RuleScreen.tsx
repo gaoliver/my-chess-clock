@@ -204,7 +204,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 			(item: IStage) => item.id === selectedStage
 		);
 		if (selectedStage) {
-			ruleDispatch({ type: RuleActions.DeleteStage, payload: stageIndex - 1 });
+			ruleDispatch({ type: RuleActions.DeleteStage, payload: stageIndex });
 		}
 		setStageModalOptions(false);
 	};
