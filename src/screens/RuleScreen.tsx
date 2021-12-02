@@ -14,45 +14,16 @@ import {
 } from '../components';
 import Colors from '../constants/Colors';
 import { ApplicationState } from '../redux';
-import { IRule, IStage, NavigationParamsProp } from '../utils/types';
+import {
+	FieldOptions,
+	IncrementTypeModels,
+	IRule,
+	IRuleState,
+	IStage,
+	NavigationParamsProp,
+	RuleActions,
+} from '../utils/types';
 import * as gameActions from '../redux/actions';
-
-interface IRuleState {
-	name: string;
-	stages: Array<IStage>;
-	hasDelay: boolean;
-	delayPlayer1: number;
-	delayPlayer2: number;
-	hasIncrement: boolean;
-	incrementType: IncrementTypeModels | null;
-	incrementPlayer1: number;
-	incrementPlayer2: number;
-}
-enum IncrementTypeModels {
-	fischer = 'fischer',
-	bronstein = 'bronstein',
-}
-enum RuleActions {
-	'SetName',
-	'HasDelay',
-	'HasIncrement',
-	'IncrementType',
-	'PushStage',
-	'DeleteStage',
-	'SetValues',
-	'SetDelay1',
-	'SetDelay2',
-	'SetIncrement1',
-	'SetIncrement2',
-}
-
-enum FieldOptions {
-	'NAME',
-	'DELAY1',
-	'DELAY2',
-	'INCREMENT1',
-	'INCREMENT2',
-}
 
 function reducer(state: IRuleState, action: { type: any; payload?: any }) {
 	switch (action.type) {
@@ -66,8 +37,6 @@ function reducer(state: IRuleState, action: { type: any; payload?: any }) {
 				delayPlayer2: action.payload.delayPlayer2,
 				hasIncrement: action.payload.increment ? true : false,
 				incrementType: action.payload.increment,
-				// incrementPlayer1: action.payload.incrementPlayer1,
-				// incrementPlayer2: action.payload.incrementPlayer2,
 			};
 		case RuleActions.SetName:
 			return {
