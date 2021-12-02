@@ -29,6 +29,7 @@ interface IState {
 	movementsPlayer2: number;
 	counterPlayer1: number;
 	counterPlayer2: number;
+	countDown: any;
 }
 interface ITimers {
 	totalTimer: any;
@@ -43,6 +44,10 @@ interface IDelay {
 enum StateActions {
 	'TapPlayer1',
 	'TapPlayer2',
+	'PlayPause',
+	'CounterPlayer1',
+	'CounterPlayer2',
+	'SetCountDown',
 }
 
 function init(initialState: IState) {
@@ -64,6 +69,26 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 				turn: 1,
 				thisPlayer1: true,
 				thisPlayer2: false,
+			};
+		case StateActions.PlayPause:
+			return {
+				...state,
+				thisPlay: state.thisPlay ? false : true,
+			};
+		case StateActions.CounterPlayer1:
+			return {
+				...state,
+				counterPlayer1: state.counterPlayer1 - 1,
+			};
+		case StateActions.CounterPlayer2:
+			return {
+				...state,
+				counterPlayer2: state.counterPlayer2 - 1,
+			};
+		case StateActions.SetCountDown:
+			return {
+				...state,
+				countDown: action.payload,
 			};
 		default:
 			return state;
@@ -114,6 +139,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		movementsPlayer2: mainRule.stages[currentStage].movements,
 		counterPlayer1: mainRule.stages[currentStage].timePlayer1,
 		counterPlayer2: mainRule.stages[currentStage].timePlayer2,
+		countDown: undefined,
 	};
 	const [state, stateDispatch] = useReducer(reducer, initialState, init);
 	const [states, setState] = useState(initialState);
@@ -151,40 +177,23 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		}
 	};
 
-	const handlePlayPause = () => {
-		if (state.thisPlay) {
-			setState({
-				...state,
-				thisPlay: false,
-			});
-			dispatch(gameActions.setTimerPlayer1(state.counterPlayer1));
-			dispatch(gameActions.setTimerPlayer2(state.counterPlayer2));
-		} else {
-			setState({
-				...state,
-				thisPlay: true,
-			});
-		}
-		dispatch(gameActions.setPlayPause(state.thisPlay));
-	};
-
 	const onReset = () => {
 		setCurrentStage(0);
-		setState({
-			thisPlay: false,
-			thisPlayer1: player1,
-			thisPlayer2: player2,
-			thisTotalTime: totalTime,
-			turn: 0,
-			stageTimeCounter: 0,
-			winnderModal: false,
-			showCountDown1: false,
-			showCountDown2: false,
-			movementsPlayer1: mainRule.stages[0].movements,
-			movementsPlayer2: mainRule.stages[0].movements,
-			counterPlayer1: mainRule.stages[0].timePlayer1,
-			counterPlayer2: mainRule.stages[0].timePlayer2,
-		});
+		// setState({
+		// 	thisPlay: false,
+		// 	thisPlayer1: player1,
+		// 	thisPlayer2: player2,
+		// 	thisTotalTime: totalTime,
+		// 	turn: 0,
+		// 	stageTimeCounter: 0,
+		// 	winnderModal: false,
+		// 	showCountDown1: false,
+		// 	showCountDown2: false,
+		// 	movementsPlayer1: mainRule.stages[0].movements,
+		// 	movementsPlayer2: mainRule.stages[0].movements,
+		// 	counterPlayer1: mainRule.stages[0].timePlayer1,
+		// 	counterPlayer2: mainRule.stages[0].timePlayer2,
+		// });
 		setDelay({
 			delayCounter1: mainRule.delayPlayer1,
 			delayCounter2: mainRule.delayPlayer2,
@@ -198,22 +207,12 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const startCounter = () => {
 		let timerId = setInterval(() => {
 			if (state.thisPlayer1) {
-				setState((prevState) => {
-					return {
-						...prevState,
-						counterPlayer1: prevState.counterPlayer1 - 1,
-					};
-				});
+				stateDispatch({ type: StateActions.CounterPlayer1 });
 			} else if (state.thisPlayer2) {
-				setState((prevState) => {
-					return {
-						...prevState,
-						counterPlayer2: prevState.counterPlayer2 - 1,
-					};
-				});
+				stateDispatch({ type: StateActions.CounterPlayer2 });
 			}
 		}, 1000);
-		timers.timer = timerId;
+		stateDispatch({ type: StateActions.SetCountDown, payload: timerId });
 	};
 
 	const handleCountDown1 = () => {
@@ -245,7 +244,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const stopInterval = () => {
-		clearInterval(timers.countDown);
+		clearInterval(state.countDown);
 		clearInterval(timers.timer);
 	};
 
@@ -489,7 +488,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				/>
 				<RoundedButton
 					landscape={settings.landscape}
-					onPress={handlePlayPause}
+					onPress={() => stateDispatch({ type: StateActions.PlayPause })}
 					icon={state.thisPlay ? <PauseIcon /> : <PlayIcon />}
 					size={65}
 				/>
