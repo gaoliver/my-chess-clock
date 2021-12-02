@@ -210,15 +210,21 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const handleInput = (field: FieldOptions, value: any) => {
 		switch (field) {
 			case FieldOptions.NAME:
-				ruleDispatch({ type: RuleActions.SetName, payload: value });
+				return ruleDispatch({ type: RuleActions.SetName, payload: value });
 			case FieldOptions.DELAY1:
-				ruleDispatch({ type: RuleActions.SetDelay1, payload: value });
+				return ruleDispatch({ type: RuleActions.SetDelay1, payload: value });
 			case FieldOptions.DELAY2:
-				ruleDispatch({ type: RuleActions.SetDelay2, payload: value });
+				return ruleDispatch({ type: RuleActions.SetDelay2, payload: value });
 			case FieldOptions.INCREMENT1:
-				ruleDispatch({ type: RuleActions.SetIncrement1, payload: value });
+				return ruleDispatch({
+					type: RuleActions.SetIncrement1,
+					payload: value,
+				});
 			case FieldOptions.INCREMENT2:
-				ruleDispatch({ type: RuleActions.SetIncrement2, payload: value });
+				return ruleDispatch({
+					type: RuleActions.SetIncrement2,
+					payload: value,
+				});
 			default:
 				return null;
 		}
