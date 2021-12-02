@@ -198,6 +198,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const handleTapPlayer = () => {
+		clearInterval(state.countDown);
 		if (state.thisPlayer1) {
 			stateDispatch({ type: StateActions.TapPlayer1 });
 		} else {
@@ -207,21 +208,6 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	const onReset = () => {
 		setCurrentStage(0);
-		// setState({
-		// 	thisPlay: false,
-		// 	thisPlayer1: player1,
-		// 	thisPlayer2: player2,
-		// 	thisTotalTime: totalTime,
-		// 	turn: 0,
-		// 	stageTimeCounter: 0,
-		// 	winnderModal: false,
-		// 	showCountDown1: false,
-		// 	showCountDown2: false,
-		// 	movementsPlayer1: mainRule.stages[0].movements,
-		// 	movementsPlayer2: mainRule.stages[0].movements,
-		// 	counterPlayer1: mainRule.stages[0].timePlayer1,
-		// 	counterPlayer2: mainRule.stages[0].timePlayer2,
-		// });
 	};
 
 	const onSettings = () => {
@@ -268,7 +254,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			handleCountDown1();
 			setTimeout(() => {
 				stateDispatch({ type: StateActions.ShowDelay1, payload: false });
-				clearInterval(state.countDown);
+				clearInterval(state.delaying);
 				startCounter();
 			}, mainRule.delayPlayer1 * 1000);
 		} else if (mainRule.delay && state.thisPlayer2) {
@@ -276,7 +262,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			handleCountDown2();
 			setTimeout(() => {
 				stateDispatch({ type: StateActions.ShowDelay2, payload: false });
-				clearInterval(state.countDown);
+				clearInterval(state.delaying);
 				startCounter();
 			}, mainRule.delayPlayer2 * 1000);
 		}
