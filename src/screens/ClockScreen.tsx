@@ -58,6 +58,7 @@ enum StateActions {
 	'SetCountDown',
 	'SetDelaying',
 	'NextStage',
+	'FinishGame',
 	'Reset',
 }
 
@@ -160,6 +161,13 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 				movementsPlayer1: action.payload.movements,
 				movementsPlayer2: action.payload.movements,
 				stageTimeCounter: 0,
+			};
+		case StateActions.FinishGame:
+			return {
+				...state,
+				countDown: undefined,
+				thisPlay: false,
+				winnderModal: true,
 			};
 		case StateActions.Reset:
 			return init(action.payload);
@@ -395,12 +403,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			goToNextStage();
 		} else if (currentStage >= mainRule.stages.length - 1) {
 			stopInterval();
-			timers.timer = undefined;
-			setState({
-				...state,
-				thisPlay: false,
-				winnderModal: true,
-			});
+			stateDispatch({ type: StateActions.FinishGame });
 		}
 	}, [
 		state.movementsPlayer1,
