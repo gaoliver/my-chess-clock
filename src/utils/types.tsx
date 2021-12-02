@@ -133,3 +133,31 @@ export enum FieldOptions {
 	'INCREMENT1',
 	'INCREMENT2',
 }
+
+export interface IStageState {
+	counterSameForBoth: boolean;
+	counterPlayer1: number;
+	counterPlayer2: number;
+	stageHasMovements: boolean;
+	stageMovements: number;
+	hasTotalTime: boolean;
+	totalTime: number;
+}
+
+export enum StageActions {
+	'SetCounterSameForBoth',
+	'SetCounterPlayer1',
+	'SetCounterPlayer2',
+	'SetHasMovements',
+	'SetMovements',
+	'SetHasTotalTime',
+	'SetTotalTime',
+	'SetStageValues',
+}
+
+export enum StageFieldOptions {
+	'CounterPlayer1',
+	'CounterPlayer2',
+	'Movements',
+	'TotalTime',
+}

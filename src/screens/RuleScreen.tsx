@@ -25,7 +25,10 @@ import {
 } from '../utils/types';
 import * as gameActions from '../redux/actions';
 
-function reducer(state: IRuleState, action: { type: any; payload?: any }) {
+function reducer(
+	state: IRuleState,
+	action: { type: RuleActions; payload?: any }
+) {
 	switch (action.type) {
 		case RuleActions.SetValues:
 			return {

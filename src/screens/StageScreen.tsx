@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { Container, Content } from 'native-base';
 
 import { AppHeader, AppSwitcher, TimeInput } from '../components';
 import Colors from '../constants/Colors';
-import { StackParamList } from '../utils/types';
+import {
+	IStageState,
+	StackParamList,
+	StageActions,
+	StageFieldOptions,
+} from '../utils/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { ApplicationState } from '../redux';
@@ -15,44 +20,121 @@ export type NavigationParamsProp = NativeStackScreenProps<
 	'StageScreen'
 >;
 
+function reducer(
+	state: IStageState,
+	action: { type: StageActions; payload?: any }
+) {
+	switch (action.type) {
+		case StageActions.SetCounterPlayer1:
+			return {
+				...state,
+				counterPlayer1: action.payload,
+			};
+		case StageActions.SetCounterPlayer2:
+			return {
+				...state,
+				counterPlayer2: action.payload,
+			};
+		case StageActions.SetMovements:
+			return {
+				...state,
+				stageMovements: action.payload,
+			};
+		case StageActions.SetTotalTime:
+			return {
+				...state,
+				totalTime: action.payload,
+			};
+		case StageActions.SetStageValues:
+			return {
+				counterSameForBoth: false,
+				counterPlayer1: action.payload.timePlayer1,
+				counterPlayer2: action.payload.timePlayer2,
+				stageHasMovements: action.payload.movements > 0 ? true : false,
+				stageMovements: action.payload.movements,
+				hasTotalTime: action.payload.maxTime > 0 ? true : false,
+				totalTime: action.payload.maxTime,
+			};
+		case StageActions.SetCounterSameForBoth:
+			return {
+				...state,
+				counterSameForBoth: state.counterSameForBoth ? false : true,
+			};
+		case StageActions.SetHasMovements:
+			return {
+				...state,
+				stageHasMovements: state.stageHasMovements ? false : true,
+			};
+		case StageActions.SetHasTotalTime:
+			return {
+				...state,
+				hasTotalTime: state.hasTotalTime ? false : true,
+			};
+		default:
+			return state;
+	}
+}
+
 const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const { stage, ruleId } = route.params;
 	const { settings } = useSelector((state: ApplicationState) => state);
 	const dispatch = useDispatch();
 
-	const [constantTrue, setconstantTrue] = useState<boolean>(false);
-	const [counterSameForBoth, setCounterSameForBoth] = useState<boolean>(false);
-	const [counterPlayer1, setCounterPlayer1] = useState<number>(0);
-	const [counterPlayer2, setCounterPlayer2] = useState<number>(0);
-	const [stageHasMovements, setstageHasMovements] = useState<boolean>(false);
-	const [stageMovements, setStageMovements] = useState<number>(0);
-	const [hasTotalTime, setHasTotalTime] = useState<boolean>(false);
-	const [totalTime, setTotalTime] = useState<number>(0);
+	const stageInitialState: IStageState = {
+		counterSameForBoth: false,
+		counterPlayer1: 0,
+		counterPlayer2: 0,
+		stageHasMovements: false,
+		stageMovements: 0,
+		hasTotalTime: false,
+		totalTime: 0,
+	};
+
+	const [state, stateDispatch] = useReducer(reducer, stageInitialState);
+
+	const handleInput = (field: StageFieldOptions, value: any) => {
+		switch (field) {
+			case StageFieldOptions.CounterPlayer1:
+				return stateDispatch({
+					type: StageActions.SetCounterPlayer1,
+					payload: value,
+				});
+			case StageFieldOptions.CounterPlayer2:
+				return stateDispatch({
+					type: StageActions.SetCounterPlayer2,
+					payload: value,
+				});
+			case StageFieldOptions.Movements:
+				return stateDispatch({
+					type: StageActions.SetMovements,
+					payload: value,
+				});
+			case StageFieldOptions.TotalTime:
+				return stateDispatch({
+					type: StageActions.SetTotalTime,
+					payload: value,
+				});
+			default:
+				return null;
+		}
+	};
 
 	const handleSaveStage = () => {
 		let ruleIndex = settings.ruleset.findIndex((rule) => rule.id === ruleId);
-		let newStage;
 		let newSettings = settings;
+		let newStage = {
+			id: stage ? stage.id : Math.random() * 135,
+			maxTime: state.totalTime,
+			movements: state.stageMovements,
+			timePlayer1: state.counterPlayer1,
+			timePlayer2: state.counterPlayer2,
+		};
 		if (stage) {
 			let stageIndex = settings.ruleset[ruleIndex].stages.findIndex(
 				(item) => item.id === stage.id
 			);
-			newStage = {
-				...stage,
-				maxTime: totalTime,
-				movements: stageMovements,
-				timePlayer1: counterPlayer1,
-				timePlayer2: counterPlayer2,
-			};
 			newSettings.ruleset[ruleIndex].stages[stageIndex] = newStage;
 		} else {
-			newStage = {
-				id: Math.random() * 135,
-				maxTime: totalTime,
-				movements: stageMovements,
-				timePlayer1: counterPlayer1,
-				timePlayer2: counterPlayer2,
-			};
 			if (ruleId !== undefined) {
 				newSettings.ruleset[ruleIndex].stages.push(newStage);
 			} else {
@@ -64,47 +146,29 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	useEffect(() => {
-		setCounterPlayer1(counterPlayer1);
-		setCounterPlayer2(counterPlayer2);
-		if (counterSameForBoth) {
-			setCounterPlayer2(counterPlayer1);
+		if (state.counterSameForBoth) {
+			stateDispatch({
+				type: StageActions.SetCounterPlayer2,
+				payload: state.counterPlayer1,
+			});
 		}
-	}, [counterSameForBoth, counterPlayer1, counterPlayer2]);
+	}, [state.counterSameForBoth, state.counterPlayer1]);
 
 	useEffect(() => {
-		if (!stageHasMovements) {
-			setStageMovements(0);
+		if (!state.stageHasMovements) {
+			stateDispatch({ type: StageActions.SetMovements, payload: 0 });
 		}
-	}, [stageHasMovements]);
+	}, [state.stageHasMovements]);
 
 	useEffect(() => {
-		if (!hasTotalTime) {
-			setTotalTime(0);
+		if (!state.hasTotalTime) {
+			stateDispatch({ type: StageActions.SetTotalTime, payload: 0 });
 		}
-	}, [hasTotalTime]);
+	}, [state.hasTotalTime]);
 
 	useEffect(() => {
-		setconstantTrue(true);
 		if (stage) {
-			setCounterSameForBoth(false);
-			setCounterPlayer1(stage.timePlayer1);
-			setCounterPlayer2(stage.timePlayer2);
-			if (stage.movements > 0) {
-				setstageHasMovements(true);
-				setStageMovements(stage.movements);
-			}
-			if (stage.maxTime > 0) {
-				setHasTotalTime(true);
-				setTotalTime(stage.maxTime);
-			}
-		} else {
-			setCounterSameForBoth(false);
-			setCounterPlayer1(0);
-			setCounterPlayer2(0);
-			setstageHasMovements(false);
-			setStageMovements(0);
-			setHasTotalTime(false);
-			setTotalTime(0);
+			stateDispatch({ type: StageActions.SetStageValues, payload: stage });
 		}
 	}, [stage]);
 
@@ -139,45 +203,50 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 				<View>
 					<AppSwitcher
 						label="Same turn timer for both"
-						value={counterSameForBoth}
+						value={state.counterSameForBoth}
 						onValueChange={() =>
-							setCounterSameForBoth((value) => (value ? false : true))
+							stateDispatch({ type: StageActions.SetCounterSameForBoth })
 						}
 					/>
-					{constantTrue && (
-						<View style={styles.stageInnerFieldView}>
+					<View style={styles.stageInnerFieldView}>
+						<TimeInput
+							label={state.counterSameForBoth ? undefined : 'Player 1'}
+							interval={state.counterPlayer1}
+							onChangeTime={(value) =>
+								handleInput(StageFieldOptions.CounterPlayer1, value)
+							}
+							padding
+						/>
+						{!state.counterSameForBoth && (
 							<TimeInput
-								label={counterSameForBoth ? undefined : 'Player 1'}
-								interval={counterPlayer1}
-								onChangeTime={(value) => setCounterPlayer1(value)}
+								label={'Player 2'}
+								interval={state.counterPlayer2}
+								onChangeTime={(value) =>
+									handleInput(StageFieldOptions.CounterPlayer2, value)
+								}
 								padding
 							/>
-							{!counterSameForBoth && (
-								<TimeInput
-									label={'Player 2'}
-									interval={counterPlayer2}
-									onChangeTime={(value) => setCounterPlayer2(value)}
-									padding
-								/>
-							)}
-						</View>
-					)}
+						)}
+					</View>
 				</View>
 				<View>
 					<AppSwitcher
 						label="Maximum movements"
-						value={stageHasMovements}
+						value={state.stageHasMovements}
 						onValueChange={() =>
-							setstageHasMovements((value) => (value ? false : true))
+							stateDispatch({ type: StageActions.SetHasMovements })
 						}
 					/>
-					{stageHasMovements && (
+					{state.stageHasMovements && (
 						<TextInput
 							style={[styles.input, { marginTop: 10 }]}
-							value={stageMovements.toFixed()}
-							onChangeText={(value) => {
-								setStageMovements(Number(value));
-							}}
+							value={String(state.stageMovements ? state.stageMovements : 0)}
+							onChangeText={(value) =>
+								handleInput(
+									StageFieldOptions.Movements,
+									value.replace(/[^0-9]/g, '')
+								)
+							}
 							keyboardType="numeric"
 						/>
 					)}
@@ -185,16 +254,18 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 				<View>
 					<AppSwitcher
 						label="Total time"
-						value={hasTotalTime}
+						value={state.hasTotalTime}
 						onValueChange={() =>
-							setHasTotalTime((value) => (value ? false : true))
+							stateDispatch({ type: StageActions.SetHasTotalTime })
 						}
 					/>
-					{hasTotalTime && (
+					{state.hasTotalTime && (
 						<View style={styles.stageInnerFieldView}>
 							<TimeInput
-								interval={totalTime}
-								onChangeTime={(value) => setTotalTime(value)}
+								interval={state.totalTime}
+								onChangeTime={(value) =>
+									handleInput(StageFieldOptions.TotalTime, value)
+								}
 								padding
 							/>
 						</View>
