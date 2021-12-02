@@ -47,6 +47,8 @@ enum StateActions {
 	'PlayPause',
 	'CounterPlayer1',
 	'CounterPlayer2',
+	'MovementPlayer1',
+	'MovementPlayer2',
 	'SetCounterPlayer1',
 	'SetCounterPlayer2',
 	'DelayCounter1',
@@ -59,6 +61,7 @@ enum StateActions {
 	'SetDelaying',
 	'NextStage',
 	'FinishGame',
+	'CloseModal',
 	'Reset',
 }
 
@@ -106,6 +109,16 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 			return {
 				...state,
 				counterPlayer2: action.payload,
+			};
+		case StateActions.MovementPlayer1:
+			return {
+				...state,
+				movementPlayer1: state.movementsPlayer1 - 1,
+			};
+		case StateActions.MovementPlayer2:
+			return {
+				...state,
+				movementPlayer2: state.movementsPlayer2 - 1,
 			};
 		case StateActions.SetCountDown:
 			return {
@@ -168,6 +181,11 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 				countDown: undefined,
 				thisPlay: false,
 				winnderModal: true,
+			};
+		case StateActions.CloseModal:
+			return {
+				...state,
+				winnderModal: false,
 			};
 		case StateActions.Reset:
 			return init(action.payload);
@@ -417,16 +435,10 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		if (!state.thisPlay) return;
 		if (mainRule.stages[currentStage].movements === 0) return;
 		if (state.thisPlayer1) {
-			return setState({
-				...state,
-				movementsPlayer1: state.movementsPlayer1 - 1,
-			});
+			return stateDispatch({ type: StateActions.MovementPlayer1 });
 		}
 		if (state.thisPlayer2) {
-			return setState({
-				...state,
-				movementsPlayer2: state.movementsPlayer1 - 1,
-			});
+			return stateDispatch({ type: StateActions.MovementPlayer2 });
 		}
 	}, [state.thisPlayer1, state.thisPlayer2]);
 
@@ -541,7 +553,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			/>
 			<WinnerAlert
 				visible={state.winnderModal}
-				onDismiss={() => setState({ ...state, winnderModal: false })}
+				onDismiss={() => stateDispatch({ type: StateActions.CloseModal })}
 				name={getWinner}
 				time={state.thisTotalTime}
 			/>
