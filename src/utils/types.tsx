@@ -96,3 +96,68 @@ export enum StateActions {
 	'CloseModal',
 	'Reset',
 }
+
+export interface IRuleState {
+	name: string;
+	stages: Array<IStage>;
+	hasDelay: boolean;
+	delayPlayer1: number;
+	delayPlayer2: number;
+	hasIncrement: boolean;
+	incrementType: IncrementTypeModels | null;
+	incrementPlayer1: number;
+	incrementPlayer2: number;
+}
+export enum IncrementTypeModels {
+	fischer = 'fischer',
+	bronstein = 'bronstein',
+}
+export enum RuleActions {
+	'SetName',
+	'HasDelay',
+	'HasIncrement',
+	'IncrementType',
+	'PushStage',
+	'DeleteStage',
+	'SetValues',
+	'SetDelay1',
+	'SetDelay2',
+	'SetIncrement1',
+	'SetIncrement2',
+}
+
+export enum FieldOptions {
+	'NAME',
+	'DELAY1',
+	'DELAY2',
+	'INCREMENT1',
+	'INCREMENT2',
+}
+
+export interface IStageState {
+	counterSameForBoth: boolean;
+	counterPlayer1: number;
+	counterPlayer2: number;
+	stageHasMovements: boolean;
+	stageMovements: number;
+	hasTotalTime: boolean;
+	totalTime: number;
+}
+
+export enum StageActions {
+	'SetCounterSameForBoth',
+	'SetCounterPlayer1',
+	'SetCounterPlayer2',
+	'SetHasMovements',
+	'SetMovements',
+	'SetHasTotalTime',
+	'SetTotalTime',
+	'SetStageValues',
+}
+
+export enum StageFieldOptions {
+	'CounterPlayer1',
+	'CounterPlayer2',
+	'Movements',
+	'TotalTime',
+}

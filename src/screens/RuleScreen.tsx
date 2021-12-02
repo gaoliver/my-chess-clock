@@ -1,5 +1,5 @@
 import { Container, Content } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { StyleSheet, TextInput, View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -14,8 +14,83 @@ import {
 } from '../components';
 import Colors from '../constants/Colors';
 import { ApplicationState } from '../redux';
-import { IRule, IStage, NavigationParamsProp } from '../utils/types';
+import {
+	FieldOptions,
+	IncrementTypeModels,
+	IRule,
+	IRuleState,
+	IStage,
+	NavigationParamsProp,
+	RuleActions,
+} from '../utils/types';
 import * as gameActions from '../redux/actions';
+
+function reducer(
+	state: IRuleState,
+	action: { type: RuleActions; payload?: any }
+) {
+	switch (action.type) {
+		case RuleActions.SetValues:
+			return {
+				...state,
+				name: action.payload.name,
+				stages: action.payload.stages,
+				hasDelay: action.payload.delay ? true : false,
+				delayPlayer1: action.payload.delayPlayer1,
+				delayPlayer2: action.payload.delayPlayer2,
+				hasIncrement: action.payload.increment ? true : false,
+				incrementType: action.payload.increment,
+			};
+		case RuleActions.SetName:
+			return {
+				...state,
+				name: action.payload,
+			};
+		case RuleActions.HasDelay:
+			return {
+				...state,
+				hasDelay: state.hasDelay ? false : true,
+			};
+		case RuleActions.SetDelay1:
+			return {
+				...state,
+				delayPlayer1: action.payload,
+			};
+		case RuleActions.SetDelay2:
+			return {
+				...state,
+				delayPlayer2: action.payload,
+			};
+		case RuleActions.HasIncrement:
+			return {
+				...state,
+				hasIncrement: state.hasIncrement ? false : true,
+			};
+		case RuleActions.IncrementType:
+			return {
+				...state,
+				incrementType: action.payload,
+			};
+		case RuleActions.SetIncrement1:
+			return {
+				...state,
+				incrementPlayer1: action.payload,
+			};
+		case RuleActions.SetIncrement2:
+			return {
+				...state,
+				incrementPlayer2: action.payload,
+			};
+		case RuleActions.PushStage:
+			state.stages.push(action.payload);
+			return { ...state };
+		case RuleActions.DeleteStage:
+			state.stages.splice(action.payload, 1);
+			return { ...state };
+		default:
+			return state;
+	}
+}
 
 const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const { rule, stage } = route.params;
@@ -23,31 +98,30 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	const ruleset = settings.ruleset;
 	const dispatch = useDispatch();
 
-	const [stages, setStages] = useState<Array<IStage>>([]);
-	const [name, setName] = useState<string>('');
-	const [delayPlayer1, setDelayPlayer1] = useState<number>(0);
-	const [delayPlayer2, setDelayPlayer2] = useState<number>(0);
-	const [incrementPlayer1, setIncrementPlayer1] = useState<number>(0);
-	const [incrementPlayer2, setIncrementPlayer2] = useState<number>(0);
+	const [stageModalOptions, setStageModalOptions] = useState<boolean>(false);
+	const [delaySameForBoth, setDelaySameForBoth] = useState<boolean>(false);
+	const [incrementSameForBoth, setIncrementSameForBoth] =
+		useState<boolean>(false);
 	const [selectedStage, setSelectedStage] = useState<number | undefined>(
 		undefined
 	);
-	const [stageModalOptions, setStageModalOptions] = useState<boolean>(false);
-	const [hasDelay, setHasDelay] = useState<boolean>(false);
-	const [delaySameForBoth, setDelaySameForBoth] = useState<boolean>(false);
-	const [hasIncrement, setHasIncrement] = useState<boolean>(false);
-	const [incrementSameForBoth, setIncrementSameForBoth] =
-		useState<boolean>(false);
-	const [incrementType, setIncrementType] = useState<
-		'fischer' | 'bronstein' | null
-	>(null);
+
+	const initialRuleState: IRuleState = {
+		name: '',
+		stages: [],
+		hasDelay: false,
+		delayPlayer1: 0,
+		delayPlayer2: 0,
+		hasIncrement: false,
+		incrementType: null,
+		incrementPlayer1: 0,
+		incrementPlayer2: 0,
+	};
+
+	const [ruleState, ruleDispatch] = useReducer(reducer, initialRuleState);
 
 	const handleAddDelay = () => {
-		if (hasDelay) {
-			setHasDelay(false);
-		} else {
-			setHasDelay(true);
-		}
+		ruleDispatch({ type: RuleActions.HasDelay });
 	};
 	const handleDelayValue = () => {
 		if (delaySameForBoth) {
@@ -66,19 +140,20 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	const handleIncrement = () => {
-		if (hasIncrement) {
-			setHasIncrement(false);
-		} else {
-			setHasIncrement(true);
-			setIncrementType('fischer');
-		}
+		ruleDispatch({ type: RuleActions.HasIncrement });
 	};
 
 	const handleIncrementType = () => {
-		if (incrementType === 'fischer') {
-			setIncrementType('bronstein');
+		if (ruleState.incrementType === IncrementTypeModels.fischer) {
+			ruleDispatch({
+				type: RuleActions.IncrementType,
+				payload: IncrementTypeModels.bronstein,
+			});
 		} else {
-			setIncrementType('fischer');
+			ruleDispatch({
+				type: RuleActions.IncrementType,
+				payload: IncrementTypeModels.fischer,
+			});
 		}
 	};
 
@@ -89,32 +164,71 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 
 	const onPressEdit = () => {
 		setStageModalOptions(false);
-		let thisStage = stages.find((item) => item.id === selectedStage);
+		let thisStage = ruleState.stages.find(
+			(item: IStage) => item.id === selectedStage
+		);
 		navigation.navigate('StageScreen', { stage: thisStage, ruleId: rule?.id });
 	};
 
 	const onPressDelete = () => {
-		let stageIndex = stages.findIndex((item) => item.id === selectedStage);
+		let stageIndex = ruleState.stages.findIndex(
+			(item: IStage) => item.id === selectedStage
+		);
 		if (selectedStage) {
-			stages.splice(stageIndex - 1, 1);
+			ruleDispatch({ type: RuleActions.DeleteStage, payload: stageIndex });
 		}
 		setStageModalOptions(false);
+	};
+
+	const handleInput = (field: FieldOptions, value: any) => {
+		switch (field) {
+			case FieldOptions.NAME:
+				return ruleDispatch({ type: RuleActions.SetName, payload: value });
+			case FieldOptions.DELAY1:
+				return ruleDispatch({ type: RuleActions.SetDelay1, payload: value });
+			case FieldOptions.DELAY2:
+				return ruleDispatch({ type: RuleActions.SetDelay2, payload: value });
+			case FieldOptions.INCREMENT1:
+				return ruleDispatch({
+					type: RuleActions.SetIncrement1,
+					payload: value,
+				});
+			case FieldOptions.INCREMENT2:
+				return ruleDispatch({
+					type: RuleActions.SetIncrement2,
+					payload: value,
+				});
+			default:
+				return null;
+		}
 	};
 
 	const handleSave = () => {
 		let newSettings = settings;
 		let saveData: IRule = {
 			id: rule ? rule.id : Math.random() * 135,
-			name: name,
-			delay: hasDelay,
-			delayPlayer1: delayPlayer1,
-			delayPlayer2: delayPlayer2,
-			increment: hasIncrement ? incrementType : null,
-			fischerPlayer1: incrementType === 'fischer' ? incrementPlayer1 : 0,
-			fischerPlayer2: incrementType === 'fischer' ? incrementPlayer2 : 0,
-			bronsteinPlayer1: incrementType === 'bronstein' ? incrementPlayer1 : 0,
-			bronsteinPlayer2: incrementType === 'bronstein' ? incrementPlayer2 : 0,
-			stages: stages,
+			name: ruleState.name,
+			delay: ruleState.hasDelay,
+			delayPlayer1: ruleState.delayPlayer1,
+			delayPlayer2: ruleState.delayPlayer2,
+			increment: ruleState.hasIncrement ? ruleState.incrementType : null,
+			fischerPlayer1:
+				ruleState.incrementType === IncrementTypeModels.fischer
+					? ruleState.incrementPlayer1
+					: 0,
+			fischerPlayer2:
+				ruleState.incrementType === IncrementTypeModels.fischer
+					? ruleState.incrementPlayer2
+					: 0,
+			bronsteinPlayer1:
+				ruleState.incrementType === IncrementTypeModels.bronstein
+					? ruleState.incrementPlayer1
+					: 0,
+			bronsteinPlayer2:
+				ruleState.incrementType === IncrementTypeModels.bronstein
+					? ruleState.incrementPlayer2
+					: 0,
+			stages: ruleState.stages,
 		};
 		if (rule) {
 			let ruleIndex = ruleset.findIndex((thisRule) => thisRule.id === rule.id);
@@ -128,56 +242,46 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	};
 
 	useEffect(() => {
-		if (stage) {
-			stages.push(stage);
-		}
-		setStages([...stages]);
-	}, [stage]);
-
-	useEffect(() => {
 		if (rule) {
-			setStages(rule.stages);
-			setName(rule.name);
-			if (rule.delay) {
-				setHasDelay(true);
-				setDelaySameForBoth(false);
-				setDelayPlayer1(rule.delayPlayer1);
-				setDelayPlayer2(rule.delayPlayer2);
-			}
-			if (rule.increment !== null) {
-				setHasIncrement(true);
-				setIncrementType(rule.increment);
-				setIncrementPlayer1(
-					rule.increment === 'bronstein'
-						? rule.bronsteinPlayer1
-						: rule.fischerPlayer1
-				);
-				setIncrementPlayer2(
-					rule.increment === 'bronstein'
-						? rule.bronsteinPlayer2
-						: rule.fischerPlayer2
-				);
+			ruleDispatch({ type: RuleActions.SetValues, payload: rule });
+			setDelaySameForBoth(rule.delay ? false : true);
+			if (rule.increment === 'bronstein') {
+				handleInput(FieldOptions.INCREMENT1, rule.bronsteinPlayer1);
+				handleInput(FieldOptions.INCREMENT2, rule.bronsteinPlayer2);
+			} else if (rule.increment === 'fischer') {
+				handleInput(FieldOptions.INCREMENT1, rule.fischerPlayer1);
+				handleInput(FieldOptions.INCREMENT2, rule.fischerPlayer2);
 			}
 		}
 	}, []);
 
 	useEffect(() => {
-		if (delaySameForBoth) {
-			setDelayPlayer2(delayPlayer1);
+		if (stage) {
+			ruleDispatch({ type: RuleActions.PushStage, payload: stage });
 		}
-	}, [delaySameForBoth, delayPlayer1, delayPlayer2]);
+	}, [stage]);
+
+	useEffect(() => {
+		if (delaySameForBoth) {
+			ruleDispatch({
+				type: RuleActions.SetDelay2,
+				payload: ruleState.delayPlayer1,
+			});
+		}
+	}, [delaySameForBoth, ruleState.delayPlayer1, ruleState.delayPlayer2]);
 
 	useEffect(() => {
 		if (incrementSameForBoth) {
-			setIncrementPlayer2(incrementPlayer1);
+			ruleDispatch({
+				type: RuleActions.SetIncrement2,
+				payload: ruleState.incrementPlayer1,
+			});
 		}
-	}, [incrementSameForBoth, incrementPlayer1, incrementPlayer2]);
-
-	useEffect(() => {
-		if (!hasIncrement) {
-			setIncrementType(null);
-		}
-	}, [hasIncrement]);
+	}, [
+		incrementSameForBoth,
+		ruleState.incrementPlayer1,
+		ruleState.incrementPlayer2,
+	]);
 
 	const styles = StyleSheet.create({
 		content: {
@@ -212,22 +316,22 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 	return (
 		<Container>
 			<AppHeader
-				title={name ? 'Edit Rule' : 'New Rule'}
+				title={ruleState.name ? 'Edit Rule' : 'New Rule'}
 				onSave={handleSave}
 				hasSave
 				hasGoBack
 			/>
 			<Content style={styles.content}>
 				<TextInput
-					value={name}
-					onChangeText={(value) => setName(value)}
+					value={ruleState.name}
+					onChangeText={(value) => handleInput(FieldOptions.NAME, value)}
 					style={styles.input}
 					placeholder="Write a name"
 				/>
 				<ListCreator
 					title="Stages"
 					buttonTitle="New Stage"
-					listData={stages}
+					listData={ruleState.stages}
 					itemName="Stage"
 					onPressItem={handleModalOptions}
 					onPressButton={() => {
@@ -239,11 +343,11 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 						<SectionTitle text="Delay" />
 						<AppSwitcher
 							noMargin
-							value={hasDelay}
+							value={ruleState.hasDelay}
 							onValueChange={handleAddDelay}
 						/>
 					</View>
-					{hasDelay && (
+					{ruleState.hasDelay && (
 						<View style={styles.sectionContent}>
 							<AppSwitcher
 								label="Same for both"
@@ -252,15 +356,19 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							/>
 							<TimeInput
 								label={!delaySameForBoth ? 'Player 1' : undefined}
-								interval={delayPlayer1}
-								onChangeTime={(value) => setDelayPlayer1(value)}
+								interval={ruleState.delayPlayer1}
+								onChangeTime={(value) =>
+									handleInput(FieldOptions.DELAY1, value)
+								}
 							/>
 							{!delaySameForBoth && (
 								<View style={{ marginTop: 10 }}>
 									<TimeInput
 										label="Player 2"
-										interval={delayPlayer2}
-										onChangeTime={(value) => setDelayPlayer2(value)}
+										interval={ruleState.delayPlayer2}
+										onChangeTime={(value) =>
+											handleInput(FieldOptions.DELAY2, value)
+										}
 									/>
 								</View>
 							)}
@@ -272,11 +380,11 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 						<SectionTitle text="Increment" />
 						<AppSwitcher
 							noMargin
-							value={hasIncrement}
+							value={ruleState.hasIncrement}
 							onValueChange={handleIncrement}
 						/>
 					</View>
-					{hasIncrement && (
+					{ruleState.hasIncrement && (
 						<View style={styles.sectionContent}>
 							<View
 								style={{
@@ -288,12 +396,16 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							>
 								<AppCheckbox
 									label="Fischer"
-									value={incrementType === 'fischer'}
+									value={
+										ruleState.incrementType === IncrementTypeModels.fischer
+									}
 									onValueChange={handleIncrementType}
 								/>
 								<AppCheckbox
 									label="Bronstein"
-									value={incrementType === 'bronstein'}
+									value={
+										ruleState.incrementType === IncrementTypeModels.bronstein
+									}
 									onValueChange={handleIncrementType}
 								/>
 							</View>
@@ -304,15 +416,19 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 							/>
 							<TimeInput
 								label={!incrementSameForBoth ? 'Player 1' : undefined}
-								interval={incrementPlayer1}
-								onChangeTime={(value) => setIncrementPlayer1(value)}
+								interval={ruleState.incrementPlayer1}
+								onChangeTime={(value) =>
+									handleInput(FieldOptions.INCREMENT1, value)
+								}
 							/>
 							{!incrementSameForBoth && (
 								<View style={{ marginTop: 10 }}>
 									<TimeInput
 										label="Player 2"
-										interval={incrementPlayer2}
-										onChangeTime={(value) => setIncrementPlayer2(value)}
+										interval={ruleState.incrementPlayer2}
+										onChangeTime={(value) =>
+											handleInput(FieldOptions.INCREMENT2, value)
+										}
 									/>
 								</View>
 							)}
