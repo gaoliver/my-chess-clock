@@ -154,6 +154,11 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 			return {
 				...state,
 				currentStage: state.currentStage + 1,
+				counterPlayer1: action.payload.timePlayer1,
+				counterPlayer2: action.payload.timePlayer2,
+				movementsPlayer1: action.payload.movements,
+				movementsPlayer2: action.payload.movements,
+				stageTimeCounter: 0,
 			};
 		default:
 			return state;
@@ -352,19 +357,11 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const goToNextStage = () => {
-		stateDispatch({ type: StateActions.NextStage });
-	};
-
-	useEffect(() => {
-		setState({
-			...state,
-			counterPlayer1: settings.mainRule.stages[currentStage].timePlayer1,
-			counterPlayer2: settings.mainRule.stages[currentStage].timePlayer2,
-			movementsPlayer1: settings.mainRule.stages[currentStage].movements,
-			movementsPlayer2: settings.mainRule.stages[currentStage].movements,
-			stageTimeCounter: 0,
+		stateDispatch({
+			type: StateActions.NextStage,
+			payload: settings.mainRule.stages[currentStage],
 		});
-	}, [currentStage]);
+	};
 
 	useEffect(() => {
 		setMainRule({ ...settings.mainRule });
