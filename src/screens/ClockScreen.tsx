@@ -48,6 +48,8 @@ enum StateActions {
 	'CounterPlayer2',
 	'DelayCounter1',
 	'DelayCounter2',
+	'SetDelay1',
+	'SetDelay2',
 	'ShowDelay1',
 	'ShowDelay2',
 	'SetCountDown',
@@ -113,6 +115,21 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 			return {
 				...state,
 				delayCounter2: state.delayCounter2 - 1,
+			};
+		case StateActions.SetDelay1:
+			return {
+				...state,
+				delayCounter1: action.payload,
+			};
+		case StateActions.SetDelay1:
+			return {
+				...state,
+				delayCounter1: action.payload,
+			};
+		case StateActions.SetDelay2:
+			return {
+				...state,
+				delayCounter2: action.payload,
 			};
 		case StateActions.SetDelaying:
 			return {
@@ -392,21 +409,17 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	useEffect(() => {
 		if (state.delayCounter1 === 0) {
-			clearInterval(state.countDown);
-			// setDelay((prevState) => {
-			// 	return {
-			// 		...delay,
-			// 		delayCounter1: prevState.delayCounter1 + mainRule.delayPlayer1,
-			// 	};
-			// });
+			clearInterval(state.delaying);
+			stateDispatch({
+				type: StateActions.SetDelay1,
+				payload: mainRule.delayPlayer1,
+			});
 		} else if (state.delayCounter2 === 0) {
-			clearInterval(state.countDown);
-			// setDelay((prevState) => {
-			// 	return {
-			// 		...delay,
-			// 		delayCounter2: prevState.delayCounter2 + mainRule.delayPlayer2,
-			// 	};
-			// });
+			clearInterval(state.delaying);
+			stateDispatch({
+				type: StateActions.SetDelay2,
+				payload: mainRule.delayPlayer2,
+			});
 		}
 	}, [state.delayCounter1, state.delayCounter2]);
 
