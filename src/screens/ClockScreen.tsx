@@ -60,14 +60,14 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 				counterPlayer2: action.payload,
 			};
 		case StateActions.MovementPlayer1:
+			state.movementsPlayer1 -= 1;
 			return {
 				...state,
-				movementPlayer1: state.movementsPlayer1 - 1,
 			};
 		case StateActions.MovementPlayer2:
+			state.movementsPlayer2 -= 1;
 			return {
 				...state,
-				movementPlayer2: state.movementsPlayer2 - 1,
 			};
 		case StateActions.SetCountDown:
 			return {
@@ -389,6 +389,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		if (!state.thisPlay) return;
 		if (mainRule.stages[state.currentStage].movements === 0) return;
 		if (state.thisPlayer1) {
+			console.log(state.movementsPlayer1, state.movementsPlayer2);
 			return stateDispatch({ type: StateActions.MovementPlayer1 });
 		}
 		if (state.thisPlayer2) {

@@ -125,7 +125,7 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 		let newStage = {
 			id: stage ? stage.id : Math.random() * 135,
 			maxTime: state.totalTime,
-			movements: state.stageMovements,
+			movements: parseInt(state.stageMovements),
 			timePlayer1: state.counterPlayer1,
 			timePlayer2: state.counterPlayer2,
 		};
@@ -240,11 +240,11 @@ const StageScreen = ({ route, navigation }: NavigationParamsProp) => {
 					{state.stageHasMovements && (
 						<TextInput
 							style={[styles.input, { marginTop: 10 }]}
-							value={state.stageMovements}
+							value={String(state.stageMovements)}
 							onChangeText={(value) =>
 								handleInput(
 									StageFieldOptions.Movements,
-									value.replace(/[^0-9]/g, '')
+									Number(value.replace(/[^0-9]/g, ''))
 								)
 							}
 							keyboardType="numeric"
