@@ -37,6 +37,7 @@ enum RuleActions {
 	'HasDelay',
 	'HasIncrement',
 	'IncrementType',
+	'PushStage',
 	'DeleteStage',
 	'SetValues',
 	'SetDelay1',
@@ -109,11 +110,12 @@ function reducer(state: IRuleState, action: { type: any; payload?: any }) {
 				...state,
 				incrementPlayer2: action.payload,
 			};
+		case RuleActions.PushStage:
+			state.stages.push(action.payload);
+			return { ...state };
 		case RuleActions.DeleteStage:
-			return {
-				...state,
-				stages: state.stages.splice(action.payload, 1),
-			};
+			state.stages.splice(action.payload, 1);
+			return { ...state };
 		default:
 			return state;
 	}
@@ -230,38 +232,49 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		}
 	};
 
-	// const handleSave = () => {
-	// 	let newSettings = settings;
-	// 	let saveData: IRule = {
-	// 		id: rule ? rule.id : Math.random() * 135,
-	// 		name: name,
-	// 		delay: hasDelay,
-	// 		delayPlayer1: delayPlayer1,
-	// 		delayPlayer2: delayPlayer2,
-	// 		increment: hasIncrement ? incrementType : null,
-	// 		fischerPlayer1: incrementType === 'fischer' ? incrementPlayer1 : 0,
-	// 		fischerPlayer2: incrementType === 'fischer' ? incrementPlayer2 : 0,
-	// 		bronsteinPlayer1: incrementType === 'bronstein' ? incrementPlayer1 : 0,
-	// 		bronsteinPlayer2: incrementType === 'bronstein' ? incrementPlayer2 : 0,
-	// 		stages: stages,
-	// 	};
-	// 	if (rule) {
-	// 		let ruleIndex = ruleset.findIndex((thisRule) => thisRule.id === rule.id);
-	// 		ruleset[ruleIndex] = saveData;
-	// 		newSettings.ruleset = ruleset;
-	// 	} else {
-	// 		newSettings.ruleset.push(saveData);
-	// 	}
-	// 	dispatch(gameActions.setSettings(newSettings));
-	// 	navigation.goBack();
-	// };
+	const handleSave = () => {
+		let newSettings = settings;
+		let saveData: IRule = {
+			id: rule ? rule.id : Math.random() * 135,
+			name: ruleState.name,
+			delay: ruleState.hasDelay,
+			delayPlayer1: ruleState.delayPlayer1,
+			delayPlayer2: ruleState.delayPlayer2,
+			increment: ruleState.hasIncrement ? ruleState.incrementType : null,
+			fischerPlayer1:
+				ruleState.incrementType === IncrementTypeModels.fischer
+					? ruleState.incrementPlayer1
+					: 0,
+			fischerPlayer2:
+				ruleState.incrementType === IncrementTypeModels.fischer
+					? ruleState.incrementPlayer2
+					: 0,
+			bronsteinPlayer1:
+				ruleState.incrementType === IncrementTypeModels.bronstein
+					? ruleState.incrementPlayer1
+					: 0,
+			bronsteinPlayer2:
+				ruleState.incrementType === IncrementTypeModels.bronstein
+					? ruleState.incrementPlayer2
+					: 0,
+			stages: ruleState.stages,
+		};
+		if (rule) {
+			let ruleIndex = ruleset.findIndex((thisRule) => thisRule.id === rule.id);
+			ruleset[ruleIndex] = saveData;
+			newSettings.ruleset = ruleset;
+		} else {
+			newSettings.ruleset.push(saveData);
+		}
+		dispatch(gameActions.setSettings(newSettings));
+		navigation.goBack();
+	};
 
-	// useEffect(() => {
-	// 	if (stage) {
-	// 		stages.push(stage);
-	// 	}
-	// 	setStages([...stages]);
-	// }, [stage]);
+	useEffect(() => {
+		if (stage) {
+			ruleDispatch({ type: RuleActions.PushStage, payload: stage });
+		}
+	}, [stage]);
 
 	useEffect(() => {
 		if (rule) {
@@ -335,7 +348,7 @@ const RuleScreen = ({ route, navigation }: NavigationParamsProp) => {
 		<Container>
 			<AppHeader
 				title={ruleState.name ? 'Edit Rule' : 'New Rule'}
-				// onSave={handleSave}
+				onSave={handleSave}
 				hasSave
 				hasGoBack
 			/>
