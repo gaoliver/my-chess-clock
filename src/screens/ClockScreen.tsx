@@ -12,7 +12,7 @@ import PauseIcon from '../../assets/icons/pause.svg';
 import SettingsIcon from '../../assets/icons/settings.svg';
 import RefreshIcon from '../../assets/icons/refresh.svg';
 import { ApplicationState } from '../redux';
-import { IStage, NavigationParamsProp } from '../utils/types';
+import { NavigationParamsProp } from '../utils/types';
 import Colors from '../constants/Colors';
 
 interface IState {
@@ -34,6 +34,7 @@ interface IState {
 	delayCounter2: number;
 	countDown: any;
 	delaying: any;
+	totalTime: any;
 }
 interface ITimers {
 	totalTimer: any;
@@ -53,6 +54,7 @@ enum StateActions {
 	'SetCounterPlayer2',
 	'DelayCounter1',
 	'DelayCounter2',
+	'TotalTime',
 	'SetDelay1',
 	'SetDelay2',
 	'ShowDelay1',
@@ -188,11 +190,16 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 				...state,
 				winnderModal: false,
 			};
-		case StateActions.SetTotalTime:
+		case StateActions.TotalTime:
 			return {
 				...state,
 				thisTotalTime: state.thisTotalTime + 1,
 				stageTimeCounter: state.stageTimeCounter + 1,
+			};
+		case StateActions.SetTotalTime:
+			return {
+				...state,
+				totalTime: action.payload,
 			};
 		case StateActions.Reset:
 			return init(action.payload);
@@ -208,7 +215,6 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		(state: ApplicationState) => state
 	);
 
-	const [currentStage, setCurrentStage] = useState(0);
 	const [mainRule, setMainRule] = useState({
 		id: settings.mainRule.id,
 		name: settings.mainRule.name,
@@ -222,11 +228,6 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		bronsteinPlayer1: settings.mainRule.bronsteinPlayer1,
 		bronsteinPlayer2: settings.mainRule.bronsteinPlayer2,
 	});
-	const [timers, setTimers] = useState<ITimers>({
-		totalTimer: undefined,
-		timer: undefined,
-		countDown: undefined,
-	});
 	const initialState: IState = {
 		currentStage: 0,
 		thisPlay: play,
@@ -238,17 +239,17 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		winnderModal: false,
 		showCountDown1: false,
 		showCountDown2: false,
-		movementsPlayer1: mainRule.stages[currentStage].movements,
-		movementsPlayer2: mainRule.stages[currentStage].movements,
-		counterPlayer1: mainRule.stages[currentStage].timePlayer1,
-		counterPlayer2: mainRule.stages[currentStage].timePlayer2,
+		movementsPlayer1: mainRule.stages[0].movements,
+		movementsPlayer2: mainRule.stages[0].movements,
+		counterPlayer1: mainRule.stages[0].timePlayer1,
+		counterPlayer2: mainRule.stages[0].timePlayer2,
 		delayCounter1: mainRule.delayPlayer1,
 		delayCounter2: mainRule.delayPlayer2,
 		countDown: undefined,
 		delaying: undefined,
+		totalTime: undefined,
 	};
 	const [state, stateDispatch] = useReducer(reducer, initialState, init);
-	const [states, setState] = useState(initialState);
 
 	const translator = {
 		showPlayer1: state.showCountDown1
@@ -261,7 +262,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	const getWinner =
 		state.counterPlayer1 === 0 ||
-		(mainRule.stages[currentStage].movements > 0 &&
+		(mainRule.stages[state.currentStage].movements > 0 &&
 			state.movementsPlayer1 === 1)
 			? 'Player 2'
 			: 'Player 1';
@@ -323,7 +324,8 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	const stopInterval = () => {
 		clearInterval(state.countDown);
-		clearInterval(timers.timer);
+		clearInterval(state.totalTime);
+		clearInterval(state.delaying);
 	};
 
 	const useDelay = () => {
@@ -349,7 +351,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const useFisher = () => {
 		if (
 			state.thisPlayer1 &&
-			state.movementsPlayer1 <= mainRule.stages[currentStage].movements
+			state.movementsPlayer1 <= mainRule.stages[state.currentStage].movements
 		) {
 			stateDispatch({
 				type: StateActions.SetCounterPlayer1,
@@ -357,7 +359,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			});
 		} else if (
 			state.thisPlayer2 &&
-			state.movementsPlayer2 <= mainRule.stages[currentStage].movements
+			state.movementsPlayer2 <= mainRule.stages[state.currentStage].movements
 		) {
 			stateDispatch({
 				type: StateActions.SetCounterPlayer2,
@@ -369,24 +371,24 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const useBronstein = () => {
 		if (
 			state.thisPlayer1 &&
-			state.movementsPlayer1 <= mainRule.stages[currentStage].movements
+			state.movementsPlayer1 <= mainRule.stages[state.currentStage].movements
 		) {
 			stateDispatch({
 				type: StateActions.SetCounterPlayer1,
 				payload: Math.min(
 					state.counterPlayer1 + mainRule.bronsteinPlayer1,
-					mainRule.stages[currentStage].timePlayer1
+					mainRule.stages[state.currentStage].timePlayer1
 				),
 			});
 		} else if (
 			state.thisPlayer2 &&
-			state.movementsPlayer2 <= mainRule.stages[currentStage].movements
+			state.movementsPlayer2 <= mainRule.stages[state.currentStage].movements
 		) {
 			stateDispatch({
 				type: StateActions.SetCounterPlayer2,
 				payload: Math.min(
 					state.counterPlayer2 + mainRule.bronsteinPlayer2,
-					mainRule.stages[currentStage].timePlayer2
+					mainRule.stages[state.currentStage].timePlayer2
 				),
 			});
 		}
@@ -395,7 +397,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	const goToNextStage = () => {
 		stateDispatch({
 			type: StateActions.NextStage,
-			payload: settings.mainRule.stages[currentStage],
+			payload: settings.mainRule.stages[state.currentStage + 1],
 		});
 	};
 
@@ -405,7 +407,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	}, [isFocused]);
 
 	useEffect(() => {
-		let thisStage = mainRule.stages[currentStage];
+		let thisStage = mainRule.stages[state.currentStage];
 
 		if (thisStage.maxTime > 0 && state.stageTimeCounter === thisStage.maxTime) {
 			return goToNextStage();
@@ -424,9 +426,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				state.counterPlayer2 > 0)
 		) {
 			return;
-		} else if (currentStage < mainRule.stages.length - 1) {
+		} else if (state.currentStage < mainRule.stages.length - 1) {
 			goToNextStage();
-		} else if (currentStage >= mainRule.stages.length - 1) {
+		} else if (state.currentStage >= mainRule.stages.length - 1) {
 			stopInterval();
 			stateDispatch({ type: StateActions.FinishGame });
 		}
@@ -440,7 +442,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 
 	useEffect(() => {
 		if (!state.thisPlay) return;
-		if (mainRule.stages[currentStage].movements === 0) return;
+		if (mainRule.stages[state.currentStage].movements === 0) return;
 		if (state.thisPlayer1) {
 			return stateDispatch({ type: StateActions.MovementPlayer1 });
 		}
@@ -488,11 +490,11 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	useEffect(() => {
 		if (state.thisPlay) {
 			const totalTimerId = setInterval(() => {
-				stateDispatch({ type: StateActions.SetTotalTime });
+				stateDispatch({ type: StateActions.TotalTime });
 			}, 1000);
-			timers.totalTimer = totalTimerId;
+			stateDispatch({ type: StateActions.SetTotalTime, payload: totalTimerId });
 		} else {
-			clearInterval(timers.totalTimer);
+			clearInterval(state.totalTime);
 		}
 	}, [state.thisPlay]);
 
@@ -517,7 +519,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				direction={landscape('down')}
 				playerTime={translator.showPlayer2}
 				totalTime={state.thisTotalTime}
-				stage={currentStage + 1}
+				stage={state.currentStage + 1}
 				moviments={state.movementsPlayer1}
 				disabled={!state.thisPlayer2}
 				onPress={handleTapPlayer}
@@ -548,7 +550,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 				direction={landscape('up')}
 				playerTime={translator.showPlayer1}
 				totalTime={state.thisTotalTime}
-				stage={currentStage + 1}
+				stage={state.currentStage + 1}
 				moviments={state.movementsPlayer2}
 				onPress={handleTapPlayer}
 			/>
