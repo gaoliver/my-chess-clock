@@ -16,6 +16,7 @@ import { IStage, NavigationParamsProp } from '../utils/types';
 import Colors from '../constants/Colors';
 
 interface IState {
+	currentStage: number;
 	thisPlay: boolean;
 	thisPlayer1: boolean;
 	thisPlayer2: boolean;
@@ -46,6 +47,8 @@ enum StateActions {
 	'PlayPause',
 	'CounterPlayer1',
 	'CounterPlayer2',
+	'SetCounterPlayer1',
+	'SetCounterPlayer2',
 	'DelayCounter1',
 	'DelayCounter2',
 	'SetDelay1',
@@ -54,6 +57,7 @@ enum StateActions {
 	'ShowDelay2',
 	'SetCountDown',
 	'SetDelaying',
+	'NextStage',
 }
 
 function init(initialState: IState) {
@@ -90,6 +94,16 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 			return {
 				...state,
 				counterPlayer2: state.counterPlayer2 - 1,
+			};
+		case StateActions.SetCounterPlayer1:
+			return {
+				...state,
+				counterPlayer1: action.payload,
+			};
+		case StateActions.SetCounterPlayer2:
+			return {
+				...state,
+				counterPlayer2: action.payload,
 			};
 		case StateActions.SetCountDown:
 			return {
@@ -136,6 +150,11 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 				...state,
 				delaying: action.payload,
 			};
+		case StateActions.NextStage:
+			return {
+				...state,
+				currentStage: state.currentStage + 1,
+			};
 		default:
 			return state;
 	}
@@ -168,6 +187,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 		countDown: undefined,
 	});
 	const initialState: IState = {
+		currentStage: 0,
 		thisPlay: play,
 		thisPlayer1: player1,
 		thisPlayer2: player2,
@@ -290,17 +310,17 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			state.thisPlayer1 &&
 			state.movementsPlayer1 <= mainRule.stages[currentStage].movements
 		) {
-			setState({
-				...state,
-				counterPlayer1: state.counterPlayer1 + mainRule.fischerPlayer1,
+			stateDispatch({
+				type: StateActions.SetCounterPlayer1,
+				payload: state.counterPlayer1 + mainRule.fischerPlayer1,
 			});
 		} else if (
 			state.thisPlayer2 &&
 			state.movementsPlayer2 <= mainRule.stages[currentStage].movements
 		) {
-			setState({
-				...state,
-				counterPlayer2: state.counterPlayer1 + mainRule.fischerPlayer2,
+			stateDispatch({
+				type: StateActions.SetCounterPlayer2,
+				payload: state.counterPlayer2 + mainRule.fischerPlayer2,
 			});
 		}
 	};
@@ -310,9 +330,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			state.thisPlayer1 &&
 			state.movementsPlayer1 <= mainRule.stages[currentStage].movements
 		) {
-			setState({
-				...state,
-				counterPlayer1: Math.min(
+			stateDispatch({
+				type: StateActions.SetCounterPlayer1,
+				payload: Math.min(
 					state.counterPlayer1 + mainRule.bronsteinPlayer1,
 					mainRule.stages[currentStage].timePlayer1
 				),
@@ -321,9 +341,9 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 			state.thisPlayer2 &&
 			state.movementsPlayer2 <= mainRule.stages[currentStage].movements
 		) {
-			setState({
-				...state,
-				counterPlayer2: Math.min(
+			stateDispatch({
+				type: StateActions.SetCounterPlayer2,
+				payload: Math.min(
 					state.counterPlayer2 + mainRule.bronsteinPlayer2,
 					mainRule.stages[currentStage].timePlayer2
 				),
@@ -332,7 +352,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	};
 
 	const goToNextStage = () => {
-		setCurrentStage((value) => value + 1);
+		stateDispatch({ type: StateActions.NextStage });
 	};
 
 	useEffect(() => {
