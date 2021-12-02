@@ -59,6 +59,7 @@ enum StateActions {
 	'ShowDelay2',
 	'SetCountDown',
 	'SetDelaying',
+	'SetTotalTime',
 	'NextStage',
 	'FinishGame',
 	'CloseModal',
@@ -186,6 +187,12 @@ function reducer(state: IState, action: { type: StateActions; payload?: any }) {
 			return {
 				...state,
 				winnderModal: false,
+			};
+		case StateActions.SetTotalTime:
+			return {
+				...state,
+				thisTotalTime: state.thisTotalTime + 1,
+				stageTimeCounter: state.stageTimeCounter + 1,
 			};
 		case StateActions.Reset:
 			return init(action.payload);
@@ -481,13 +488,7 @@ const ClockScreen = ({ navigation }: NavigationParamsProp) => {
 	useEffect(() => {
 		if (state.thisPlay) {
 			const totalTimerId = setInterval(() => {
-				setState((prevState) => {
-					return {
-						...prevState,
-						thisTotalTime: prevState.thisTotalTime + 1,
-						stageTimeCounter: prevState.stageTimeCounter + 1,
-					};
-				});
+				stateDispatch({ type: StateActions.SetTotalTime });
 			}, 1000);
 			timers.totalTimer = totalTimerId;
 		} else {
